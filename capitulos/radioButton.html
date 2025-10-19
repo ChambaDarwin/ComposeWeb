@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RadioButton en Jetpack Compose</title>
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+    <link rel="stylesheet" href="../style/radioButton.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔘 RadioButton en Jetpack Compose</h1>
+        <p class="subtitle">Aprende a crear opciones de selección única</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Mira este video paso a paso para aprender a crear RadioButtons:</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/ivh0cMZeQdk?si=5o7PAgzDqycZfjv-" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+                
+            </div>
+        </div>
+
+        <!-- ¿Qué es RadioButton? -->
+        <div class="section">
+            <h2><span class="icon">❓</span> ¿Qué es un RadioButton?</h2>
+            <p>El <span class="highlight">RadioButton</span> es un componente que permite al usuario <strong>seleccionar UNA opción entre varias</strong>. Es ideal para preguntas de opción múltiple o configuraciones donde solo se puede elegir una alternativa.</p>
+
+            <div class="visual-demo">
+                <h4 style="color: #2d3748; margin-bottom: 20px;">Ejemplo Visual:</h4>
+                <div class="radio-demo">
+                    <div class="radio-circle selected"></div>
+                    <span>Sumar</span>
+                </div>
+                <div class="radio-demo">
+                    <div class="radio-circle"></div>
+                    <span>Restar</span>
+                </div>
+                <div class="radio-demo">
+                    <div class="radio-circle"></div>
+                    <span>Multiplicar</span>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>📋 Parámetros obligatorios:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>selected:</strong> Booleano que indica si está seleccionado</li>
+                    <li><strong>onClick:</strong> Función lambda que se ejecuta al hacer clic</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Forma Básica -->
+        <div class="section">
+            <h2><span class="icon">📝</span> Forma Básica: Un RadioButton</h2>
+            <p>Primero aprenderemos a crear un RadioButton simple:</p>
+
+            <div class="step-timeline">
+                <div class="step-item">
+                    <h3 style="color: #667eea; margin-top: 0;">Crear la variable observable</h3>
+                    <pre><code><span class="keyword">var</span> selectedOption <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="string">"sumar"</span>) }</code></pre>
+                    <p>Esta variable guarda la opción seleccionada actualmente.</p>
+                </div>
+
+                <div class="step-item">
+                    <h3 style="color: #667eea; margin-top: 0;">Crear el Row</h3>
+                    <p><span class="highlight">Row</span> organiza los elementos horizontalmente (uno al lado del otro).</p>
+                    <div class="info-box" style="margin-top: 10px;">
+                        <strong>Nueva propiedad: verticalAlignment</strong>
+                        <p style="margin-top: 8px;">Trabaja sobre el eje secundario (vertical) para centrar los elementos verticalmente dentro del Row.</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <h3 style="color: #667eea; margin-top: 0;">Implementar RadioButton + Text</h3>
+                    <pre><code><span class="function">Row</span>(
+    verticalAlignment = Alignment.CenterVertically
+) {
+    <span class="function">RadioButton</span>(
+        selected = selectedOption == <span class="string">"sumar"</span>,
+        onClick = {
+            selectedOption = <span class="string">"sumar"</span>
+        }
+    )
+    <span class="function">Text</span>(<span class="string">"Sumar"</span>)
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Cómo funciona:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li><code>selected</code> compara si <code>"sumar" == selectedOption</code></li>
+                    <li>Si es igual → devuelve <code>true</code> → RadioButton se muestra seleccionado</li>
+                    <li>Al hacer clic → actualiza <code>selectedOption = "sumar"</code></li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Múltiples RadioButtons -->
+        <div class="section">
+            <h2><span class="icon">🔢</span> Múltiples RadioButtons</h2>
+            <p>Ahora veamos cómo crear varios RadioButtons para múltiples opciones:</p>
+
+            <pre><code><span class="keyword">var</span> selectedOption <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="string">"sumar"</span>) }
+
+<span class="comment">// Opción 1: Sumar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">RadioButton</span>(
+        selected = selectedOption == <span class="string">"sumar"</span>,
+        onClick = { selectedOption = <span class="string">"sumar"</span> }
+    )
+    <span class="function">Text</span>(<span class="string">"Sumar"</span>)
+}
+
+<span class="comment">// Opción 2: Restar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">RadioButton</span>(
+        selected = selectedOption == <span class="string">"restar"</span>,
+        onClick = { selectedOption = <span class="string">"restar"</span> }
+    )
+    <span class="function">Text</span>(<span class="string">"Restar"</span>)
+}
+
+<span class="comment">// Opción 3: Multiplicar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">RadioButton</span>(
+        selected = selectedOption == <span class="string">"multiplicar"</span>,
+        onClick = { selectedOption = <span class="string">"multiplicar"</span> }
+    )
+    <span class="function">Text</span>(<span class="string">"Multiplicar"</span>)
+}</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ Problema:</strong>
+                <p style="margin-top: 10px;">Este código funciona, pero tiene mucha repetición. ¡Hay una forma más eficiente!</p>
+            </div>
+        </div>
+
+        <!-- Forma Eficiente -->
+        <div class="section">
+            <h2><span class="icon">⚡</span> Forma Eficiente: Usando Listas</h2>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>❌ Forma Manual</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Código repetitivo</li>
+                        <li>Difícil de mantener</li>
+                        <li>Más propenso a errores</li>
+                    </ul>
+                    <span class="badge badge-basic">Manual</span>
+                </div>
+                <div class="comparison-card">
+                    <h4>✅ Forma con Lista</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Código limpio y conciso</li>
+                        <li>Fácil de agregar opciones</li>
+                        <li>Más profesional</li>
+                    </ul>
+                    <span class="badge badge-advanced">Recomendado</span>
+                </div>
+            </div>
+
+            <h3>Paso 1: Crear la lista de opciones</h3>
+            <pre><code><span class="keyword">val</span> opciones = listOf(<span class="string">"sumar"</span>, <span class="string">"restar"</span>, <span class="string">"multiplicar"</span>)
+<span class="keyword">var</span> optionSelected <span class="keyword">by</span> rememberSaveable { 
+    mutableStateOf(opciones.first()) <span class="comment">// Primer elemento</span>
+}</code></pre>
+
+            <h3>Paso 2: Recorrer la lista con forEach</h3>
+            <pre><code>opciones.forEach { opcion <span class="keyword">-></span>
+    <span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+        <span class="function">RadioButton</span>(
+            selected = optionSelected == opcion,
+            onClick = { optionSelected = opcion }
+        )
+        <span class="function">Text</span>(text = opcion)
+    }
+}</code></pre>
+
+            <div class="success-box">
+                <strong>🎉 Resultado:</strong>
+                <p style="margin-top: 10px;">Con este código obtenemos el mismo resultado que antes, pero de forma mucho más elegante y mantenible. Si necesitas agregar más opciones, solo modificas la lista.</p>
+            </div>
+        </div>
+
+        <!-- Función Reutilizable -->
+        <div class="section">
+            <h2><span class="icon">🔧</span> Función Composable Reutilizable</h2>
+            <p>El siguiente paso es crear una función que puedas usar en cualquier parte de tu aplicación:</p>
+
+            <h3>Crear la función RadioButtonUi</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">RadioButtonUi</span>(
+    lista: List&lt;String&gt;,
+    selectedOption: String,
+    onClick: (String) <span class="keyword">-></span> Unit
+) {
+    lista.forEach { option <span class="keyword">-></span>
+        <span class="function">Row</span>(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = <span class="string">8</span>.dp)
+        ) {
+            <span class="function">RadioButton</span>(
+                selected = selectedOption == option,
+                onClick = { onClick(option) }
+            )
+            <span class="function">Text</span>(
+                text = option,
+                modifier = Modifier.padding(start = <span class="string">8</span>.dp)
+            )
+        }
+    }
+}</code></pre>
+
+            <div class="info-box">
+                <strong>📚 Explicación de los parámetros:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>lista:</strong> Lista de opciones a mostrar</li>
+                    <li><strong>selectedOption:</strong> Opción actualmente seleccionada</li>
+                    <li><strong>onClick:</strong> Callback que se ejecuta al seleccionar una opción</li>
+                </ul>
+            </div>
+
+            <h3>Cómo usar la función</h3>
+            <pre><code><span class="keyword">val</span> opciones = listOf(<span class="string">"sumar"</span>, <span class="string">"restar"</span>, <span class="string">"multiplicar"</span>)
+<span class="keyword">var</span> optionSelected <span class="keyword">by</span> rememberSaveable { 
+    mutableStateOf(opciones.first()) 
+}
+
+<span class="function">RadioButtonUi</span>(
+    lista = opciones,
+    selectedOption = optionSelected,
+    onClick = { item <span class="keyword">-></span>
+        optionSelected = item
+    }
+)</code></pre>
+
+            <div class="success-box">
+                <strong>✅ Flujo completo:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usuario hace clic en un RadioButton</li>
+                    <li>Se ejecuta <code>onClick(option)</code> dentro de RadioButtonUi</li>
+                    <li>Esto invoca la lambda <code>{ item -> optionSelected = item }</code></li>
+                    <li>Se actualiza <code>optionSelected</code> con el nuevo valor</li>
+                    <li>La interfaz se recompone mostrando la nueva selección</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Comparación Visual -->
+        <div class="section">
+            <h2><span class="icon">📊</span> Comparación de Enfoques</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🔸 Básico</h4>
+                    <p style="color: #4a5568; margin: 10px 0;">Un RadioButton individual con su propia lógica.</p>
+                    <pre style="font-size: 0.8em; padding: 10px;"><code>Row {
+  RadioButton(...)
+  Text("Opción")
+}</code></pre>
+                    <span class="badge badge-basic">3 líneas/opción</span>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>🔹 Con forEach</h4>
+                    <p style="color: #4a5568; margin: 10px 0;">Itera sobre una lista para crear múltiples opciones.</p>
+                    <pre style="font-size: 0.8em; padding: 10px;"><code>opciones.forEach {
+  Row {
+    RadioButton(...)
+  }
+}</code></pre>
+                    <span class="badge badge-advanced">1 bloque para todas</span>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>🔷 Función Reutilizable</h4>
+                    <p style="color: #4a5568; margin: 10px 0;">Componente que se puede usar en toda la app.</p>
+                    <pre style="font-size: 0.8em; padding: 10px;"><code>RadioButtonUi(
+  lista = opciones,
+  ...
+)</code></pre>
+                    <span class="badge badge-advanced">Profesional</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/validacionTextField.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">Validación de TextField</small>
+            </a>
+            <a href="../capitulos/checkBox.html" class="nav-button">
+                Siguiente Capítulo ➡️<br>
+                <small style="opacity: 0.8;">CheckBox</small>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

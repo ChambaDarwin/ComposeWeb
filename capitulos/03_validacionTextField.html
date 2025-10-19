@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Entrada de Datos - Jetpack Compose</title>
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+    <link rel="stylesheet" href="../style/03_calidacionTextField.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Validación de Entrada de Datos</h1>
+        <p class="subtitle">Aprende a validar formularios en Jetpack Compose</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Sigue este video para aprender paso a paso la validación de datos:</p>
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/53f3v73lJcI?si=QzfhCHTahinQa3rR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Repaso -->
+        <div class="section">
+            <h2><span class="icon">📚</span> Repaso del Capítulo Anterior</h2>
+            <div class="info-box">
+                <strong>¿Qué aprendimos antes?</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Crear vistas <strong>TextField</strong> para entrada de datos</li>
+                    <li>Usar <strong>rememberSaveable</strong> para mantener el estado durante rotaciones</li>
+                    <li>El delegado <strong>by</strong> permite acceder al valor sin usar <code>.value</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Objetivo -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> Objetivo de este Capítulo</h2>
+            <p>Aprenderemos a <span class="highlight">validar la información</span> ingresada por el usuario para evitar que envíe campos vacíos o datos incorrectos.</p>
+            
+            <div class="flow-diagram">
+                <div class="flow-step">Usuario escribe</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Validamos datos</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Mostramos error</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Usuario corrige</div>
+            </div>
+        </div>
+
+        <!-- Paso 1 -->
+        <div class="section">
+            <h2><span class="icon">1️⃣</span> Paso 1: Crear Variable de Validación</h2>
+            <p>Primero, crearemos una variable observable que guardará el estado de validación:</p>
+
+            <pre><code><span class="keyword">var</span> isCorrect <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }</code></pre>
+
+            <div class="info-box">
+                <strong>💡 ¿Qué hace esta variable?</strong>
+                <p style="margin-top: 10px;">Esta variable almacena <code>true</code> si hay un error (campo vacío) o <code>false</code> si todo está correcto. Inicialmente es <code>false</code> porque el campo empieza limpio.</p>
+            </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="section">
+            <h2><span class="icon">2️⃣</span> Paso 2: Validar en onValueChange</h2>
+            <p>Dentro de <span class="highlight">onValueChange</span> validaremos si el usuario ha escrito algo usando el método <code>isNullOrEmpty()</code>:</p>
+
+            <div class="step-card">
+                <p><span class="step-number">✓</span> <strong>isNullOrEmpty()</strong> devuelve:</p>
+                <ul style="margin-left: 50px; margin-top: 10px;">
+                    <li><code>true</code> → Si el campo está vacío o es nulo (❌ ERROR)</li>
+                    <li><code>false</code> → Si el campo tiene contenido (✅ CORRECTO)</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="function">CreateTextField</span>(
+    value = value,
+    onValueChange = {
+        value = it
+        <span class="comment">// Validamos: ¿está vacío?</span>
+        isCorrect = value.isNullOrEmpty()
+    },
+    isError = isCorrect
+)</code></pre>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="section">
+            <h2><span class="icon">3️⃣</span> Paso 3: Actualizar el TextField</h2>
+            <p>Agregamos la propiedad <span class="highlight">isError</span> al TextField para mostrar el error visualmente:</p>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">CreateTextField</span>(
+    value: String,
+    onValueChange: (String) <span class="keyword">-></span> Unit,
+    isError: Boolean
+) {
+    <span class="function">TextField</span>(
+        value = value,
+        onValueChange = onValueChange,
+        label = { <span class="function">Text</span>(<span class="string">"Ingrese su nombre"</span>) },
+        modifier = Modifier.fillMaxWidth(),
+        <span class="comment">// Si isError es true, se pinta el borde de rojo</span>
+        isError = isError,
+        singleLine = <span class="keyword">true</span>
+    )
+}</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ Importante:</strong>
+                <p style="margin-top: 10px;">Cuando <code>isError = true</code>, el TextField muestra un borde rojo indicando que hay un problema con la entrada de datos.</p>
+            </div>
+        </div>
+
+        <!-- Paso 4 -->
+        <div class="section">
+            <h2><span class="icon">4️⃣</span> Paso 4: Mostrar Mensaje de Error</h2>
+            <p>Agregamos un texto condicional que se muestra solo cuando hay un error:</p>
+
+            <pre><code><span class="keyword">if</span> (isCorrect) {
+    <span class="function">Text</span>(
+        text = <span class="string">"⚠️ Debes ingresar un valor"</span>,
+        color = Color.Red,
+        fontSize = <span class="string">14</span>.sp,
+        modifier = Modifier.padding(start = <span class="string">16</span>.dp, top = <span class="string">4</span>.dp)
+    )
+}</code></pre>
+
+            <div class="info-box">
+                <strong>💡 ¿Cuándo se muestra este mensaje?</strong>
+                <p style="margin-top: 10px;">El mensaje aparece cuando el usuario comienza a escribir y luego borra todo el texto, porque la validación se ejecuta dentro de <code>onValueChange</code>.</p>
+            </div>
+        </div>
+
+        <!-- Paso 5 -->
+        <div class="section">
+            <h2><span class="icon">5️⃣</span> Paso 5: Validar al Enviar</h2>
+            <p>También debemos validar cuando el usuario presiona el botón:</p>
+
+            <pre><code><span class="function">CreateButton</span> {
+    <span class="comment">// Validamos antes de mostrar el mensaje</span>
+    isCorrect = value.isNullOrEmpty()
+    
+    <span class="keyword">if</span> (!isCorrect) {
+        <span class="comment">// Si NO hay error, mostramos el saludo</span>
+        Toast.makeText(
+            context,
+            <span class="string">"¡Hola </span>$value<span class="string">! 👋"</span>,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+}</code></pre>
+
+            <div class="success-box">
+                <strong>✅ Flujo completo:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>El usuario presiona el botón</li>
+                    <li>Validamos si el campo está vacío</li>
+                    <li>Si está vacío: mostramos el error (borde rojo + mensaje)</li>
+                    <li>Si tiene contenido: mostramos el saludo con Toast</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Código Completo -->
+        <div class="section">
+            <h2><span class="icon">📋</span> Código Completo</h2>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">Formulario</span>(paddingValues: PaddingValues) {
+    <span class="keyword">var</span> value <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">var</span> isCorrect <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+    <span class="keyword">val</span> context = LocalContext.current
+
+    <span class="function">Column</span>(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .padding(<span class="string">16</span>.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        <span class="comment">// Campo de texto con validación</span>
+        <span class="function">CreateTextField</span>(
+            value = value,
+            onValueChange = {
+                value = it
+                isCorrect = value.isNullOrEmpty()
+            },
+            isError = isCorrect
+        )
+
+        <span class="comment">// Mensaje de error</span>
+        <span class="keyword">if</span> (isCorrect) {
+            <span class="function">Text</span>(
+                <span class="string">"⚠️ Debes ingresar un valor"</span>,
+                color = Color.Red
+            )
+        }
+
+        <span class="function">Spacer</span>(modifier = Modifier.height(<span class="string">16</span>.dp))
+
+        <span class="comment">// Botón con validación</span>
+        <span class="function">CreateButton</span> {
+            isCorrect = value.isNullOrEmpty()
+            <span class="keyword">if</span> (!isCorrect) {
+                Toast.makeText(
+                    context,
+                    <span class="string">"¡Hola </span>$value<span class="string">!"</span>,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+}</code></pre>
+        </div>
+
+        <!-- Ejercicios -->
+        <div class="exercise-section">
+            <h2><span class="icon">💪</span> Ejercicios Prácticos</h2>
+            <p style="color: #6a1b9a; font-weight: 600; margin-bottom: 20px;">Pon en práctica lo aprendido con estos ejercicios:</p>
+
+            <div class="exercise-card">
+                <span class="exercise-number">Ejercicio 1</span>
+                <h3 style="color: #2d3748; margin: 10px 0;">Convertir a Mayúsculas</h3>
+                <p style="color: #4a5568;">Pide al usuario que ingrese una cadena de texto y conviértela a mayúsculas usando <code>toUpperCase()</code>. Muestra el resultado en un Toast.</p>
+            </div>
+
+            <div class="exercise-card">
+                <span class="exercise-number">Ejercicio 2</span>
+                <h3 style="color: #2d3748; margin: 10px 0;">Contador de Caracteres</h3>
+                <p style="color: #4a5568;">Pide al usuario que ingrese una cadena de texto y muestra cuántos caracteres tiene usando <code>.length</code>. Ejemplo: "Tu texto tiene 15 caracteres"</p>
+            </div>
+
+            <div class="exercise-card">
+                <span class="exercise-number">Ejercicio 3</span>
+                <h3 style="color: #2d3748; margin: 10px 0;">Reemplazar Espacios</h3>
+                <p style="color: #4a5568;">Pide al usuario que ingrese una cadena de texto y reemplaza todos los espacios por guiones usando <code>replace(" ", "-")</code>. Ejemplo: "Hola Mundo" → "Hola-Mundo"</p>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/02_saludoPersonalizado.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">Text, TextField y Button</small>
+            </a>
+            <a href="../capitulos/radioButton.html" class="nav-button">
+                Siguiente Capítulo ➡️<br>
+                <small style="opacity: 0.8;">RadioButton</small>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

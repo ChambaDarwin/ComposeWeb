@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text y TextField en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/saludoPersonalizado.css">
+
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Text y TextField en Jetpack Compose</h1>
+        <p class="subtitle">Aprende a crear interfaces interactivas con mensajes personalizados</p>
+
+         <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Mira este video paso a paso para aprender a crear el componente Text</p>
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/GJk_r6zmqiQ?si=K2eDXxse88SuOwfT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+        <!-- Introducción Scaffold -->
+        <div class="section">
+            <h2><span class="icon">🏗️</span> ¿Qué es Scaffold?</h2>
+            <p><span class="highlight">Scaffold</span> es un contenedor que organiza los componentes principales de una pantalla de forma estructurada.</p>
+            
+            <div class="info-box">
+                <strong>Componentes de Scaffold:</strong>
+                <ol>
+                    <li><strong>topBar:</strong> Barra superior (AppBar)</li>
+                    <li><strong>bottomBar:</strong> Barra inferior de navegación</li>
+                    <li><strong>floatingActionButton:</strong> Botón de acción flotante</li>
+                    <li><strong>content:</strong> Contenido principal de la pantalla</li>
+                </ol>
+            </div>
+
+            <pre><code><span class="keyword">@Preview</span>
+<span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">ShowContent</span>() {
+    <span class="function">Scaffold</span>(
+        content = { paddingValues <span class="keyword">-></span>
+            <span class="function">Formulario</span>(paddingValues)
+        }
+    )
+}</code></pre>
+
+            <p><strong>PaddingValues:</strong> Se utiliza para evitar que el contenido se superponga con el topBar o bottomBar. El sistema lo genera automáticamente para respetar los espacios de estos componentes.</p>
+        </div>
+
+        <!-- Text Component -->
+        <div class="section">
+            <h2><span class="icon">📝</span> Componente Text</h2>
+            <p>El componente <span class="highlight">Text</span> es fundamental para mostrar información en la interfaz. Solo recibe un parámetro obligatorio: <strong>text</strong> (String).</p>
+
+            <div class="warning-box">
+                <strong>⚠️ Regla importante:</strong>
+                Debes distinguir entre propiedades que afectan al <strong>texto</strong> (van separadas por comas) y las que afectan al <strong>contenedor</strong> (van en modifier).
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-card">
+                    <h3>🎨 Propiedades del Texto</h3>
+                    <ul>
+                        <li>color</li>
+                        <li>fontSize</li>
+                        <li>fontWeight</li>
+                        <li>fontFamily</li>
+                        <li>textAlign</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h3>📦 Propiedades del Contenedor</h3>
+                    <ul>
+                        <li>background</li>
+                        <li>padding</li>
+                        <li>fillMaxWidth</li>
+                        <li>border</li>
+                        <li>clip</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Ejemplo - Propiedades del Texto:</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">CreateText</span>() {
+    <span class="function">Text</span>(
+        text = <span class="string">"Mensaje Personalizado"</span>,
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.Bold,
+        fontSize = <span class="string">24</span>.sp,
+        color = Color.Blue
+    )
+}</code></pre>
+
+            <h3>Ejemplo - Modifier (Contenedor):</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">CreateText</span>() {
+    <span class="function">Text</span>(
+        text = <span class="string">"Hola Mundo"</span>,
+        modifier = Modifier
+            .background(Color.Blue)
+            .fillMaxWidth()
+            .padding(<span class="string">16</span>.dp),
+        color = Color.White
+    )
+}</code></pre>
+        </div>
+
+        <!-- TextField Component -->
+        <div class="section">
+            <h2><span class="icon">✏️</span> Componente TextField</h2>
+            <p>El <span class="highlight">TextField</span> permite la entrada de datos del usuario. Tiene dos parámetros obligatorios:</p>
+            
+            <div class="info-box">
+                <strong>Parámetros obligatorios:</strong>
+                <ul style="margin-left: 20px;">
+                    <li><strong>value:</strong> Valor actual del campo (String)</li>
+                    <li><strong>onValueChange:</strong> Lambda que se ejecuta cada vez que el usuario escribe</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">CreateTextField</span>(
+    value: String,
+    onValueChange: (String) <span class="keyword">-></span> Unit
+) {
+    <span class="function">TextField</span>(
+        value = value,
+        onValueChange = onValueChange,
+        label = { <span class="function">Text</span>(<span class="string">"Ingrese su nombre"</span>) },
+        placeholder = { <span class="function">Text</span>(<span class="string">"Escribe aquí..."</span>) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = <span class="keyword">true</span>
+    )
+}</code></pre>
+
+            <p><strong>Explicación:</strong> Esta función es reutilizable porque recibe los parámetros y los pasa directamente al TextField. La lambda <code>onValueChange</code> tiene la misma firma que requiere TextField, por eso podemos pasarla por referencia.</p>
+        </div>
+
+        <!-- Button Component -->
+        <div class="section">
+            <h2><span class="icon">🔘</span> Componente Button</h2>
+            <p>El componente Button ejecuta una acción cuando el usuario hace clic.</p>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">CreateButton</span>(
+    onClick: () <span class="keyword">-></span> Unit
+) {
+    <span class="function">Button</span>(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        <span class="function">Text</span>(<span class="string">"Enviar Saludo"</span>)
+    }
+}</code></pre>
+        </div>
+
+        <!-- Complete Example -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> Ejemplo Completo: Mensaje Personalizado</h2>
+            <p>Ahora vamos a integrar todos los componentes para crear una aplicación que muestre un saludo personalizado.</p>
+
+            <div class="info-box">
+                <strong>💡 Gestión de Estado:</strong>
+                <p style="margin-top: 10px;">Utilizamos <code>rememberSaveable { mutableStateOf("") }</code> para crear una variable observable que mantiene su valor incluso cuando se rota la pantalla o se recrea la actividad.</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>mutableStateOf(""):</strong> Crea un estado mutable observable con valor inicial vacío</li>
+                    <li><strong>rememberSaveable:</strong> Recuerda el estado después de recrear la actividad</li>
+                    <li><strong>by:</strong> Delegado que permite acceder directamente sin usar .value</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">Formulario</span>(paddingValues: PaddingValues) {
+    <span class="comment">// Estado que guarda el nombre del usuario</span>
+    <span class="keyword">var</span> name <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="string">""</span>) }
+    <span class="keyword">val</span> context = LocalContext.current
+
+    <span class="function">Column</span>(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .padding(<span class="string">16</span>.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        <span class="comment">// Título</span>
+        <span class="function">CreateText</span>()
+        
+        <span class="function">Spacer</span>(modifier = Modifier.height(<span class="string">20</span>.dp))
+        
+        <span class="comment">// Campo de texto</span>
+        <span class="function">CreateTextField</span>(
+            value = name,
+            onValueChange = { name = it }
+        )
+        
+        <span class="function">Spacer</span>(modifier = Modifier.height(<span class="string">20</span>.dp))
+        
+        <span class="comment">// Botón que muestra el mensaje</span>
+        <span class="function">CreateButton</span> {
+            Toast.makeText(
+                context,
+                <span class="string">"¡Hola </span>$name<span class="string">! 👋"</span>,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+}</code></pre>
+
+            <div class="warning-box">
+                <strong>🎓 Conceptos clave:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Column:</strong> Organiza los elementos verticalmente</li>
+                    <li><strong>Spacer:</strong> Añade espacio entre componentes</li>
+                    <li><strong>Toast:</strong> Muestra mensajes temporales en pantalla</li>
+                    <li><strong>LocalContext.current:</strong> Obtiene el contexto actual de Android</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section">
+            <h2><span class="icon">✅</span> Resumen</h2>
+            <div style="background: white; padding: 20px; border-radius: 12px;">
+                <p><span class="step-number">1</span> Usamos <strong>Scaffold</strong> para estructurar la pantalla</p>
+                <p><span class="step-number">2</span> Creamos un <strong>Text</strong> para el título</p>
+                <p><span class="step-number">3</span> Añadimos un <strong>TextField</strong> para capturar el nombre</p>
+                <p><span class="step-number">4</span> Implementamos un <strong>Button</strong> para enviar el mensaje</p>
+                <p><span class="step-number">5</span> Gestionamos el estado con <strong>rememberSaveable</strong></p>
+                <p><span class="step-number">6</span> Mostramos el resultado con un <strong>Toast</strong></p>
+            </div>
+        </div>
+
+         <div class="navigation">
+            <a href="../capitulos/propiedadesModifiier.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">Propiedes y Modifier</small>
+            </a>
+            <a href="../capitulos/03_validacionTextField.html" class="nav-button">
+                Siguiente Capítulo ➡️<br>
+                <small style="opacity: 0.8;">Valida la entrada de datos</small>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

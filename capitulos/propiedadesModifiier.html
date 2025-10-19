@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propiedades Text y TextField - Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/propiedadesModifier.css" />
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Propiedades de Text y TextField</h1>
+      <p class="subtitle">Referencia completa para Jetpack Compose</p>
+ 
+      <!-- Sección Text -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">📝</span>
+          Componente Text
+        </h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Propiedad</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Ejemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="property-name">text</td>
+                <td><span class="type">String</span></td>
+                <td class="description">Texto a mostrar</td>
+                <td><span class="example">text = "Hola"</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">fontSize</td>
+                <td><span class="type">TextUnit</span></td>
+                <td class="description">Tamaño de la fuente</td>
+                <td><span class="example">fontSize = 20.sp</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">fontWeight</td>
+                <td><span class="type">FontWeight</span></td>
+                <td class="description">Grosor del texto</td>
+                <td><span class="example">fontWeight = Bold</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">fontStyle</td>
+                <td><span class="type">FontStyle</span></td>
+                <td class="description">Estilo (normal o itálica)</td>
+                <td><span class="example">fontStyle = Italic</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">color</td>
+                <td><span class="type">Color</span></td>
+                <td class="description">Color del texto</td>
+                <td><span class="example">color = Color.Red</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">textAlign</td>
+                <td><span class="type">TextAlign</span></td>
+                <td class="description">Alineación del texto</td>
+                <td><span class="example">textAlign = Center</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">lineHeight</td>
+                <td><span class="type">TextUnit</span></td>
+                <td class="description">Altura entre líneas</td>
+                <td><span class="example">lineHeight = 24.sp</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">maxLines</td>
+                <td><span class="type">Int</span></td>
+                <td class="description">Número máximo de líneas</td>
+                <td><span class="example">maxLines = 2</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">overflow</td>
+                <td><span class="type">TextOverflow</span></td>
+                <td class="description">Comportamiento del desbordamiento</td>
+                <td><span class="example">overflow = Ellipsis</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">letterSpacing</td>
+                <td><span class="type">TextUnit</span></td>
+                <td class="description">Espaciado entre letras</td>
+                <td><span class="example">letterSpacing = 0.5.sp</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">textDecoration</td>
+                <td><span class="type">TextDecoration</span></td>
+                <td class="description">Decoración (underline, lineThrough)</td>
+                <td><span class="example">textDecoration = Underline</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sección TextField -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">✏️</span>
+          Componente TextField
+        </h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Propiedad</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Ejemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="property-name">value</td>
+                <td><span class="type">String</span></td>
+                <td class="description">Valor actual del campo</td>
+                <td><span class="example">value = text</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">onValueChange</td>
+                <td><span class="type">Lambda</span></td>
+                <td class="description">Callback al cambiar el texto</td>
+                <td>
+                  <span class="example">onValueChange = { text = it }</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">label</td>
+                <td><span class="type">@Composable</span></td>
+                <td class="description">Etiqueta descriptiva</td>
+                <td><span class="example">label = { Text("Nombre") }</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">placeholder</td>
+                <td><span class="type">@Composable</span></td>
+                <td class="description">Texto de ayuda cuando está vacío</td>
+                <td>
+                  <span class="example"
+                    >placeholder = { Text("Escribe...") }</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">leadingIcon</td>
+                <td><span class="type">@Composable</span></td>
+                <td class="description">Icono al inicio del campo</td>
+                <td>
+                  <span class="example">leadingIcon = { Icon(...) }</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">trailingIcon</td>
+                <td><span class="type">@Composable</span></td>
+                <td class="description">Icono al final del campo</td>
+                <td>
+                  <span class="example">trailingIcon = { Icon(...) }</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">singleLine</td>
+                <td><span class="type">Boolean</span></td>
+                <td class="description">Limita a una sola línea</td>
+                <td><span class="example">singleLine = true</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">maxLines</td>
+                <td><span class="type">Int</span></td>
+                <td class="description">Número máximo de líneas</td>
+                <td><span class="example">maxLines = 3</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">enabled</td>
+                <td><span class="type">Boolean</span></td>
+                <td class="description">Habilita o deshabilita el campo</td>
+                <td><span class="example">enabled = true</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">readOnly</td>
+                <td><span class="type">Boolean</span></td>
+                <td class="description">Campo de solo lectura</td>
+                <td><span class="example">readOnly = false</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">keyboardOptions</td>
+                <td><span class="type">KeyboardOptions</span></td>
+                <td class="description">Opciones del teclado (tipo, acción)</td>
+                <td>
+                  <span class="example"
+                    >keyboardOptions = KeyboardOptions(keyboardType =
+                    Number)</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">keyboardActions</td>
+                <td><span class="type">KeyboardActions</span></td>
+                <td class="description">Acciones del teclado</td>
+                <td>
+                  <span class="example"
+                    >keyboardActions = KeyboardActions(onDone = {...})</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">visualTransformation</td>
+                <td><span class="type">VisualTransformation</span></td>
+                <td class="description">
+                  Transformación visual (ej: password)
+                </td>
+                <td>
+                  <span class="example"
+                    >visualTransformation = PasswordVisualTransformation()</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="property-name">isError</td>
+                <td><span class="type">Boolean</span></td>
+                <td class="description">Indica estado de error</td>
+                <td><span class="example">isError = false</span></td>
+              </tr>
+              <tr>
+                <td class="property-name">colors</td>
+                <td><span class="type">TextFieldColors</span></td>
+                <td class="description">Colores personalizados</td>
+                <td>
+                  <span class="example"
+                    >colors = TextFieldDefaults.colors(...)</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sección Modifiers -->
+      <div class="section">
+        <h2 class="section-title">
+          <span class="icon">🔧</span>
+          Modifiers Comunes
+        </h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Modifier</th>
+                <th>Descripción</th>
+                <th>Ejemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="modifier-badge">padding</span></td>
+                <td class="description">Añade espacio interno</td>
+                <td><span class="example">.padding(16.dp)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">fillMaxWidth</span></td>
+                <td class="description">Ocupa todo el ancho disponible</td>
+                <td><span class="example">.fillMaxWidth()</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">width</span></td>
+                <td class="description">Define ancho específico</td>
+                <td><span class="example">.width(200.dp)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">height</span></td>
+                <td class="description">Define altura específica</td>
+                <td><span class="example">.height(56.dp)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">background</span></td>
+                <td class="description">Color de fondo</td>
+                <td><span class="example">.background(Color.White)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">border</span></td>
+                <td class="description">Añade borde</td>
+                <td><span class="example">.border(2.dp, Color.Gray)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">clip</span></td>
+                <td class="description">Recorta con forma específica</td>
+                <td>
+                  <span class="example">.clip(RoundedCornerShape(8.dp))</span>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">clickable</span></td>
+                <td class="description">Hace el elemento clickeable</td>
+                <td>
+                  <span class="example">.clickable { /* acción */ }</span>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">alpha</span></td>
+                <td class="description">Transparencia</td>
+                <td><span class="example">.alpha(0.5f)</span></td>
+              </tr>
+              <tr>
+                <td><span class="modifier-badge">shadow</span></td>
+                <td class="description">Añade sombra</td>
+                <td><span class="example">.shadow(4.dp)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <a href="../temas/listaTemas.html" class="nav-button">
+          ⬅️ Home<br />
+          <small style="opacity: 0.8">Lista de Temas</small>
+        </a>
+        <a href="../capitulos/02_saludoPersonalizado.html" class="nav-button">
+          Siguiente Capítulo ➡️<br />
+          <small style="opacity: 0.8">Text,TextField y Button</small>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
