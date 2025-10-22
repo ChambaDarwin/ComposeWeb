@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckBox en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/checkbox.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <h1>☑️ CheckBox en Jetpack Compose</h1>
+        <p class="subtitle">Aprende a crear opciones de selección múltiple</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Mira este video completo para aprender a implementar CheckBox:</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/53f3v73lJcI?si=PNUp-0xhv_yyPB_-" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- ¿Qué es CheckBox? -->
+        <div class="section">
+            <h2><span class="icon">❓</span> ¿Qué es un CheckBox?</h2>
+            <p>El componente <span class="highlight">CheckBox</span> permite al usuario <strong>seleccionar MÚLTIPLES opciones</strong> simultáneamente. A diferencia del RadioButton (solo una opción), aquí puedes elegir todas las que necesites.</p>
+
+            <div class="visual-demo">
+                <h4 style="color: #2d3748; margin-bottom: 20px;">Ejemplo Visual:</h4>
+                <div class="checkbox-demo">
+                    <div class="checkbox-square checked"></div>
+                    <span>Sumar</span>
+                </div>
+                <div class="checkbox-demo">
+                    <div class="checkbox-square checked"></div>
+                    <span>Restar</span>
+                </div>
+                <div class="checkbox-demo">
+                    <div class="checkbox-square"></div>
+                    <span>Multiplicar</span>
+                </div>
+                <p style="margin-top: 15px; color: #4a5568; font-size: 0.95em;">
+                    ✓ Puedes seleccionar una, varias o todas las opciones
+                </p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🔘 RadioButton</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Solo UNA opción</li>
+                        <li>Selección excluyente</li>
+                        <li>Círculo seleccionado</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>☑️ CheckBox</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>MÚLTIPLES opciones</li>
+                        <li>Selección independiente</li>
+                        <li>Cuadro con check</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Row -->
+        <div class="section">
+            <h2><span class="icon">📐</span> Layout Row</h2>
+            <p>Usaremos <span class="highlight">Row</span> para organizar el CheckBox y el Text horizontalmente:</p>
+
+            <div class="info-box">
+                <strong>🎯 Row + verticalAlignment:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Row:</strong> Ubica elementos uno al lado del otro (horizontal)</li>
+                    <li><strong>verticalAlignment:</strong> Alinea los elementos en el eje vertical</li>
+                    <li><strong>CenterVertically:</strong> Centra verticalmente dentro del Row</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="comment">// CheckBox y Text alineados verticalmente</span>
+}</code></pre>
+        </div>
+
+        <!-- Variables Observables -->
+        <div class="section">
+            <h2><span class="icon">💾</span> Variables Observables</h2>
+            <p>Necesitamos crear <strong>una variable observable por cada CheckBox</strong>. Si tienes 5 CheckBox, creas 5 variables.</p>
+
+            <div class="key-concept">
+                <strong>🔑 Conceptos Clave:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><code class="code-highlight">mutableStateOf(false)</code> → Crea un estado mutable observable con valor inicial false (no seleccionado)</li>
+                    <li><code class="code-highlight">rememberSaveable</code> → Recuerda el estado incluso cuando el usuario gira la pantalla</li>
+                    <li><code class="code-highlight">by</code> → Delegado que permite acceder al valor sin usar .value</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="keyword">var</span> suma <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> resta <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> multiplicar <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ Importante:</strong>
+                <p style="margin-top: 10px;">Cada CheckBox necesita su propia variable porque pueden estar seleccionados independientemente. No puedes usar una sola variable para múltiples CheckBox.</p>
+            </div>
+        </div>
+
+        <!-- Crear CheckBox -->
+        <div class="section">
+            <h2><span class="icon">🔨</span> Cómo Crear un CheckBox</h2>
+            <p>El CheckBox tiene dos parámetros obligatorios:</p>
+
+            <div class="info-box">
+                <strong>📋 Parámetros obligatorios:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>checked:</strong> Boolean que indica si está seleccionado</li>
+                    <li><strong>onCheckedChange:</strong> Lambda que se ejecuta al cambiar el estado</li>
+                </ul>
+            </div>
+
+            <pre><code><span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">Checkbox</span>(
+        checked = suma,
+        onCheckedChange = {
+            suma = it
+        }
+    )
+    <span class="function">Text</span>(text = <span class="string">"Sumar"</span>)
+}</code></pre>
+
+            <h3>¿Cómo funciona onCheckedChange?</h3>
+            <div class="flow-diagram">
+                <div class="flow-step">Usuario hace clic</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Se invoca onCheckedChange</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Ejecuta lambda</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">Actualiza estado</div>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Flujo detallado:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usuario selecciona/deselecciona el CheckBox</li>
+                    <li>Se invoca <code>onCheckedChange(Boolean)</code></li>
+                    <li>Se ejecuta la lambda <code>{ suma = it }</code></li>
+                    <li><code>it</code> contiene el nuevo estado (<code>true</code> si seleccionado, <code>false</code> si no)</li>
+                    <li>Se actualiza la variable observable <code>suma</code></li>
+                    <li>La UI se recompone mostrando el nuevo estado</li>
+                </ol>
+            </div>
+
+            <div class="key-concept">
+                <strong>🔍 ¿Qué es "it"?</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    <code class="code-highlight">it</code> es el parámetro implícito de la lambda que contiene el nuevo estado del CheckBox:
+                </p>
+                <ul style="margin-left: 20px; margin-top: 8px; color: #4a5568;">
+                    <li><code>it = true</code> → CheckBox seleccionado ✓</li>
+                    <li><code>it = false</code> → CheckBox no seleccionado ☐</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Múltiples CheckBoxes -->
+        <div class="section">
+            <h2><span class="icon">🔢</span> Múltiples CheckBoxes</h2>
+            <p>Para crear varios CheckBoxes, simplemente repetimos el patrón con diferentes variables:</p>
+
+            <pre><code><span class="keyword">var</span> suma <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> resta <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> multiplicar <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+
+<span class="comment">// CheckBox Sumar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">Checkbox</span>(
+        checked = suma,
+        onCheckedChange = { suma = it }
+    )
+    <span class="function">Text</span>(<span class="string">"Sumar"</span>)
+}
+
+<span class="comment">// CheckBox Restar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">Checkbox</span>(
+        checked = resta,
+        onCheckedChange = { resta = it }
+    )
+    <span class="function">Text</span>(<span class="string">"Restar"</span>)
+}
+
+<span class="comment">// CheckBox Multiplicar</span>
+<span class="function">Row</span>(verticalAlignment = Alignment.CenterVertically) {
+    <span class="function">Checkbox</span>(
+        checked = multiplicar,
+        onCheckedChange = { multiplicar = it }
+    )
+    <span class="function">Text</span>(<span class="string">"Multiplicar"</span>)
+}</code></pre>
+        </div>
+
+        <!-- Función Reutilizable -->
+        <div class="section">
+            <h2><span class="icon">🔧</span> Función Composable Reutilizable</h2>
+            <p>Para evitar repetir código, creamos una función reutilizable:</p>
+
+            <h3>Crear la función Check</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">Check</span>(
+    text: String,
+    isSelected: Boolean,
+    actualizarEstado: (Boolean) <span class="keyword">-></span> Unit
+) {
+    <span class="function">Row</span>(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = <span class="string">8</span>.dp)
+    ) {
+        <span class="function">Checkbox</span>(
+            checked = isSelected,
+            onCheckedChange = {
+                actualizarEstado(it)
+            }
+        )
+        <span class="function">Text</span>(
+            text = text,
+            modifier = Modifier.padding(start = <span class="string">8</span>.dp)
+        )
+    }
+}</code></pre>
+
+            <div class="info-box">
+                <strong>📚 Parámetros explicados:</strong>
+                <div style="margin-top: 15px;">
+                    <div class="step-card">
+                        <span class="step-number">1</span>
+                        <strong>text: String</strong>
+                        <p style="margin-top: 8px; color: #4a5568;">Texto personalizado para cada CheckBox ("Sumar", "Restar", etc.)</p>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-number">2</span>
+                        <strong>isSelected: Boolean</strong>
+                        <p style="margin-top: 8px; color: #4a5568;">Estado actual del CheckBox (true = seleccionado, false = no seleccionado)</p>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-number">3</span>
+                        <strong>actualizarEstado: (Boolean) → Unit</strong>
+                        <p style="margin-top: 8px; color: #4a5568;">Callback que se invoca cuando el usuario cambia el estado. Recibe el nuevo valor y no devuelve nada.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Cómo usar la función</h3>
+            <pre><code><span class="keyword">var</span> suma <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> resta <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+<span class="keyword">var</span> multiplicar <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+
+<span class="comment">// Uso simple y limpio</span>
+<span class="function">Check</span>(<span class="string">"Sumar"</span>, suma) { suma = it }
+<span class="function">Check</span>(<span class="string">"Restar"</span>, resta) { resta = it }
+<span class="function">Check</span>(<span class="string">"Multiplicar"</span>, multiplicar) { multiplicar = it }</code></pre>
+
+            <div class="success-box">
+                <strong>✅ Flujo de actualización:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usuario hace clic en el CheckBox "Restar"</li>
+                    <li>Dentro de la función <code>Check</code>, se invoca <code>actualizarEstado(it)</code></li>
+                    <li>Esto ejecuta la lambda <code>{ resta = it }</code> que pasamos al llamar la función</li>
+                    <li><code>it</code> contiene el nuevo estado (true o false)</li>
+                    <li>Se actualiza la variable <code>resta</code></li>
+                    <li>La UI se recompone automáticamente</li>
+                </ol>
+            </div>
+
+            <div class="key-concept">
+                <strong>💡 Concepto Callback:</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    Un <strong>callback</strong> es una función que se pasa como parámetro y se invoca en un momento específico. 
+                    En este caso, <code>actualizarEstado</code> es un callback que se invoca cuando el usuario cambia el CheckBox,
+                    y nos permite actualizar la variable observable desde donde llamamos la función.
+                </p>
+            </div>
+        </div>
+
+        <!-- Comparación -->
+        <div class="section">
+            <h2><span class="icon">📊</span> Código Manual vs Reutilizable</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>❌ Sin función reutilizable</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 15px;"><code>Row(...) {
+  Checkbox(...)
+  Text(...)
+}
+Row(...) {
+  Checkbox(...)
+  Text(...)
+}
+Row(...) {
+  Checkbox(...)
+  Text(...)
+}</code></pre>
+                    <p style="color: #e65100; margin-top: 10px; font-weight: 600;">30+ líneas repetitivas</p>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>✅ Con función reutilizable</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 15px;"><code>Check("Sumar", suma) {
+  suma = it
+}
+Check("Restar", resta) {
+  resta = it
+}
+Check("Multiplicar", m) {
+  multiplicar = it
+}</code></pre>
+                    <p style="color: #2e7d32; margin-top: 10px; font-weight: 600;">9 líneas limpias</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/radioButton.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">RadioButton</small>
+            </a>
+            <a href="../capitulos/calculadora.html" class="nav-button">
+                Siguiente Capítulo ➡️<br>
+                <small style="opacity: 0.8;">Calculadora</small>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
