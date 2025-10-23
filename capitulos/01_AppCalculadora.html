@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura MVVM en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/appCalculadora.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🏗️ Arquitectura MVVM</h1>
+        <p class="subtitle">Model-View-ViewModel en Jetpack Compose</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Aprende paso a paso cómo implementar MVVM en una calculadora:</p>
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/9B-xZ6ujbno?si=QrQ7K44-qUxTYT-3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- ¿Qué es MVVM? -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> ¿Qué es MVVM?</h2>
+            <p><span class="highlight">MVVM</span> (Model-View-ViewModel) es un patrón de arquitectura que separa la
+                lógica de negocio de la interfaz de usuario, facilitando el mantenimiento y las pruebas.</p>
+
+            <div class="mvvm-diagram">
+                <div class="layer layer-view">
+                    <strong>VIEW (Vista)</strong>
+                    <p style="margin-top: 8px; font-size: 0.9em; opacity: 0.9;">Composables - UI que el usuario ve</p>
+                </div>
+                <div class="arrow-down">↕️</div>
+                <div class="layer layer-viewmodel">
+                    <strong>VIEWMODEL</strong>
+                    <p style="margin-top: 8px; font-size: 0.9em; opacity: 0.9;">Lógica de presentación - Gestiona
+                        estados</p>
+                </div>
+                <div class="arrow-down">↕️</div>
+                <div class="layer layer-model">
+                    <strong>MODEL (Modelo)</strong>
+                    <p style="margin-top: 8px; font-size: 0.9em; opacity: 0.9;">Data Classes - Estructura de datos</p>
+                </div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>📱 View (Vista)</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Composables</li>
+                        <li>Muestra datos</li>
+                        <li>Captura eventos</li>
+                        <li>No tiene lógica</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>🧠 ViewModel</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Maneja estados</li>
+                        <li>Lógica de negocio</li>
+                        <li>Expone datos</li>
+                        <li>Sobrevive a rotaciones</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>📦 Model (Modelo)</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Data Classes</li>
+                        <li>Estructura de datos</li>
+                        <li>Representa entidades</li>
+                        <li>Sin lógica de UI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proyecto: Calculadora -->
+        <div class="section">
+            <h2><span class="icon">🔢</span> Proyecto: Calculadora con MVVM</h2>
+            <p>Crearemos una aplicación para sumar dos números siguiendo la arquitectura MVVM.</p>
+
+            <div class="info-box">
+                <strong>📋 Componentes necesarios:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Scaffold para organizar la pantalla</li>
+                    <li>Column para alinear elementos verticalmente</li>
+                    <li>TextField para entrada de datos</li>
+                    <li>Button para ejecutar la suma</li>
+                    <li>PaddingValues para evitar superposiciones</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 1: Modelo -->
+        <div class="section">
+            <h2><span class="icon">1️⃣</span> Paso 1: Crear el Modelo de Datos</h2>
+            <p>El <span class="highlight">Modelo</span> representa la estructura de datos de nuestra calculadora:</p>
+
+            <pre><code><span class="keyword">data class</span> <span class="function">Calculadora</span>(
+    <span class="keyword">val</span> num1: String = <span class="string">""</span>,
+    <span class="keyword">val</span> num2: String = <span class="string">""</span>,
+    <span class="keyword">val</span> resultado: Int = <span class="string">0</span>,
+    <span class="keyword">val</span> isErrorNum1: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isErrorNum2: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isEnabled: Boolean = <span class="keyword">false</span>
+)</code></pre>
+
+            <div class="key-concept">
+                <strong>🔍 Propiedades del Modelo:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>num1, num2:</strong> Valores ingresados por el usuario</li>
+                    <li><strong>resultado:</strong> Resultado de la suma</li>
+                    <li><strong>isErrorNum1, isErrorNum2:</strong> Indican si hay errores de validación</li>
+                    <li><strong>isEnabled:</strong> Habilita/deshabilita el botón de sumar</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Ventajas del Data Class:</strong>
+                <p style="margin-top: 10px;">Al usar <code>data class</code> obtenemos automáticamente métodos como
+                    <code>copy()</code> que nos permite crear copias inmutables con valores modificados.</p>
+            </div>
+        </div>
+
+        <!-- Paso 2: ViewModel -->
+        <div class="section">
+            <h2><span class="icon">2️⃣</span> Paso 2: Crear el ViewModel</h2>
+            <p>El <span class="highlight">ViewModel</span> gestiona el estado y contiene la lógica de negocio:</p>
+
+            <pre><code><span class="keyword">class</span> <span class="function">CalculadoraViewModel</span> : ViewModel() {
+
+    <span class="comment">// Estado mutable privado (solo escritura interna)</span>
+    <span class="keyword">private val</span> _calculadora = MutableStateFlow(Calculadora())
+    
+    <span class="comment">// Estado público de solo lectura</span>
+    <span class="keyword">val</span> calculadora: StateFlow&lt;Calculadora&gt; <span class="keyword">get</span>() = _calculadora
+}</code></pre>
+
+            <div class="info-box">
+                <strong>💡 MutableStateFlow vs StateFlow:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>MutableStateFlow:</strong> Contenedor de estado observable que permite modificar
+                        valores. Es <strong>privado</strong> para escritura interna.</li>
+                    </strong> Versión de <strong>solo lectura</strong> que se expone públicamente. Los observadores
+                    reciben notificaciones cuando cambia el estado.</li>
+                </ul>
+            </div>
+
+            <h3>Función para obtener el primer número</h3>
+            <pre><code><span class="keyword">fun</span> <span class="function">getNum1</span>(num1: String) {
+    _calculadora.<span class="function">update</span> {
+        it.<span class="function">copy</span>(
+            num1 = num1,
+            isErrorNum1 = num1.isBlank(),
+            isEnabled = !num1.isBlank() && !it.num2.isBlank()
+        )
+    }
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔍 Explicación línea por línea:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><code>_calculadora.update</code> → Actualiza el estado actual</li>
+                    <li><code>it.copy()</code> → Crea una copia inmutable con nuevos valores</li>
+                    <li><code>num1 = num1</code> → Guarda el valor ingresado</li>
+                    <li><code>isErrorNum1 = num1.isBlank()</code> → true si está vacío (error)</li>
+                    <li><code>isEnabled</code> → Habilita el botón solo si ambos campos tienen datos</li>
+                </ul>
+            </div>
+
+            <h3>Función para obtener el segundo número</h3>
+            <pre><code><span class="keyword">fun</span> <span class="function">getNum2</span>(num2: String) {
+    _calculadora.<span class="function">update</span> {
+        it.<span class="function">copy</span>(
+            num2 = num2,
+            isErrorNum2 = num2.isBlank(),
+            isEnabled = !it.num1.isBlank() && !num2.isBlank()
+        )
+    }
+}</code></pre>
+
+            <h3>Función para sumar</h3>
+            <pre><code><span class="keyword">fun</span> <span class="function">sumar</span>() {
+    <span class="keyword">val</span> num1 = _calculadora.value.num1
+    <span class="keyword">val</span> num2 = _calculadora.value.num2
+
+    <span class="comment">// Validar que no estén vacíos</span>
+    <span class="keyword">if</span> (num1.isBlank() || num2.isBlank()) <span class="keyword">return</span>
+
+    <span class="comment">// Intentar convertir a enteros</span>
+    <span class="keyword">val</span> numero1 = num1.toIntOrNull()
+    <span class="keyword">val</span> numero2 = num2.toIntOrNull()
+
+    <span class="keyword">if</span> (numero1 != <span class="keyword">null</span> && numero2 != <span class="keyword">null</span>) {
+        <span class="comment">// Suma exitosa</span>
+        _calculadora.<span class="function">update</span> {
+            it.<span class="function">copy</span>(resultado = numero1 + numero2)
+        }
+    } <span class="keyword">else</span> {
+        <span class="comment">// Error: no son números válidos</span>
+        _calculadora.<span class="function">update</span> {
+            it.<span class="function">copy</span>(
+                isErrorNum1 = numero1 == <span class="keyword">null</span>,
+                isErrorNum2 = numero2 == <span class="keyword">null</span>
+            )
+        }
+    }
+}</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ Validación importante:</strong>
+                <p style="margin-top: 10px;">Usamos <code>toIntOrNull()</code> para convertir el String a Int. Si la
+                    conversión falla (el usuario ingresó letras), devuelve <code>null</code> y mostramos el error
+                    correspondiente.</p>
+            </div>
+        </div>
+
+        <!-- Paso 3: Vista -->
+        <div class="section">
+            <h2><span class="icon">3️⃣</span> Paso 3: Crear la Vista (UI)</h2>
+
+            <h3>MainActivity - Crear instancia del ViewModel</h3>
+            <pre><code><span class="keyword">class</span> <span class="function">MainActivity</span> : ComponentActivity() {
+    
+    <span class="keyword">override fun</span> <span class="function">onCreate</span>(savedInstanceState: Bundle?) {
+        <span class="keyword">super</span>.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            <span class="comment">// Crear o recuperar instancia del ViewModel</span>
+            <span class="keyword">val</span> viewModel: CalculadoraViewModel = viewModel()
+            <span class="function">ShowContent</span>(viewModel)
+        }
+    }
+}</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Función viewModel():</strong>
+                <p style="margin-top: 10px;">Esta función crea una nueva instancia del ViewModel o recupera una
+                    existente. El ViewModel sobrevive a cambios de configuración como rotaciones de pantalla.</p>
+            </div>
+
+            <h3>Composables de la Vista</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">ShowContent</span>(viewModel: CalculadoraViewModel) {
+    <span class="function">Scaffold</span> {
+        <span class="function">App</span>(it, viewModel)
+    }
+}
+
+<span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">App</span>(paddingValues: PaddingValues, viewModel: CalculadoraViewModel) {
+    <span class="comment">// Convertir StateFlow a State observable</span>
+    <span class="keyword">val</span> calculadora <span class="keyword">by</span> viewModel.calculadora.collectAsState()
+    
+    <span class="function">Column</span>(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        verticalArrangement = Arrangement.spacedBy(<span class="string">12</span>.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        <span class="function">TextUi</span>(<span class="string">"Suma de dos números"</span>)
+
+        <span class="comment">// Primer TextField</span>
+        <span class="function">TextFieldUi</span>(
+            value = calculadora.num1,
+            text = <span class="string">"Ingrese un número entero"</span>,
+            placeholder = <span class="string">"Ej: 5"</span>,
+            isError = calculadora.isErrorNum1
+        ) {
+            viewModel.getNum1(it)
+        }
+
+        <span class="comment">// Segundo TextField</span>
+        <span class="function">TextFieldUi</span>(
+            value = calculadora.num2,
+            text = <span class="string">"Ingrese un segundo número entero"</span>,
+            placeholder = <span class="string">"Ej: 3"</span>,
+            isError = calculadora.isErrorNum2
+        ) {
+            viewModel.getNum2(it)
+        }
+
+        <span class="comment">// Botón habilitado solo si ambos campos tienen datos</span>
+        <span class="function">ButtonUi</span>(<span class="string">"Calcular"</span>, calculadora.isEnabled) {
+            viewModel.sumar()
+        }
+
+        <span class="comment">// Mostrar resultado</span>
+        <span class="function">TextUi</span>(<span class="string">"Resultado: </span>${calculadora.resultado}<span class="string">"</span>)
+    }
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔑 collectAsState():</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    Convierte un <code>StateFlow</code> en un <code>State</code> observable de Compose.
+                    Cuando el StateFlow emite un nuevo valor, el composable se recompone automáticamente.
+                </p>
+            </div>
+        </div>
+
+        <!-- Flujo Completo -->
+        <div class="section">
+            <h2><span class="icon">🔄</span> Flujo Completo de la Aplicación</h2>
+
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Usuario escribe en TextField</strong>
+                <p style="margin-top: 8px; color: #4a5568;">El TextField captura el texto y ejecuta su lambda
+                    <code>onValueChange</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Se invoca viewModel.getNum1(it)</strong>
+                <p style="margin-top: 8px; color: #4a5568;">El valor ingresado se pasa al ViewModel</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>ViewModel actualiza el estado</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Se usa <code>_calculadora.update</code> para crear un nuevo
+                    estado con los valores actualizados</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <strong>StateFlow emite el nuevo valor</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Los observadores son notificados del cambio</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">5</span>
+                <strong>UI se recompone</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Compose detecta el cambio y actualiza la interfaz
+                    automáticamente</p>
+            </div>
+        </div>
+
+        <!-- Ventajas de MVVM -->
+        <div class="section">
+            <h2><span class="icon">⭐</span> Ventajas de usar MVVM</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🧪 Testeable</h4>
+                    <p style="color: #4a5568;">La lógica está separada de la UI, facilitando las pruebas unitarias</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔄 Reutilizable</h4>
+                    <p style="color: #4a5568;">El ViewModel puede usarse en múltiples vistas</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>📱 Sobrevive rotaciones</h4>
+                    <p style="color: #4a5568;">El estado se mantiene al rotar el dispositivo</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🧹 Código limpio</h4>
+                    <p style="color: #4a5568;">Separación clara de responsabilidades</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔧 Mantenible</h4>
+                    <p style="color: #4a5568;">Más fácil de modificar y escalar</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>👥 Colaborativo</h4>
+                    <p style="color: #4a5568;">Múltiples desarrolladores pueden trabajar en paralelo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/04_chekBox.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">CheckBox</small>
+            </a>
+            <a href="../capitulos/01_AppCalculadora.html" class="nav-button">
+                Siguiente Capítulo ➡️<br>
+                <small style="opacity: 0.8;">App Calculadora</small>
+            </a>
+        </div>
+
+    </div>
+
+</html>
