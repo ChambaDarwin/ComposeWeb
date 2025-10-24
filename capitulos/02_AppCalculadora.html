@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVVM Calculadora - Parte 2</title>
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+    <link rel="stylesheet" href="../style/02_AppCalculadora.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 Calculadora MVVM - Parte 2</h1>
+        <p class="subtitle">4 Operaciones + Manejo de Errores con Result</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Continúa con la segunda parte de la calculadora en MVVM:</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/9B-xZ6ujbno?si=Fp4CyMsK8VmSo7T9" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- Introducción -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> Objetivos de esta Parte</h2>
+            <p>En esta segunda parte extenderemos la calculadora para incluir las 4 operaciones básicas usando conceptos avanzados:</p>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🔢 4 Operaciones</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Suma (+)</li>
+                        <li>Resta (-)</li>
+                        <li>Multiplicación (*)</li>
+                        <li>División (/)</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>🎨 Enum Class</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Valores constantes</li>
+                        <li>Type-safe</li>
+                        <li>Fácil de mantener</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>✅ Result Type</h4>
+                    <ul style="margin-left: 20px; color: #4a5568;">
+                        <li>Manejo de errores</li>
+                        <li>División por cero</li>
+                        <li>Código más seguro</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 1: RadioButton -->
+        <div class="section">
+            <h2><span class="icon">1️⃣</span> Paso 1: Actualizar RadioButton</h2>
+            <p>Modificaremos el componente RadioButton para trabajar con <span class="highlight">Enum Class</span>. Si necesitas repasar RadioButtons, <a href="../capitulos/radioButton.html" style="color: #667eea; text-decoration: none; font-weight: 600;">revisa aquí</a>.</p>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">RadioButtonUi</span>(
+    lista: List&lt;Operacion&gt;,
+    value: Operacion,
+    onClick: (Operacion) <span class="keyword">-></span> Unit
+) {
+    <span class="function">Row</span>(
+        horizontalArrangement = Arrangement.spacedBy(<span class="string">8</span>.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        lista.forEach { item <span class="keyword">-></span>
+            <span class="function">Row</span>(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(<span class="string">4</span>.dp)
+            ) {
+                <span class="function">RadioButton</span>(
+                    selected = value == item,
+                    onClick = { onClick(item) }
+                )
+                <span class="function">Text</span>(
+                    text = item.signo,
+                    fontSize = <span class="string">18</span>.sp
+                )
+            }
+        }
+    }
+}</code></pre>
+
+            <div class="info-box">
+                <strong>🔍 Cambios importantes:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li>Ahora recibe <code>List&lt;Operacion&gt;</code> en lugar de <code>List&lt;String&gt;</code></li>
+                    <li>El parámetro <code>value</code> es de tipo <code>Operacion</code> (enum)</li>
+                    <li>Accedemos al signo con <code>item.signo</code></li>
+                    <li>Usamos un Row principal para organizar horizontalmente</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 2: Enum Class -->
+        <div class="section">
+            <h2><span class="icon">2️⃣</span> Paso 2: Crear Enum Class</h2>
+            <p>Una <span class="highlight">Enum Class</span> define un conjunto limitado de valores constantes. Es perfecta para operaciones matemáticas.</p>
+
+            <pre><code><span class="keyword">enum class</span> <span class="function">Operacion</span>(<span class="keyword">val</span> signo: String) {
+    SUMAR(<span class="string">"+"</span>),
+    RESTAR(<span class="string">"-"</span>),
+    MULTIPLICAR(<span class="string">"*"</span>),
+    DIVIDIR(<span class="string">"/"</span>)
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔑 Conceptos del Enum:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>Constructor:</strong> <code>(val signo: String)</code> - Cada constante puede tener propiedades</li>
+                    <li><strong>Instancias:</strong> Cada constante (<code>SUMAR</code>, <code>RESTAR</code>, etc.) es una instancia de <code>Operacion</code></li>
+                    <li><strong>Invocación:</strong> Al escribir <code>SUMAR("+")</code>, se invoca el constructor pasando "+" como argumento</li>
+                    <li><strong>Acceso:</strong> Podemos acceder al signo con <code>operacion.signo</code></li>
+                </ul>
+            </div>
+
+            <div class="enum-demo">
+                <h4 style="color: #2d3748; margin-bottom: 15px; text-align: center;">Valores del Enum:</h4>
+                <div style="text-align: center;">
+                    <span class="enum-item">SUMAR (+)</span>
+                    <span class="enum-item">RESTAR (-)</span>
+                    <span class="enum-item">MULTIPLICAR (*)</span>
+                    <span class="enum-item">DIVIDIR (/)</span>
+                </div>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Ventajas de usar Enum:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Type-safe:</strong> El compilador valida que solo uses valores válidos</li>
+                    <li><strong>Autocompletado:</strong> El IDE sugiere todas las opciones disponibles</li>
+                    <li><strong>Mantenible:</strong> Agregar operaciones es fácil y seguro</li>
+                    <li><strong>Sin errores de typo:</strong> No puedes escribir "suma" en lugar de "SUMAR"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 3: Result Type -->
+        <div class="section">
+            <h2><span class="icon">3️⃣</span> Paso 3: Interfaz con Result</h2>
+            <p>Crearemos una interfaz que usa <span class="highlight">Result&lt;T&gt;</span> para manejar éxitos y errores de forma elegante.</p>
+
+            <pre><code><span class="keyword">interface</span> <span class="function">Operaciones</span> {
+    <span class="keyword">fun</span> <span class="function">calcular</span>(
+        operacion: Operacion,
+        num1: Int,
+        num2: Int
+    ): Result&lt;Int&gt;
+}</code></pre>
+
+            <div class="info-box">
+                <strong>💡 ¿Qué es Result&lt;T&gt;?</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    <code>Result</code> es una clase genérica de Kotlin que representa el resultado de una operación que puede ser:
+                </p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>Éxito:</strong> <code>Result.success(valor)</code> - La operación se completó correctamente</li>
+                    <li><strong>Fallo:</strong> <code>Result.failure(excepción)</code> - Ocurrió un error</li>
+                </ul>
+            </div>
+
+            <div class="flow-diagram">
+                <h4 style="color: #2d3748; margin-bottom: 15px;">Flujo con Result:</h4>
+                <div class="flow-step">Operación</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">¿Éxito?</div>
+                <div style="margin: 20px 0;">
+                    <div style="display: inline-block; width: 45%; text-align: center;">
+                        <div style="color: #4caf50; font-weight: 600;">✓ SI</div>
+                        <div style="background: #e8f5e9; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                            Result.success(valor)
+                        </div>
+                    </div>
+                    <div style="display: inline-block; width: 45%; text-align: center;">
+                        <div style="color: #f44336; font-weight: 600;">✗ NO</div>
+                        <div style="background: #ffebee; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                            Result.failure(error)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 4: Actualizar Modelo -->
+        <div class="section">
+            <h2><span class="icon">4️⃣</span> Paso 4: Actualizar el Modelo</h2>
+            <p>Modificamos la data class <code>Calculadora</code> para usar <code>Result</code> y <code>Operacion</code>:</p>
+
+            <pre><code><span class="keyword">data class</span> <span class="function">Calculadora</span>(
+    <span class="keyword">val</span> num1: String = <span class="string">""</span>,
+    <span class="keyword">val</span> num2: String = <span class="string">""</span>,
+    <span class="keyword">val</span> resultado: Result&lt;Int&gt; = Result.success(<span class="string">0</span>),
+    <span class="keyword">val</span> operacion: Operacion = Operacion.SUMAR,
+    <span class="keyword">val</span> isErrorNum1: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isErrorNum2: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isEnabled: Boolean = <span class="keyword">false</span>
+)</code></pre>
+
+            <div class="warning-box">
+                <strong>⚠️ Cambios importantes:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><code>resultado</code> ahora es <code>Result&lt;Int&gt;</code> en lugar de <code>Int</code></li>
+                    <li>Agregamos <code>operacion: Operacion</code> con valor inicial <code>SUMAR</code></li>
+                    <li>El valor inicial de resultado es <code>Result.success(0)</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 5: Implementación -->
+        <div class="section">
+            <h2><span class="icon">5️⃣</span> Paso 5: Implementar la Interfaz</h2>
+            <p>Creamos la clase que implementa la lógica de las operaciones:</p>
+
+            <pre><code><span class="keyword">class</span> <span class="function">CalculadoraImpl</span> : Operaciones {
+
+    <span class="keyword">override fun</span> <span class="function">calcular</span>(
+        operacion: Operacion,
+        num1: Int,
+        num2: Int
+    ): Result&lt;Int&gt; {
+        <span class="keyword">return try</span> {
+            <span class="keyword">when</span> (operacion) {
+                Operacion.SUMAR <span class="keyword">-></span> 
+                    Result.success(num1 + num2)
+                
+                Operacion.RESTAR <span class="keyword">-></span> 
+                    Result.success(num1 - num2)
+                
+                Operacion.MULTIPLICAR <span class="keyword">-></span> 
+                    Result.success(num1 * num2)
+                
+                Operacion.DIVIDIR <span class="keyword">-></span> {
+                    <span class="keyword">if</span> (num2 == <span class="string">0</span>) {
+                        Result.failure(
+                            ArithmeticException(<span class="string">"No se puede dividir por cero"</span>)
+                        )
+                    } <span class="keyword">else</span> {
+                        Result.success(num1 / num2)
+                    }
+                }
+            }
+        } <span class="keyword">catch</span> (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔍 Explicación del When:</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    La expresión <code>when</code> evalúa el valor del enum <code>operacion</code> y ejecuta el bloque correspondiente. 
+                    Es como un switch en otros lenguajes, pero más poderoso:
+                </p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li>El compilador verifica que cubras todos los casos del enum</li>
+                    <li>No necesitas <code>break</code> como en switch</li>
+                    <li>Puede retornar valores directamente</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Manejo de errores:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>División por cero:</strong> Retorna <code>Result.failure</code> con un mensaje descriptivo</li>
+                    <li><strong>Try-catch:</strong> Captura cualquier excepción inesperada</li>
+                    <li><strong>Type-safe:</strong> El resultado siempre es un <code>Result&lt;Int&gt;</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 6: ViewModel -->
+        <div class="section">
+            <h2><span class="icon">6️⃣</span> Paso 6: Actualizar ViewModel</h2>
+            <p>Agregamos una función para actualizar la operación seleccionada:</p>
+
+            <pre><code><span class="keyword">class</span> <span class="function">CalculadoraViewModel</span> : ViewModel() {
+
+    <span class="keyword">private val</span> _calculadora = MutableStateFlow(Calculadora())
+    <span class="keyword">val</span> calculadora: StateFlow&lt;Calculadora&gt; <span class="keyword">get</span>() = _calculadora
+    
+    <span class="keyword">private val</span> operaciones: Operaciones = CalculadoraImpl()
+
+    <span class="comment">// Función para actualizar la operación seleccionada</span>
+    <span class="keyword">fun</span> <span class="function">getOperacion</span>(operacion: Operacion) {
+        _calculadora.<span class="function">update</span> {
+            it.<span class="function">copy</span>(
+                operacion = operacion,
+                isEnabled = !it.num1.isBlank() && !it.num2.isBlank()
+            )
+        }
+    }
+
+    <span class="comment">// Función para calcular según la operación seleccionada</span>
+    <span class="keyword">fun</span> <span class="function">calcular</span>() {
+        <span class="keyword">val</span> num1 = _calculadora.value.num1
+        <span class="keyword">val</span> num2 = _calculadora.value.num2
+
+        <span class="keyword">if</span> (num1.isBlank() || num2.isBlank()) <span class="keyword">return</span>
+
+        <span class="keyword">val</span> numero1 = num1.toIntOrNull()
+        <span class="keyword">val</span> numero2 = num2.toIntOrNull()
+
+        <span class="keyword">if</span> (numero1 != <span class="keyword">null</span> && numero2 != <span class="keyword">null</span>) {
+            <span class="keyword">val</span> resultado = operaciones.calcular(
+                _calculadora.value.operacion,
+                numero1,
+                numero2
+            )
+            
+            _calculadora.<span class="function">update</span> {
+                it.<span class="function">copy</span>(resultado = resultado)
+            }
+        } <span class="keyword">else</span> {
+            _calculadora.<span class="function">update</span> {
+                it.<span class="function">copy</span>(
+                    isErrorNum1 = numero1 == <span class="keyword">null</span>,
+                    isErrorNum2 = numero2 == <span class="keyword">null</span>
+                )
+            }
+        }
+    }
+}</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Inyección de dependencia simple:</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    Creamos una instancia de <code>CalculadoraImpl</code> en el ViewModel. 
+                    En proyectos más grandes, usarías Hilt o Koin para inyección de dependencias.
+                </p>
+            </div>
+        </div>
+
+        <!-- Paso 7: Vista -->
+        <div class="section">
+            <h2><span class="icon">7️⃣</span> Paso 7: Mostrar Resultado con Result</h2>
+            <p>Usamos los métodos <code>onSuccess</code> y <code>onFailure</code> para manejar ambos casos:</p>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">App</span>(paddingValues: PaddingValues, viewModel: CalculadoraViewModel) {
+    <span class="keyword">val</span> calculadora <span class="keyword">by</span> viewModel.calculadora.collectAsState()
+    
+    <span class="function">Column</span>(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(<span class="string">16</span>.dp),
+        verticalArrangement = Arrangement.spacedBy(<span class="string">16</span>.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        <span class="function">TextUi</span>(<span class="string">"Calculadora Completa"</span>)
+
+        <span class="comment">// Seleccionar operación</span>
+        <span class="function">RadioButtonUi</span>(
+            lista = Operacion.values().toList(),
+            value = calculadora.operacion
+        ) {
+            viewModel.getOperacion(it)
+        }
+
+        <span class="comment">// Campos de entrada</span>
+        <span class="function">TextFieldUi</span>(
+            value = calculadora.num1,
+            text = <span class="string">"Primer número"</span>,
+            placeholder = <span class="string">"Ej: 10"</span>,
+            isError = calculadora.isErrorNum1
+        ) {
+            viewModel.getNum1(it)
+        }
+
+        <span class="function">TextFieldUi</span>(
+            value = calculadora.num2,
+            text = <span class="string">"Segundo número"</span>,
+            placeholder = <span class="string">"Ej: 5"</span>,
+            isError = calculadora.isErrorNum2
+        ) {
+            viewModel.getNum2(it)
+        }
+
+        <span class="comment">// Botón calcular</span>
+        <span class="function">ButtonUi</span>(<span class="string">"Calcular"</span>, calculadora.isEnabled) {
+            viewModel.calcular()
+        }
+
+        <span class="comment">// Mostrar resultado con manejo de éxito y error</span>
+        calculadora.resultado.onSuccess { valor <span class="keyword">-></span>
+            <span class="function">TextUi</span>(<span class="string">"Resultado: </span>$valor<span class="string">"</span>)
+        }.onFailure { error <span class="keyword">-></span>
+            <span class="function">Text</span>(
+                text = <span class="string">"Error: </span>${error.message}<span class="string">"</span>,
+                color = Color.Red,
+                fontSize = <span class="string">16</span>.sp
+            )
+        }
+    }
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔑 Métodos de Result:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><code>onSuccess { valor -> ... }</code> - Se ejecuta solo si la operación fue exitosa</li>
+                    <li><code>onFailure { error -> ... }</code> - Se ejecuta solo si hubo un error</li>
+                    <li><strong>Encadenamiento:</strong> Puedes encadenar ambos métodos con punto</li>
+                    <li><strong>Type-safe:</strong> <code>valor</code> es Int y <code>error</code> es Throwable</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Ventajas de este enfoque:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>No necesitas verificar manualmente si hubo error</li>
+                    <li>El código es más legible y expresivo</li>
+                    <li>Los errores se manejan de forma centralizada</li>
+                    <li>Puedes mostrar mensajes personalizados según el error</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Flujo Completo -->
+        <div class="section">
+            <h2><span class="icon">🔄</span> Flujo Completo de la Aplicación</h2>
+            
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Usuario selecciona operación</strong>
+                <p style="margin-top: 8px; color: #4a5568;">RadioButton captura la selección y llama a <code>viewModel.getOperacion(operacion)</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Usuario ingresa números</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Los TextFields llaman a <code>getNum1()</code> y <code>getNum2()</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>Usuario presiona Calcular</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Se ejecuta <code>viewModel.calcular()</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <strong>ViewModel valida y calcula</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Convierte strings a Int, valida y llama a <code>operaciones.calcular()</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">5</span>
+                <strong>CalculadoraImpl procesa</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Ejecuta la operación según el enum y retorna <code>Result</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">6</span>
+                <strong>UI muestra resultado</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Usa <code>onSuccess</code> para mostrar el valor o <code>onFailure</code> para el error</p>
+            </div>
+        </div>
+
+        <!-- Enum.values() -->
+        <div class="section">
+            <h2><span class="icon">💡</span> Operacion.values()</h2>
+            <p>Para obtener todas las constantes del enum usamos <code>values()</code>:</p>
+
+            <pre><code><span class="comment">// Obtener todas las operaciones</span>
+<span class="keyword">val</span> todasLasOperaciones = Operacion.values().toList()
+
+<span class="comment">// Resultado: [SUMAR, RESTAR, MULTIPLICAR, DIVIDIR]</span>
+
+<span class="function">RadioButtonUi</span>(
+    lista = Operacion.values().toList(),
+    value = calculadora.operacion
+) {
+    viewModel.getOperacion(it)
+}</code></pre>
+
+            <div class="info-box">
+                <strong>📚 Métodos útiles de Enum:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><code>values()</code> - Retorna un array con todas las constantes</li>
+                    <li><code>valueOf(name)</code> - Obtiene una constante por su nombre</li>
+                    <li><code>name</code> - Nombre de la constante como String</li>
+                    <li><code>ordinal</code> - Posición de la constante (0, 1, 2...)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Ventajas del Diseño -->
+        <div class="section">
+            <h2><span class="icon">⭐</span> Ventajas de esta Arquitectura</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🧪 Testeable</h4>
+                    <p style="color: #4a5568;">Puedes probar <code>CalculadoraImpl</code> sin UI</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔒 Type-Safe</h4>
+                    <p style="color: #4a5568;">El enum previene errores de valores inválidos</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🛡️ Seguro</h4>
+                    <p style="color: #4a5568;">Result maneja errores de forma explícita</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>📦 Separado</h4>
+                    <p style="color: #4a5568;">Lógica separada de la interfaz</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🔧 Extensible</h4>
+                    <p style="color: #4a5568;">Fácil agregar más operaciones</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>🧹 Limpio</h4>
+                    <p style="color: #4a5568;">Código organizado y mantenible</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manejo de Errores -->
+        <div class="section">
+            <h2><span class="icon">🚨</span> Casos de Error Manejados</h2>
+            
+            <div class="warning-box">
+                <strong>❌ Errores que manejamos:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>División por cero:</strong> Retorna mensaje específico</li>
+                    <li><strong>Entrada no numérica:</strong> Valida con <code>toIntOrNull()</code></li>
+                    <li><strong>Campos vacíos:</strong> Deshabilita el botón calcular</li>
+                    <li><strong>Excepciones inesperadas:</strong> Capturadas en el catch</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <strong>✅ Experiencia de usuario:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Mensajes de error claros y descriptivos</li>
+                    <li>Validación en tiempo real</li>
+                    <li>No se producen crashes</li>
+                    <li>Feedback visual inmediato</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Ejercicio -->
+        <div class="section" style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);">
+            <h2 style="color: #6a1b9a;"><span class="icon">💪</span> Ejercicio Propuesto</h2>
+            <p style="color: #4a5568;"><strong>Extiende la calculadora con operaciones avanzadas:</strong></p>
+            
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Agrega nuevas operaciones</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Añade POTENCIA (^) y MODULO (%) al enum</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Implementa la lógica</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Usa <code>Math.pow()</code> para potencia y el operador % para módulo</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>Maneja casos especiales</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Potencias negativas, overflow, módulo por cero</p>
+            </div>
+
+            <div class="success-box" style="margin-top: 20px;">
+                <strong>🎯 Bonus:</strong>
+                <p style="margin-top: 10px;">Agrega un historial de operaciones que guarde las últimas 10 operaciones realizadas en una lista. Muéstralas en un LazyColumn.</p>
+            </div>
+        </div>
+
+        <!-- Código Completo -->
+        <div class="section">
+            <h2><span class="icon">📋</span> Código Completo Resumido</h2>
+            
+            <h3>1. Enum (Operacion.kt)</h3>
+            <pre><code><span class="keyword">enum class</span> <span class="function">Operacion</span>(<span class="keyword">val</span> signo: String) {
+    SUMAR(<span class="string">"+"</span>),
+    RESTAR(<span class="string">"-"</span>),
+    MULTIPLICAR(<span class="string">"*"</span>),
+    DIVIDIR(<span class="string">"/"</span>)
+}</code></pre>
+
+            <h3>2. Interface (Operaciones.kt)</h3>
+            <pre><code><span class="keyword">interface</span> <span class="function">Operaciones</span> {
+    <span class="keyword">fun</span> <span class="function">calcular</span>(operacion: Operacion, num1: Int, num2: Int): Result&lt;Int&gt;
+}</code></pre>
+
+            <h3>3. Implementación (CalculadoraImpl.kt)</h3>
+            <pre><code><span class="keyword">class</span> <span class="function">CalculadoraImpl</span> : Operaciones {
+    <span class="keyword">override fun</span> <span class="function">calcular</span>(operacion: Operacion, num1: Int, num2: Int): Result&lt;Int&gt; {
+        <span class="keyword">return try</span> {
+            <span class="keyword">when</span> (operacion) {
+                Operacion.SUMAR <span class="keyword">-></span> Result.success(num1 + num2)
+                Operacion.RESTAR <span class="keyword">-></span> Result.success(num1 - num2)
+                Operacion.MULTIPLICAR <span class="keyword">-></span> Result.success(num1 * num2)
+                Operacion.DIVIDIR <span class="keyword">-></span> {
+                    <span class="keyword">if</span> (num2 == <span class="string">0</span>) {
+                        Result.failure(ArithmeticException(<span class="string">"No se puede dividir por cero"</span>))
+                    } <span class="keyword">else</span> {
+                        Result.success(num1 / num2)
+                    }
+                }
+            }
+        } <span class="keyword">catch</span> (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}</code></pre>
+
+            <h3>4. Modelo Actualizado (Calculadora.kt)</h3>
+            <pre><code><span class="keyword">data class</span> <span class="function">Calculadora</span>(
+    <span class="keyword">val</span> num1: String = <span class="string">""</span>,
+    <span class="keyword">val</span> num2: String = <span class="string">""</span>,
+    <span class="keyword">val</span> resultado: Result&lt;Int&gt; = Result.success(<span class="string">0</span>),
+    <span class="keyword">val</span> operacion: Operacion = Operacion.SUMAR,
+    <span class="keyword">val</span> isErrorNum1: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isErrorNum2: Boolean = <span class="keyword">false</span>,
+    <span class="keyword">val</span> isEnabled: Boolean = <span class="keyword">false</span>
+)</code></pre>
+        </div>
+
+        <!-- Conclusión -->
+        <div class="section">
+            <h2><span class="icon">🎓</span> Conclusión</h2>
+            <div class="success-box">
+                <strong>✅ Has aprendido:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usar <strong>Enum Class</strong> para valores constantes type-safe</li>
+                    <li>Implementar <strong>interfaces</strong> para abstraer lógica</li>
+                    <li>Manejar errores con <strong>Result&lt;T&gt;</strong></li>
+                    <li>Usar <strong>when</strong> con enumeradores</li>
+                    <li>Separar responsabilidades en capas claras</li>
+                    <li>Crear una calculadora completa con MVVM</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <strong>🚀 Próximos pasos:</strong>
+                <p style="margin-top: 10px; color: #4a5568;">
+                    Ahora que dominas MVVM con manejo de errores, puedes explorar Room Database para persistir datos, 
+                    Retrofit para APIs REST, y Hilt para inyección de dependencias profesional.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/01_AppCalculadora.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">Calculadora MVVM - Parte 1</small>
+            </a>
+            <a href="../temas/listaTemas.html" class="nav-button">
+                📚 Menú Principal<br>
+                <small style="opacity: 0.8;">Lista de Temas</small>
+            </a>
+        </div>
+
+    </div>
+</body>
+</html>
