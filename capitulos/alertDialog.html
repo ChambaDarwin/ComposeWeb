@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertDialog en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/style_alertDialog.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <h1>💬 AlertDialog en Jetpack Compose</h1>
+        <p class="subtitle">Crea diálogos de confirmación y alertas</p>
+
+        <!-- Video Tutorial -->
+        <div class="section">
+            <h2><span class="icon">🎥</span> Video Tutorial</h2>
+            <p>Aprende paso a paso cómo crear AlertDialogs en Compose:</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/beXC7PItvM0?si=ODcJVTbPYIt75PWo" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <!-- ¿Qué es AlertDialog? -->
+        <div class="section">
+            <h2><span class="icon">❓</span> ¿Qué es un AlertDialog?</h2>
+            <p>Un <span class="highlight">AlertDialog</span> es una ventana emergente que interrumpe el flujo de la aplicación para solicitar una acción del usuario, como confirmar una operación o mostrar información importante.</p>
+
+            <div class="dialog-demo">
+                <h4 style="color: #2d3748; margin-bottom: 20px;">Ejemplo Visual de un AlertDialog:</h4>
+                <div class="dialog-preview">
+                    <div class="dialog-title">Título del Diálogo</div>
+                    <div class="dialog-message">Este es el mensaje que explica la acción que se va a realizar. ¿Deseas continuar?</div>
+                    <div class="dialog-buttons">
+                        <button class="dialog-button dialog-button-dismiss">Cancelar</button>
+                        <button class="dialog-button dialog-button-confirm">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>✅ Confirmar acciones</h4>
+                    <p style="color: #4a5568;">Eliminar datos, cerrar sesión, salir de la app</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>ℹ️ Mostrar información</h4>
+                    <p style="color: #4a5568;">Alertas, avisos, mensajes importantes</p>
+                </div>
+                <div class="comparison-card">
+                    <h4>⚠️ Advertencias</h4>
+                    <p style="color: #4a5568;">Errores, validaciones, confirmaciones críticas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 1: Estado -->
+        <div class="section">
+            <h2><span class="icon">1️⃣</span> Paso 1: Crear Variable de Estado</h2>
+            <p>Necesitamos una variable que controle cuándo mostrar u ocultar el diálogo:</p>
+
+            <pre><code><span class="keyword">var</span> mostrarDialogo <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Estado del diálogo:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><code>false</code> → El diálogo está oculto (por defecto)</li>
+                    <li><code>true</code> → El diálogo se muestra en pantalla</li>
+                    <li>Usamos <code>rememberSaveable</code> para mantener el estado durante rotaciones</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Paso 2: Botón -->
+        <div class="section">
+            <h2><span class="icon">2️⃣</span> Paso 2: Botón para Mostrar el Diálogo</h2>
+            <p>Creamos un botón que cambia el estado a <code>true</code> cuando se presiona:</p>
+
+            <pre><code><span class="function">Button</span>(
+    onClick = {
+        mostrarDialogo = <span class="keyword">true</span>
+    }
+) {
+    <span class="function">Text</span>(text = <span class="string">"Mostrar Diálogo"</span>)
+}</code></pre>
+
+            <div class="success-box">
+                <strong>✅ Flujo básico:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usuario presiona el botón</li>
+                    <li>Se ejecuta <code>mostrarDialogo = true</code></li>
+                    <li>El estado cambia y la UI se recompone</li>
+                    <li>El diálogo aparece en pantalla</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Paso 3: AlertDialog -->
+        <div class="section">
+            <h2><span class="icon">3️⃣</span> Paso 3: Crear el AlertDialog</h2>
+            <p>Cuando <code>mostrarDialogo</code> es <code>true</code>, mostramos el AlertDialog:</p>
+
+            <pre><code><span class="keyword">if</span> (mostrarDialogo) {
+    <span class="function">AlertDialog</span>(
+        title = {
+            <span class="function">Text</span>(<span class="string">"Título del Diálogo"</span>)
+        },
+        text = {
+            <span class="function">Text</span>(<span class="string">"¿Estás seguro de realizar esta acción?"</span>)
+        },
+        confirmButton = {
+            <span class="function">TextButton</span>(
+                onClick = {
+                    <span class="comment">// Acción al confirmar</span>
+                    mostrarDialogo = <span class="keyword">false</span>
+                }
+            ) {
+                <span class="function">Text</span>(<span class="string">"Aceptar"</span>)
+            }
+        },
+        dismissButton = {
+            <span class="function">TextButton</span>(
+                onClick = {
+                    <span class="comment">// Acción al cancelar</span>
+                    mostrarDialogo = <span class="keyword">false</span>
+                }
+            ) {
+                <span class="function">Text</span>(<span class="string">"Cancelar"</span>)
+            }
+        },
+        onDismissRequest = {
+            <span class="comment">// Se ejecuta al tocar fuera o botón atrás</span>
+            mostrarDialogo = <span class="keyword">false</span>
+        }
+    )
+}</code></pre>
+
+            <div class="info-box">
+                <strong>📋 Parámetros del AlertDialog:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>title:</strong> Título del diálogo (opcional pero recomendado)</li>
+                    <li><strong>text:</strong> Mensaje o descripción (opcional)</li>
+                    <li><strong>confirmButton:</strong> Botón de confirmación (obligatorio)</li>
+                    <li><strong>dismissButton:</strong> Botón de cancelación (opcional)</li>
+                    <li><strong>onDismissRequest:</strong> Se ejecuta al tocar fuera del diálogo o presionar atrás (obligatorio)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Parámetros Explicados -->
+        <div class="section">
+            <h2><span class="icon">🔍</span> Parámetros Explicados</h2>
+
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>confirmButton</strong>
+                <p style="margin-top: 8px; color: #4a5568;">
+                    Botón principal que confirma la acción. Generalmente cierra el diálogo y ejecuta la operación solicitada.
+                    En nuestro caso, simplemente oculta el diálogo con <code>mostrarDialogo = false</code>.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>dismissButton</strong>
+                <p style="margin-top: 8px; color: #4a5568;">
+                    Botón secundario que cancela la acción. Cierra el diálogo sin ejecutar la operación principal.
+                    También establece <code>mostrarDialogo = false</code>.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>onDismissRequest</strong>
+                <p style="margin-top: 8px; color: #4a5568;">
+                    Lambda que se ejecuta cuando el usuario toca fuera del diálogo o presiona el botón de retroceso.
+                    Es obligatorio para permitir que el usuario pueda cerrar el diálogo de estas formas.
+                </p>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Importante:</strong>
+                <p style="margin-top: 10px;">
+                    Siempre debes cambiar <code>mostrarDialogo = false</code> en los tres lugares (confirmButton, dismissButton y onDismissRequest)
+                    para que el diálogo se cierre correctamente en todos los casos.
+                </p>
+            </div>
+        </div>
+
+        <!-- Función Reutilizable -->
+        <div class="section">
+            <h2><span class="icon">🔧</span> Función Composable Reutilizable</h2>
+            <p>Creamos una función reutilizable para no repetir código:</p>
+
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">AlertDialogUi</span>(
+    title: String,
+    message: String,
+    confirmButton: () <span class="keyword">-></span> Unit,
+    dismissButton: () <span class="keyword">-></span> Unit
+) {
+    <span class="function">AlertDialog</span>(
+        title = {
+            <span class="function">Text</span>(text = title)
+        },
+        text = {
+            <span class="function">Text</span>(text = message)
+        },
+        confirmButton = {
+            <span class="function">TextButton</span>(onClick = confirmButton) {
+                <span class="function">Text</span>(<span class="string">"Aceptar"</span>)
+            }
+        },
+        dismissButton = {
+            <span class="function">TextButton</span>(onClick = dismissButton) {
+                <span class="function">Text</span>(<span class="string">"Cancelar"</span>)
+            }
+        },
+        onDismissRequest = dismissButton
+    )
+}</code></pre>
+
+            <div class="key-concept">
+                <strong>🔑 Parámetros de la función:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li><strong>title:</strong> Título personalizado del diálogo</li>
+                    <li><strong>message:</strong> Mensaje personalizado</li>
+                    <li><strong>confirmButton:</strong> Lambda que se ejecuta al aceptar</li>
+                    <li><strong>dismissButton:</strong> Lambda que se ejecuta al cancelar o cerrar</li>
+                </ul>
+            </div>
+
+            <h3>Cómo usar la función reutilizable:</h3>
+            <pre><code><span class="keyword">var</span> mostrarDialogo <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+
+<span class="function">Button</span>(onClick = { mostrarDialogo = <span class="keyword">true</span> }) {
+    <span class="function">Text</span>(<span class="string">"Eliminar cuenta"</span>)
+}
+
+<span class="keyword">if</span> (mostrarDialogo) {
+    <span class="function">AlertDialogUi</span>(
+        title = <span class="string">"Eliminar cuenta"</span>,
+        message = <span class="string">"¿Estás seguro de eliminar tu cuenta? Esta acción no se puede deshacer."</span>,
+        confirmButton = {
+            <span class="comment">// Aquí ejecutarías la lógica de eliminación</span>
+            mostrarDialogo = <span class="keyword">false</span>
+        },
+        dismissButton = {
+            mostrarDialogo = <span class="keyword">false</span>
+        }
+    )
+}</code></pre>
+
+            <div class="success-box">
+                <strong>✅ Ventajas de la función reutilizable:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Código más limpio y mantenible</li>
+                    <li>Fácil de usar en múltiples pantallas</li>
+                    <li>Título y mensaje personalizables</li>
+                    <li>Lógica de confirmación flexible</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Casos de Uso -->
+        <div class="section">
+            <h2><span class="icon">💼</span> Casos de Uso Comunes</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>🗑️ Eliminar datos</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 10px;"><code>AlertDialogUi(
+  title = "Eliminar",
+  message = "¿Eliminar?"
+  ...
+)</code></pre>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>🚪 Cerrar sesión</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 10px;"><code>AlertDialogUi(
+  title = "Cerrar sesión",
+  message = "¿Salir?"
+  ...
+)</code></pre>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>💾 Guardar cambios</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 10px;"><code>AlertDialogUi(
+  title = "Cambios sin guardar",
+  message = "¿Guardar?"
+  ...
+)</code></pre>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>📤 Salir de la app</h4>
+                    <pre style="font-size: 0.8em; padding: 12px; margin-top: 10px;"><code>AlertDialogUi(
+  title = "Salir",
+  message = "¿Cerrar app?"
+  ...
+)</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flujo Completo -->
+        <div class="section">
+            <h2><span class="icon">🔄</span> Flujo Completo del AlertDialog</h2>
+            
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Estado inicial: mostrarDialogo = false</strong>
+                <p style="margin-top: 8px; color: #4a5568;">El diálogo está oculto, solo se ve el botón</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Usuario presiona el botón</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Se ejecuta <code>onClick</code> que cambia el estado a <code>true</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>Compose detecta el cambio de estado</strong>
+                <p style="margin-top: 8px; color: #4a5568;">La UI se recompone y evalúa la condición <code>if (mostrarDialogo)</code></p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <strong>AlertDialog aparece en pantalla</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Se muestra sobre el contenido actual, bloqueando la interacción con el fondo</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">5</span>
+                <strong>Usuario interactúa con el diálogo</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Puede: Presionar "Aceptar", "Cancelar", tocar fuera o presionar atrás</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">6</span>
+                <strong>Estado vuelve a false</strong>
+                <p style="margin-top: 8px; color: #4a5568;">El diálogo se cierra y desaparece de la pantalla</p>
+            </div>
+        </div>
+
+        <!-- Mejores Prácticas -->
+        <div class="section">
+            <h2><span class="icon">💎</span> Mejores Prácticas</h2>
+            
+            <div class="success-box">
+                <strong>✅ Haz esto:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Usa títulos claros y concisos</li>
+                    <li>Mensajes que expliquen claramente la acción</li>
+                    <li>Botones con verbos de acción ("Eliminar", "Guardar", "Salir")</li>
+                    <li>Siempre implementa <code>onDismissRequest</code></li>
+                    <li>Usa colores apropiados para acciones destructivas</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>❌ Evita esto:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Títulos genéricos como "Atención" o "Aviso"</li>
+                    <li>Mensajes largos que requieran scroll</li>
+                    <li>Múltiples diálogos apilados</li>
+                    <li>Olvidar cambiar el estado en todos los callbacks</li>
+                    <li>Usar diálogos para información no crítica</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Ejercicio -->
+        <div class="section" style="background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);">
+            <h2 style="color: #6a1b9a;"><span class="icon">💪</span> Ejercicio Propuesto</h2>
+            <p style="color: #4a5568;"><strong>Crea una lista de tareas con confirmación de eliminación:</strong></p>
+            
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Crea una lista de tareas</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Usa LazyColumn para mostrar una lista de tareas con un botón de eliminar en cada item</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Muestra AlertDialog antes de eliminar</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Al presionar eliminar, muestra un diálogo pidiendo confirmación con el nombre de la tarea</p>
+            </div>
+
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>Implementa la eliminación</strong>
+                <p style="margin-top: 8px; color: #4a5568;">Solo elimina la tarea si el usuario confirma en el diálogo</p>
+            </div>
+
+            <div class="success-box" style="margin-top: 20px;">
+                <strong>🎯 Bonus:</strong>
+                <p style="margin-top: 10px;">Agrega un segundo diálogo que aparezca después de eliminar diciendo "Tarea eliminada correctamente" con un solo botón de "Aceptar".</p>
+            </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="section">
+            <h2><span class="icon">📝</span> Resumen</h2>
+            <div class="success-box">
+                <strong>✅ Has aprendido:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Qué es un AlertDialog y cuándo usarlo</li>
+                    <li>Controlar la visibilidad con variables de estado</li>
+                    <li>Usar los parámetros obligatorios: confirmButton y onDismissRequest</li>
+                    <li>Implementar botones de confirmación y cancelación</li>
+                    <li>Crear funciones composables reutilizables</li>
+                    <li>Manejar los tres casos de cierre del diálogo</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <strong>🔑 Puntos clave:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #4a5568;">
+                    <li>El estado controla cuándo mostrar/ocultar el diálogo</li>
+                    <li>Siempre cambia el estado a <code>false</code> en confirmButton, dismissButton y onDismissRequest</li>
+                    <li>Los diálogos son útiles para acciones destructivas o importantes</li>
+                    <li>Mantén los mensajes claros y concisos</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Código Completo -->
+        <div class="section">
+            <h2><span class="icon">📋</span> Código Completo</h2>
+            
+            <h3>Ejemplo Básico:</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">DialogExample</span>() {
+    <span class="keyword">var</span> mostrarDialogo <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+    
+    <span class="function">Column</span>(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(<span class="string">16</span>.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        <span class="function">Button</span>(onClick = { mostrarDialogo = <span class="keyword">true</span> }) {
+            <span class="function">Text</span>(<span class="string">"Mostrar Diálogo"</span>)
+        }
+        
+        <span class="keyword">if</span> (mostrarDialogo) {
+            <span class="function">AlertDialog</span>(
+                title = { <span class="function">Text</span>(<span class="string">"Confirmación"</span>) },
+                text = { <span class="function">Text</span>(<span class="string">"¿Deseas continuar con esta acción?"</span>) },
+                confirmButton = {
+                    <span class="function">TextButton</span>(onClick = { mostrarDialogo = <span class="keyword">false</span> }) {
+                        <span class="function">Text</span>(<span class="string">"Aceptar"</span>)
+                    }
+                },
+                dismissButton = {
+                    <span class="function">TextButton</span>(onClick = { mostrarDialogo = <span class="keyword">false</span> }) {
+                        <span class="function">Text</span>(<span class="string">"Cancelar"</span>)
+                    }
+                },
+                onDismissRequest = { mostrarDialogo = <span class="keyword">false</span> }
+            )
+        }
+    }
+}</code></pre>
+
+            <h3>Con Función Reutilizable:</h3>
+            <pre><code><span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">AlertDialogUi</span>(
+    title: String,
+    message: String,
+    confirmButton: () <span class="keyword">-></span> Unit,
+    dismissButton: () <span class="keyword">-></span> Unit
+) {
+    <span class="function">AlertDialog</span>(
+        title = { <span class="function">Text</span>(text = title) },
+        text = { <span class="function">Text</span>(text = message) },
+        confirmButton = {
+            <span class="function">TextButton</span>(onClick = confirmButton) {
+                <span class="function">Text</span>(<span class="string">"Aceptar"</span>)
+            }
+        },
+        dismissButton = {
+            <span class="function">TextButton</span>(onClick = dismissButton) {
+                <span class="function">Text</span>(<span class="string">"Cancelar"</span>)
+            }
+        },
+        onDismissRequest = dismissButton
+    )
+}
+
+<span class="comment">// Uso:</span>
+<span class="keyword">@Composable</span>
+<span class="keyword">fun</span> <span class="function">MyScreen</span>() {
+    <span class="keyword">var</span> mostrarDialogo <span class="keyword">by</span> rememberSaveable { mutableStateOf(<span class="keyword">false</span>) }
+    
+    <span class="function">Button</span>(onClick = { mostrarDialogo = <span class="keyword">true</span> }) {
+        <span class="function">Text</span>(<span class="string">"Eliminar cuenta"</span>)
+    }
+    
+    <span class="keyword">if</span> (mostrarDialogo) {
+        <span class="function">AlertDialogUi</span>(
+            title = <span class="string">"Eliminar cuenta"</span>,
+            message = <span class="string">"Esta acción no se puede deshacer. ¿Continuar?"</span>,
+            confirmButton = {
+                <span class="comment">// Lógica de eliminación aquí</span>
+                mostrarDialogo = <span class="keyword">false</span>
+            },
+            dismissButton = {
+                mostrarDialogo = <span class="keyword">false</span>
+            }
+        )
+    }
+}</code></pre>
+        </div>
+
+        <!-- Navegación -->
+        <div class="navigation">
+            <a href="../capitulos/02_AppCalculadora.html" class="nav-button">
+                ⬅️ Capítulo Anterior<br>
+                <small style="opacity: 0.8;">App Calculadora</small>
+            </a>
+            <a href="../temas/listaTemas.html" class="nav-button">
+                📚 Menú Principal<br>
+                <small style="opacity: 0.8;">Lista de Temas</small>
+            </a>
+            
+        </div>
+
+    </div>
+</body>
+</html>
