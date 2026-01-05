@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dependencias Android - Cheat Sheet</title>
+    <link rel="stylesheet" href="../style/dependencias.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Dependencias en Android</h1>
+        <p class="subtitle">Guía completa con Jetpack Compose, Retrofit, Hilt, Firebase y más</p>
+
+        <div class="intro">
+            <p><strong>🚀 ¿Qué encontrarás aquí?</strong></p>
+            <p>Una referencia completa de todas las dependencias necesarias para desarrollar aplicaciones Android modernas. Incluye configuración de Retrofit, Dagger Hilt, Firebase Realtime Database, testing con MockK y más.</p>
+        </div>
+
+        
+
+        <!-- Dependencias del módulo app -->
+        <div class="section-header">
+            <span>📱</span>
+            <span>Dependencias del módulo app (build.gradle.kts)</span>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">🔄 Lifecycle & ViewModel</div>
+            <div class="dependency-desc">Para manejar el ciclo de vida y ViewModels en Compose</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// Lifecycle ViewModel Compose</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")</code></pre>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">🌐 Retrofit & Networking</div>
+            <div class="dependency-desc">Cliente HTTP para consumir APIs REST</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// Retrofit + Conversor Gson</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>implementation("com.squareup.retrofit2:retrofit:2.9.0")
+implementation("com.squareup.retrofit2:converter-gson:2.9.0")</code></pre>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">📄 Paginación</div>
+            <div class="dependency-desc">Para cargar datos de forma paginada en listas</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// Paging 3 con Compose</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>implementation("androidx.paging:paging-compose:3.3.0")</code></pre>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">💉 Dagger Hilt</div>
+            <div class="dependency-desc">Inyección de dependencias para Android</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// Hilt completo</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="comment">// Hilt principal</span>
+implementation("com.google.dagger:hilt-android:2.51.1")
+kapt("com.google.dagger:hilt-compiler:2.51.1")
+
+<span class="comment">// Para inyectar ViewModels en Compose</span>
+implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+<span class="comment">// (Opcional) Para pruebas con Hilt</span>
+androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
+kaptAndroidTest("com.google.dagger:hilt-compiler:2.51.1")</code></pre>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">🔥 Firebase Realtime Database</div>
+            <div class="dependency-desc">Base de datos en tiempo real de Firebase</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// Firebase Database</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+implementation("com.google.firebase:firebase-database-ktx")</code></pre>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">🧪 Testing con MockK</div>
+            <div class="dependency-desc">Framework de mocking para pruebas unitarias en Kotlin</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">// MockK Testing</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>testImplementation("io.mockk:mockk:1.13.10")
+
+<span class="comment">// Para testing de coroutines</span>
+testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")</code></pre>
+        </div>
+
+        <!-- Plugins del módulo app -->
+        <div class="section-header">
+            <span>🔌</span>
+            <span>Plugins del módulo app (build.gradle.kts)</span>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">plugins { ... }</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
+    id("com.google.gms.google-services") <span class="comment">// Para Firebase</span>
+}</code></pre>
+        </div>
+
+        <!-- Plugins nivel proyecto -->
+        <div class="section-header">
+            <span>🏗️</span>
+            <span>Plugins a nivel del proyecto (build.gradle.kts raíz)</span>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">plugins { ... }</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>plugins {
+    id("com.android.application") version "8.2.0" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.20" apply false
+    id("com.google.dagger.hilt.android") version "2.51.1" apply false
+    id("com.google.gms.google-services") version "4.4.0" apply false
+}</code></pre>
+        </div>
+
+        <!-- Configuración adicional Firebase -->
+        <div class="section-header">
+            <span>⚙️</span>
+            <span>Configuración adicional Firebase</span>
+        </div>
+
+        <div class="dependency-card">
+            <div class="dependency-title">📝 Archivo google-services.json</div>
+            <div class="dependency-desc">Descarga el archivo desde la consola de Firebase y colócalo en la carpeta app/</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">Ubicación del archivo</div>
+            <pre><code>tu-proyecto/
+├── app/
+│   ├── google-services.json  <span class="comment">← Aquí va el archivo</span>
+│   └── build.gradle.kts
+└── build.gradle.kts</code></pre>
+        </div>
+
+        <!-- Bloque completo de dependencias -->
+        <div class="section-header">
+            <span>📋</span>
+            <span>Bloque completo de dependencias</span>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">dependencies { ... } - Todo junto</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code>dependencies {
+    <span class="comment">// Lifecycle</span>
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    
+    <span class="comment">// Retrofit</span>
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    
+    <span class="comment">// Paging</span>
+    implementation("androidx.paging:paging-compose:3.3.0")
+    
+    <span class="comment">// Hilt</span>
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    
+    <span class="comment">// Firebase</span>
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-database-ktx")
+    
+    <span class="comment">// Testing</span>
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.51.1")
+}</code></pre>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="../temas/listaTemas.html" class="back-button">📚 Ver Lista de Temas</a>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copiado';
+                button.style.background = '#48bb78';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+    </script>
+</body>
+</html>

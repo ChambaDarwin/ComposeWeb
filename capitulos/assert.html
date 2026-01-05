@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing con MockK - Cheat Sheet</title>
+    <link rel="stylesheet" href="../style/testing.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Testing con MockK</h1>
+        <p class="subtitle">Guía completa de Asserts (JUnit) y Verificaciones (MockK)</p>
+
+        <div class="intro">
+            <p><strong>📚 ¿Qué encontrarás aquí?</strong></p>
+            <p>Una referencia completa de todos los métodos de testing que necesitas para escribir pruebas unitarias en Android con JUnit y MockK. Incluye asserts básicos, verificaciones de mocks, manejo de coroutines y más.</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Asserts JUnit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">Métodos MockK</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25</div>
+                <div class="stat-label">Total de Métodos</div>
+            </div>
+        </div>
+
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Buscar por método, descripción o ejemplo...">
+
+        <div class="quick-filter">
+            <button class="filter-btn active" onclick="filterTable('all')">Todos</button>
+            <button class="filter-btn" onclick="filterTable('junit')">JUnit</button>
+            <button class="filter-btn" onclick="filterTable('mockk')">MockK</button>
+            <button class="filter-btn" onclick="filterTable('coroutine')">Coroutines</button>
+        </div>
+
+        <!-- JUnit Asserts -->
+        <div class="section-header">
+            <span>✅</span>
+            <span>Asserts de JUnit</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="testTable">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Método</th>
+                        <th style="width: 35%;">Descripción</th>
+                        <th style="width: 35%;">Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertEquals(expected, actual)</div>
+                        </td>
+                        <td class="description">Verifica que dos valores sean iguales. Es el assert más común.</td>
+                        <td>
+                            <code class="example">assertEquals(10, resultado)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertNotEquals(unexpected, actual)</div>
+                        </td>
+                        <td class="description">Verifica que dos valores no sean iguales.</td>
+                        <td>
+                            <code class="example">assertNotEquals(0, lista.size)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertTrue(condition)</div>
+                        </td>
+                        <td class="description">Verifica que una condición sea verdadera.</td>
+                        <td>
+                            <code class="example">assertTrue(usuario.isActivo)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertFalse(condition)</div>
+                        </td>
+                        <td class="description">Verifica que una condición sea falsa.</td>
+                        <td>
+                            <code class="example">assertFalse(lista.isEmpty())</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertNull(value)</div>
+                        </td>
+                        <td class="description">Verifica que el valor sea <code>null</code>.</td>
+                        <td>
+                            <code class="example">assertNull(usuario.nombre)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertNotNull(value)</div>
+                        </td>
+                        <td class="description">Verifica que el valor no sea <code>null</code>.</td>
+                        <td>
+                            <code class="example">assertNotNull(viewModel)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertSame(expected, actual)</div>
+                        </td>
+                        <td class="description">Verifica que ambos objetos sean la misma instancia (misma referencia en memoria).</td>
+                        <td>
+                            <code class="example">assertSame(obj1, obj2)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertNotSame(unexpected, actual)</div>
+                        </td>
+                        <td class="description">Verifica que no sean la misma instancia.</td>
+                        <td>
+                            <code class="example">assertNotSame(obj1, obj2)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertArrayEquals(expectedArray, actualArray)</div>
+                        </td>
+                        <td class="description">Compara dos arrays elemento por elemento.</td>
+                        <td>
+                            <code class="example">assertArrayEquals(arrayOf(1,2), resultado)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertIterableEquals(expected, actual)</div>
+                        </td>
+                        <td class="description">Compara dos colecciones/listas elemento por elemento.</td>
+                        <td>
+                            <code class="example">assertIterableEquals(listOf(1,2,3), lista)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertLinesMatch(expectedLines, actualLines)</div>
+                        </td>
+                        <td class="description">Compara listas de strings (útil para texto multilínea, soporta expresiones regulares).</td>
+                        <td>
+                            <code class="example">assertLinesMatch(expected, actual)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertThrows&lt;T: Throwable&gt; { ... }</div>
+                        </td>
+                        <td class="description">Verifica que se lance una excepción específica dentro del bloque.</td>
+                        <td>
+                            <code class="example">assertThrows&lt;IllegalArgumentException&gt; { funcion() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertTimeout(duration) { ... }</div>
+                        </td>
+                        <td class="description">Verifica que un bloque termine dentro de un tiempo máximo.</td>
+                        <td>
+                            <code class="example">assertTimeout(Duration.ofMillis(200)) { tarea() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertDoesNotThrow { ... }</div>
+                        </td>
+                        <td class="description">Verifica que el bloque no lance ninguna excepción.</td>
+                        <td>
+                            <code class="example">assertDoesNotThrow { funcionSegura() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="junit">
+                        <td>
+                            <span class="tag tag-junit">JUnit</span>
+                            <div class="method-name">assertEquals(expected, actual, delta)</div>
+                        </td>
+                        <td class="description">Compara números con tolerancia (útil para floats/doubles).</td>
+                        <td>
+                            <code class="example">assertEquals(3.14, resultado, 0.001)</code>
+                        </td>
+                    </tr>
+
+                    <!-- MockK Methods -->
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">every { ... } returns ...</div>
+                        </td>
+                        <td class="description">Define el comportamiento del mock (stubbing). Cuando se llama al método del mock, retorna el valor especificado.</td>
+                        <td>
+                            <code class="example">every { repo.getUser("1") } returns user</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">verify { ... }</div>
+                        </td>
+                        <td class="description">Verifica que una llamada al mock ocurrió al menos una vez.</td>
+                        <td>
+                            <code class="example">verify { repo.save(usuario) }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">verify(exactly = n) { ... }</div>
+                        </td>
+                        <td class="description">Verifica que la llamada ocurrió exactamente <code>n</code> veces.</td>
+                        <td>
+                            <code class="example">verify(exactly = 1) { repo.insert(any()) }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">verifyOrder { ... }</div>
+                        </td>
+                        <td class="description">Verifica que las llamadas ocurrieron en el orden indicado (pueden existir otras llamadas entre medio).</td>
+                        <td>
+                            <code class="example">verifyOrder { a(); b(); c() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">verifySequence { ... }</div>
+                        </td>
+                        <td class="description">Verifica que exactamente esas llamadas ocurrieron en ese orden, sin llamadas intermedias no especificadas.</td>
+                        <td>
+                            <code class="example">verifySequence { abrir(); guardar(); cerrar() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk coroutine">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <span class="tag tag-coroutine">Coroutine</span>
+                            <div class="method-name mockk-method">coEvery { ... } returns ...</div>
+                        </td>
+                        <td class="description">Stubbing para funciones <code>suspend</code> (coroutines). Versión de <code>every</code> para código asíncrono.</td>
+                        <td>
+                            <code class="example">coEvery { repo.fetch() } returns data</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk coroutine">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <span class="tag tag-coroutine">Coroutine</span>
+                            <div class="method-name mockk-method">coVerify { ... }</div>
+                        </td>
+                        <td class="description">Verificación para funciones <code>suspend</code>. Versión de <code>verify</code> para coroutines.</td>
+                        <td>
+                            <code class="example">coVerify { repo.fetch() }</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">slot(), capture(...)</div>
+                        </td>
+                        <td class="description">Captura argumentos pasados a la llamada para realizar aserciones posteriores sobre ellos.</td>
+                        <td>
+                            <code class="example">val slot = slot&lt;String&gt;()<br>verify { repo.save(capture(slot)) }<br>assertEquals("hola", slot.captured)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">confirmVerified(mock)</div>
+                        </td>
+                        <td class="description">Confirma que no quedan interacciones sin verificar con el mock. Útil para asegurar que no hubo llamadas inesperadas.</td>
+                        <td>
+                            <code class="example">confirmVerified(repo)</code>
+                        </td>
+                    </tr>
+
+                    <tr data-category="mockk">
+                        <td>
+                            <span class="tag tag-mockk">MockK</span>
+                            <div class="method-name mockk-method">clearMocks(...)</div>
+                        </td>
+                        <td class="description">Limpia el historial e interacciones de los mocks. Útil para resetear mocks entre tests.</td>
+                        <td>
+                            <code class="example">clearMocks(repo)</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="../temas/listaTemas.html" class="back-button">📚 Ver Lista de Temas</a>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchBox = document.getElementById('searchBox');
+        const table = document.getElementById('testTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        searchBox.addEventListener('input', function() {
+            const filter = searchBox.value.toLowerCase();
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                
+                if (text.indexOf(filter) > -1) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+
+        // Filter functionality
+        function filterTable(category) {
+            // Update button states
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter rows
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const rowCategory = row.getAttribute('data-category');
+                
+                if (category === 'all' || rowCategory.includes(category)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            // Clear search when filtering
+            searchBox.value = '';
+        }
+    </script>
+</body>
+</html>

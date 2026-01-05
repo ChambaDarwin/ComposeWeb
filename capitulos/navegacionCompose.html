@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Navegacion en Jetpack Compose</h1>
+    <p>puedes ver el video a continuacion</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/Bfl2pfhpTJs?si=GXpFLQk5UjstY6Bk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <p>para realizar la navegacion entre pantallas debemos comprender los siguientes conceptos navController gestiona la navegacion y backstack y me permite navegar entre pantallas y el navHost define las rutas y que composable mostrar en cada ruta para obtener una instancia de navController se utiliza rememberNavController</p>
+    <pre><code>val navController =  rememberNavController()</code></pre>
+
+    <p>una vez que tenemos una instancia de NavHostController utilizamos el NavHost() que recibe dos parametros un objeto de la clase NavHostController y un startDestination que es la ruta inicial que se va a mostrar el NavHost es un contenedor de pantallas que muestra una pantalla a la vez dentro de las llaves del navHost definimos las rutas utilizando composable</p>
+    <pre><code>@Composable
+fun contenedorNavHost(paddingValues: PaddingValues) {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = "Home"
+    ) {
+        composable("Home") {
+            PantallaHome(navController)
+        }
+        composable("Detalle") {
+            PantallaDetalle(navController)
+        }
+    }
+}</code></pre>
+
+<p>para navegar entre pantallas utilizamos el metodo navigate del objeto navController que se pasa por parametro a la funcion composable PantallaHome y PantallaDetalle y utilizamos popBackStack para regresar hacia atras</p>
+<pre><code>
+    @Composable
+fun PantallaHome(navController: NavHostController) {
+    Scaffold {
+        Column(
+            modifier = Modifier
+                .padding(it)
+                .background(Color.Blue)
+                .fillMaxSize()
+        )
+        {
+            Text("pantalla Home")
+            Button(onClick = {
+                navController.navigate("Detalle")
+                
+            }) {
+                Text("Navegar Detalla")
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>de esta forma podemos navegar entre pantallas utilizando botones es decir que cuando precione el boton navegamos hacia la pantalla detalle ahora lo haremos utilizando el bottomBar que es mucho mejor y mas elegante lo primero que haremos sera crear una sealed class</p>
+
+<h2>Que es una sealed class</h2>
+<p>define un conjunto limitado de subclases que el compilador conoce en tiempo de compilacion cuando creamos una sealed class con un constructor con parametros estamos definiendo un contrado que las subclases deben cumplir, cada subclase debe invoca  explicitamente al constructor de la clase sellada pasando los parametros necesarios, una clase sellada no se puede instanciar directamente sino a traves de las subclases</p>
+
+<pre><code>sealed class Items(
+    val titulo:String,
+    val icon:Int,
+    val route:String
+){
+    object Home:Items("Home", R.drawable.ic_favorite,"Home")
+    object Detalle:Items("Detalle",R.drawable.ic_detalle,"Detalle")
+}</code></pre>
+<p>en el contenodor principal (Scaffold) utilizamos bottomBar y creamos un funcion composable para crear un BottomNavigation y tambien le pasamos como argumento el navController que se utiliza para navegar entre pantallas</p>
+<pre><code>
+    @Composable
+fun PantallaDetalle(navController: NavHostController) {
+    Scaffold(
+        bottomBar = {
+            NavigationUi(navController)
+        }
+    ) {
+        //resto del código ...
+    }
+}
+</code></pre>
+<p>Que es el backstack</p>
+<p>el backstack es una estructura interna del NavController que guardar el historial de pantallas visitadas en la navegacion</p>
+   <p>BottomNavigation actua como un contendor que agrupa los items de navegacion en la parte inferior de la pantalla </p>
+<ol>
+    <li>popToUp evita pantallas duplicadas eliminando el back stack</li>
+    <li>saveState guarda el estado de la pantalla actual</li>
+    <li>launchSingleTop evita abrir la pantalla dos veces</li>
+    <li>restoreState restaura el estado anterior al volver</li>
+</ol>
+
+
+  
+</body>
+</html>
