@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases y Objetos en Java</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <link rel="stylesheet" href="../style/style_clases.css">
+    <link rel="icon" type="image/x-icon" href="../img/java.png">
+</head>
+<body>
+    <a href=""></a>
+    <div class="container">
+        <div class="header">
+            <a href="../temas/temas_poo.html" class="back-button">← Volver a Temas</a>
+            <h1>☕ Clases y Objetos</h1>
+            <p class="subtitle">Fundamentos de la Programación Orientada a Objetos</p>
+        </div>
+
+        <div class="content">
+            <h2><span class="section-number">1</span>¿Qué es una Clase?</h2>
+            <p>Una <strong>clase</strong> es una plantilla o molde que define las propiedades (atributos) y métodos de un objeto. Las propiedades representan las características principales de un objeto, mientras que los métodos son las acciones que el objeto puede realizar.</p>
+            
+            <p>En esta práctica crearemos una clase con atributos y métodos, y luego imprimiremos su información. A continuación se describe la clase que vamos a trabajar:</p>
+
+            <div class="mermaid">
+classDiagram
+    class Persona {
+        - String nombre
+        - int edad
+        - String email
+        + saludar()
+        + cumplirAnios()
+    }
+            </div>
+
+            <h2><span class="section-number">2</span>Cómo Crear una Clase</h2>
+            <pre><code>class Persona {
+    
+}</code></pre>
+            <p>Para crear una clase utilizamos la palabra reservada <code>class</code>, seguida del nombre de la clase (en este caso <strong>Persona</strong>). Luego abrimos y cerramos llaves <code>{ }</code>. Dentro de las llaves definimos las propiedades y métodos de la clase.</p>
+            
+            <div class="important-box">
+                <p><strong>💡 Importante:</strong> Una palabra reservada es aquella que tiene un significado especial dentro del lenguaje y no puede ser utilizada como nombre de variable.</p>
+            </div>
+
+            <h2><span class="section-number">3</span>Propiedades (Atributos)</h2>
+            <p>Son las características del objeto y se representan a través de variables. Puedes preguntarte: ¿qué características definen a una persona? Las características serían el nombre, el apellido, la edad, etc.</p>
+            
+            <p>Para definir atributos, simplemente creas una variable: primero el tipo de dato, luego el nombre de la variable. Puedes inicializarla o no, y al final no olvides el punto y coma.</p>
+
+            <h3>Ejemplo:</h3>
+            <pre><code>String nombre;
+int edad = 30;</code></pre>
+            <p>De esta forma hemos creado las propiedades de una clase.</p>
+
+            <h2><span class="section-number">4</span>Métodos</h2>
+            <p>Para crear un método es igual que crear una función. Lo creamos de la siguiente forma:</p>
+            
+            <pre><code>public void mostrarEdad() {
+    System.out.println("Edad: " + edad);
+}
+
+// En la función principal
+persona.mostrarEdad();
+
+// Resultado:
+// Edad: 45</code></pre>
+
+            <h2><span class="section-number">5</span>¿Qué es un Objeto?</h2>
+            <p>Un <strong>objeto</strong> es una instancia de una clase que tiene acceso a las propiedades y métodos definidos en ella.</p>
+
+            <div class="concept-card">
+                <h3>🎯 Analogía</h3>
+                <p>Piensa en la clase como un molde de galletas y el objeto como cada galleta individual que produces con ese molde. Todas las galletas tienen la misma forma (clase), pero cada una puede tener diferentes decoraciones (valores de atributos).</p>
+            </div>
+
+            <h2><span class="section-number">6</span>Cómo Crear un Objeto</h2>
+            <pre><code>Persona persona = new Persona();</code></pre>
+            
+            <p>Desglosemos esta línea:</p>
+            <ul style="line-height: 2; margin: 20px 0; padding-left: 40px;">
+                <li><strong>Persona</strong> → Nombre de la clase (tipo de dato)</li>
+                <li><strong>persona</strong> → Nombre del objeto (variable)</li>
+                <li><strong>=</strong> → Operador de asignación</li>
+                <li><strong>new</strong> → Palabra reservada para crear el objeto en memoria</li>
+                <li><strong>Persona()</strong> → Constructor de la clase</li>
+            </ul>
+
+            <div class="important-box">
+                <p><strong>💡 Nota:</strong> Aunque no hayamos definido un constructor, Java invoca automáticamente el constructor vacío por defecto.</p>
+            </div>
+
+            <h2><span class="section-number">7</span>Acceder a Propiedades y Métodos</h2>
+            <p>Para acceder a las propiedades y métodos del objeto utilizamos el operador punto <code>.</code></p>
+
+            <pre><code>System.out.println(persona.edad);
+// Imprime: 30</code></pre>
+
+            <p>Las propiedades funcionan como variables, por lo que podemos reasignar valores:</p>
+            
+            <pre><code>Persona persona = new Persona();
+persona.edad = 45;
+System.out.println(persona.edad);
+// Imprime: 45</code></pre>
+
+            <h2><span class="section-number">8</span>Entrada de Datos por Teclado</h2>
+            <p>Primero debes importar la clase Scanner:</p>
+            
+            <pre><code>import java.util.Scanner;</code></pre>
+
+            <p>Luego creas un objeto de la clase Scanner:</p>
+            
+            <pre><code>Scanner sc = new Scanner(System.in);
+System.out.println("Ingrese su apellido: ");
+String apellido = sc.nextLine();
+System.out.println("Apellido ingresado: " + apellido);</code></pre>
+
+            <div class="activities">
+                <h2>📝 Actividades Prácticas</h2>
+                <p><strong>Actividad 1:</strong> Crea una clase llamada <code>Estudiante</code> con 4 propiedades (nombre, edad, carrera, promedio) y un método que muestre todos los datos. Luego imprime sus valores.</p>
+                
+                <p><strong>Actividad 2:</strong> Asigna nuevos valores a las propiedades que creaste en el apartado anterior e imprime los cambios.</p>
+                
+                <p><strong>Actividad 3:</strong> Reasigna el valor a las propiedades, pero esta vez utiliza la clase <code>Scanner</code> para ingresar datos por parte del usuario e imprime las propiedades del objeto.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Autenticacion con email/password</h1>
+
+    <p>para  realizar la autenticacion por medio de email/password primero debes vincular tu proyecto de android y firebase y seguir los pasos</p>
+    <p>las dependencias que utilizaremos son las siguientes</p>
+    <p>al modulo del proyecto utilizaremos</p>
+    <pre><code>
+        id("com.google.gms.google-services") version "4.4.4" apply false
+        id("com.google.dagger.hilt.android") version "2.51.1" apply false
+    </code></pre>
+    <p>a nivel de la aplicacion utilizaremos</p>
+    <pre><code>
+        //plugins
+        id("com.google.gms.google-services")
+        id("com.google.dagger.hilt.android")
+        id("kotlin-kapt")
+
+        //dependencies
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    </code></pre>
+    <p>una vez que me hemos creado la interfaz de usuario y hemos creado el ViewModel vamos a explicar parte del codigo</p>
+<pre><code>
+     fun setEmail(email:String){
+        _autentication.update {
+            it.copy(email=email,
+                enabledButton = email.isNotBlank() && it.name.isNotBlank())
+        }
+    }
+</code></pre>
+<p>recuerda que it representa el estado anterior y en el estado anterior los atributos de la clase estan inicializados como vacio esto es importante comprender para habilitar/deshabiliatr el boton estamos validando el valor que llega por parametro y el valor anterior</p>
+
+<h2>Como crear un TextField para visualizar la contraseña</h2>
+<p>en capitulos anterios ya aprendimos a trabajar con el componente TextField puedes revisar  <a href="../capitulos/02_saludoPersonalizado.html">aqui</a> vamos a agregar mas propiedades leadingIcon y trailingIcon son funciones lambdas y las vamos a implementar con leadingIcon podemos crear un icon en la derecha y con leadingIcon en la parte izquierda dentro de la funciones podemos crear un icono</p>
+<pre><code>
+   @Composable
+fun TextFieldPassword(
+    value: String,
+    onValueChange: (String) -> Unit
+
+) {
+    var show by rememberSaveable { mutableStateOf(false) }
+
+    OutlinedTextField(
+        visualTransformation =if(show) VisualTransformation .None else
+            PasswordVisualTransformation(),
+        leadingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_lock),
+                contentDescription = ""
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = {show = !show}) {
+                Icon(
+                    painter = painterResource(if(show) R.drawable.eyes_close else R.drawable.eyes_open),
+                    contentDescription = ""
+                )
+            }
+        }
+    )
+}
+</code></pre>
+    <h2>Explicacion</h2>
+    <ol>
+        <li>PasswordVisualTransformation() convierte visualmente el texto a caracteres</li>
+        <li>VisualTransformation.None muestra el texto real </li>
+        <li>cuando precione el icono del ojo se mostrara el texto real </li>
+        <li></li>
+    </ol>
+    
+
+    
+</body>
+</html>

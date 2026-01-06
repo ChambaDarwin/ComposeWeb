@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase</title>
+</head>
+<body>
+    <h1>Autenticacion con email/password</h1>
+    <p>antes de empezar es importante conocer estos conceptos</p>
+    <p>🔹 Lambda
+Una lambda es una forma de escribir una función de manera corta.Un callback es un concepto, no una sintaxis.Es una función que tú pasas como parámetro para que otra función la ejecute más tarde. por ejemplo</p>
+<pre><code>
+    //lambda
+{ println("Hola") }
+
+fun ejecutar(callback: () -> Unit) {
+    println("Antes")
+    callback() // se ejecuta DESPUÉS
+    println("Después")
+}
+
+
+</code></pre>
+    <p>para poder realizar la autenticacion por medio de email/password lo primero que demos realizar es obtener una instancia de Firebase para ello debemos utilizar las siguiente dependencias</p>
+    <pre><code>
+    // Firebase BOM (Bill of Materials) - maneja las versiones automáticamente
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    
+    // Firebase Authentication
+    implementation("com.google.firebase:firebase-auth-ktx")
+    </code></pre>
+
+    <p>de esta creamos una instancia de FirebaseAuth </p>
+    <pre><code>
+         private val firebaseAuth = FirebaseAuth.getInstance()
+    </code></pre>
+    <p>FirebaseAuth es la clase principal de Firebase Authentication que maneja toda la autenticación de usuarios en tu app. tiene varios metodos que se utilizan para gestionar usuarios como por ejemplo ademas  posee Persistencia automática - La sesión se mantiene aunque cierres la app
+Seguridad - Las contraseñas se encriptan automáticamente
+Verificación de email - Puedes enviar emails de verificación
+Recuperación de contraseña - Con sendPasswordResetEmail()
+Gratuito - Hasta 50,000 autenticaciones mensuales gratis</p>
+    <ol>
+        <li>createUserWithEmailAndPassword(email, password) para crear un uevo usuario</li>
+        <li>signInWithEmailAndPassword(email, password) para iniciar sesion</li>
+        <li>signOut() para cerrar sesion</li>
+        <li>auth.currentUser conocer el usuario actual devuelve null si no hay un usuario activo  </li>
+    </ol>
+    <h2>Metodos importantes</h2>
+    <p> addOnCompleteListener 
+Se ejecuta SIEMPRE, sin importar si la operación fue exitosa o falló. Uso: Cuando necesitas manejar AMBOS casos (éxito y error) en un solo lugar.
+tambien vas a poder observar it:Task&ltAuthResult> Task es un "envoltorio" que contiene:
+        // - isSuccessful: Boolean
+        // - exception: Exception?
+        // - result: AuthResult? (solo si fue exitoso)
+        cuando utilizamos el metodo result nos devuelve un objeto de la clase AuthResult y si utilizamos  el metodo user nos devuelve un objeto de tipo FirebaseUser  este objeto contiene la informacion del usuario autenticado como:
+        <ol>
+            <li>uid es el id unico del usuario autenticado</li>
+            <li>email email del usuario</li>
+            <li>displayName nombre del usuario</li>
+            <li>photoUrl Uri? -Url de la foto de perfil</li>
+        </ol>
+</p>
+
+<p>2. addOnSuccessListener 
+Se ejecuta SOLO si la operación fue exitosa. cuando utilizas este metodo ya te devuelve el objeto AuthResult directamente porque recuerda que solo va a ingresar si la operación es exitosa y a partir del objeto ya puedes utilizar el metodo user para obtener un objeto de la clase Firebase user y utilizar los mismos metodos que se describio anteriormente </p>
+
+<pre><code>
+     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val user = it.result
+            } else {
+                val error = it.exception
+            }
+        }
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+
+        }.addOnFailureListener {
+
+        }
+</code></pre>
+
+<p>en el ViewModel creamos una funcion  para crear un nuevo usuario utilizando el metodo createUserWithEmailAndPassword este metodo recibe dos parametros el email y la password si si utilizamos el metodo   </p>
+<pre><code>
+    addOnCompleteListener {
+            if (it.isSuccessful) {
+                val user = it.result
+            } else {
+                val error = it.exception
+            }
+        }
+</code></pre>
+
+<p>sabemos que si ingresa dentro del if la operacion se completara correctamente y si ingresa al else sabemos que hay un error pero como le indicamos a la ui el estado de la operacion es decir si se creo o no el usuario, recuerda que para exponer los datos utilizamos StateFlow y lo podemos realizar de la siguiente forma</p>
+<pre><code>
+     private val _firebaseUser = MutableStateFlow<FirebaseUser?>(null)
+    val firebaseUser: StateFlow<FirebaseUser?> get() = _firebaseUser
+    //dentro del if
+    _firebaseUser.value=user_firebaseUser.value=user
+</code></pre>
+<p>si la operacion se realizo correctamente entonces cambiamos el estado de null a un objeto de tipo FirebaseUser y en la ui ya podemos validar</p>
+    <pre><code>
+        val firebaseUser by autenticationEmail.firebaseUser.collectAsState()
+    </code></pre>
+    <p>collectAsState convierte un StateFlow a un State observable por Compose</p>
+
+    <p>y lo podemos utilizar de la siguiente forma</p>
+    <pre><code>
+         ButtonUi(autentication.enabledButton,"Registrar") {
+            autenticationEmail.createUser(autentication.email,autentication.password)
+
+        }
+        if(firebaseUser != null){
+            println("email ${firebaseUser?.email}  name ${firebaseUser?.displayName} uid ${firebaseUser?.uid}")
+            Toast.makeText(context, "usuario creado", Toast.LENGTH_SHORT).show()
+        }
+        //resultado del println
+        email jorge@gmail.com  name null uid eK7IcOeZ0YexvZ0FkCsXWnUoQxz1
+    </code></pre>
+    <p>validamos si el firebaseUser sea diferente de null si es diferente muestra el mensaje e imprime la informacion del usuario autenticado </p>
+    <p>como puedes observar el name nos muestra null  y esto es debido  a que para crear un usuario solo lo haces por email/password en nigun momento le estamos enviando el nombre sin embargo si deseas modificar el nombre lo puedes realizar de la siguiente forma</p>
+    <pre><code>
+val user = FirebaseAuth.getInstance().currentUser
+
+val profileUpdates = userProfileChangeRequest {
+    displayName = "Juan Pérez"
+}
+
+user?.updateProfile(profileUpdates)
+
+    </code></pre>
+    <p>sin embargo lo ideal seria guardar la informacion en realtimedatabase porque <ol>
+        <li>Auth → solo autenticación</li>
+    <li>Firestore / Realtime DB → datos del perfil</li>
+</ol></p>
+<p>hasta este momento hemos asumido que los datos ingresados por el usuario son correctos y que no habra ningun error pero si existe algun error como le indicamos al usuario cual error ocurrio</p>
+</body>
+</html>
