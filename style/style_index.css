@@ -13,6 +13,13 @@ body {
     justify-content: center;
     padding: 20px;
 }
+.politicas{
+    color: black;
+    text-decoration: none;
+    margin-top: 50px;
+    font-weight: bold;
+    font-size: 1.5em;
+}
 
 .container {
     max-width: 900px;
