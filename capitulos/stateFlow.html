@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de StateFlow</title>
+    <link rel="stylesheet" href="../style/style_stateflow.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌊 StateFlow en Kotlin</h1>
+            <p>Manejo de estados reactivos de forma simple y eficiente</p>
+        </header>
+
+        <div class="content">
+            <div class="section">
+                <h2>¿Qué es MutableStateFlow y StateFlow?</h2>
+                <p><strong>StateFlow</strong> es un contenedor de estado observable que emite actualizaciones a sus observadores cada vez que el valor cambia. Piensa en él como un canal de noticias que siempre tiene una noticia actual y notifica a sus suscriptores cuando hay algo nuevo.</p>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h4>🔒 StateFlow</h4>
+                        <p>Solo lectura. Los observadores pueden leer el estado pero no modificarlo.</p>
+                    </div>
+                    <div class="card">
+                        <h4>✏️ MutableStateFlow</h4>
+                        <p>Permite leer y modificar el estado. Es privado dentro de tu ViewModel.</p>
+                    </div>
+                </div>
+
+                <div class="analogy-box">
+                    <h3><span class="emoji">📺</span> Analogía: El Noticiero</h3>
+                    <p><strong>MutableStateFlow</strong> es como el equipo de producción del noticiero que puede escribir y cambiar las noticias.</p>
+                    <p><strong>StateFlow</strong> es como la pantalla de TV que solo muestra las noticias a los espectadores, ellos no pueden modificar el contenido.</p>
+                    <p>El público (UI) solo ve lo que se transmite (StateFlow), mientras que los productores (ViewModel) tienen el control editorial completo (MutableStateFlow).</p>
+                </div>
+
+                <h3>Ejemplo de implementación:</h3>
+                <pre><code><span class="keyword">private var</span> _authentication = <span class="function">MutableStateFlow</span>(AuthenticationEmail())
+<span class="keyword">val</span> authentication: StateFlow&lt;AuthenticationEmail&gt; <span class="keyword">get</span>() = _authentication</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>⚠️ Regla de Oro: Emisión por Referencia</h2>
+                
+                <div class="important-box">
+                    <strong>🔑 Concepto Clave:</strong> StateFlow solo emite cambios cuando detecta que la <span class="highlight">referencia del objeto</span> ha cambiado, no cuando cambian sus propiedades internas.
+                </div>
+
+                <div class="analogy-box">
+                    <h3><span class="emoji">📦</span> Analogía: La Caja de Entrega</h3>
+                    <p>Imagina que StateFlow es un servicio de entrega que solo se activa cuando entregas una <strong>caja nueva</strong> (nueva referencia).</p>
+                    <p><strong>❌ No funciona:</strong> Abrir la caja actual y cambiar lo que hay dentro. El servicio no detecta cambios porque sigue siendo la misma caja.</p>
+                    <p><strong>✅ Funciona:</strong> Crear una caja completamente nueva con el contenido actualizado. El servicio detecta la nueva caja y la entrega.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>La Función copy() - Tu Mejor Aliada</h2>
+                <p>En Kotlin, las <strong>data classes</strong> tienen una función especial llamada <code>copy()</code> que crea un nuevo objeto con las mismas propiedades, pero te permite modificar las que necesites.</p>
+
+                <h3>Ejemplo visual:</h3>
+                <pre><code><span class="keyword">data class</span> <span class="function">User</span>(
+    <span class="keyword">val</span> name: String,
+    <span class="keyword">val</span> age: Int,
+    <span class="keyword">val</span> email: String
+)
+
+<span class="keyword">val</span> user1 = <span class="function">User</span>(<span class="string">"Ana"</span>, 20, <span class="string">"ana@mail.com"</span>)
+<span class="keyword">val</span> user2 = user1.<span class="function">copy</span>(name = <span class="string">"Darwin"</span>)
+
+<span class="comment">// Resultado:</span>
+<span class="comment">// user1 → User("Ana", 20, "ana@mail.com")      ← Original intacto</span>
+<span class="comment">// user2 → User("Darwin", 20, "ana@mail.com")   ← Nuevo objeto</span></code></pre>
+
+                <div class="analogy-box">
+                    <h3><span class="emoji">📋</span> Analogía: Fotocopiando un Documento</h3>
+                    <p><code>copy()</code> es como hacer una fotocopia de un documento donde puedes cambiar algunas partes con corrector líquido antes de fotocopiar.</p>
+                    <p><strong>Original:</strong> Tu documento se mantiene intacto (user1)</p>
+                    <p><strong>Copia:</strong> Haces una fotocopia y modificas solo lo necesario (user2)</p>
+                    <p>Ahora tienes dos documentos diferentes, el original y la versión modificada.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Actualizando el Estado Correctamente</h2>
+                <p>Para que StateFlow emita un nuevo valor, <strong>debes crear un nuevo objeto</strong>. La forma más común es usar la función <code>update()</code> con <code>copy()</code>:</p>
+
+                <pre><code><span class="comment">// ✅ Forma correcta: Crea un nuevo objeto</span>
+_uiState.<span class="function">update</span> {
+    it.<span class="function">copy</span>(name = <span class="string">"Darwin"</span>)
+}
+
+<span class="comment">// ❌ Forma incorrecta: Modifica el objeto actual (NO emite)</span>
+_uiState.value.name = <span class="string">"Darwin"</span>  <span class="comment">// Esto no funcionará</span></code></pre>
+
+                <div class="analogy-box">
+                    <h3><span class="emoji">🚦</span> Analogía: El Semáforo Inteligente</h3>
+                    <p>StateFlow es como un semáforo inteligente que solo cambia cuando detecta un <strong>auto nuevo</strong> (nueva referencia):</p>
+                    <p><strong>❌ No funciona:</strong> Si solo cambias el color del auto actual, el semáforo no lo detecta.</p>
+                    <p><strong>✅ Funciona:</strong> Cuando llega un auto diferente (aunque sea del mismo modelo pero nuevo), el semáforo cambia y todos lo ven.</p>
+                    <p>Por eso necesitas <code>copy()</code>: para crear ese "auto nuevo" que active el semáforo.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📝 Resumen - Puntos Clave</h2>
+                <ul>
+                    <li>StateFlow emite cambios solo cuando la <strong>referencia del objeto</strong> cambia</li>
+                    <li>Usa <code>copy()</code> para crear un nuevo objeto con los cambios necesarios</li>
+                    <li>La función <code>update()</code> es tu herramienta principal para actualizar el estado</li>
+                    <li>Nunca modifiques las propiedades del objeto directamente, siempre crea uno nuevo</li>
+                    <li>Mantén el MutableStateFlow privado y expone solo el StateFlow de lectura</li>
+                </ul>
+
+                <div class="important-box">
+                    <strong>🎯 Recuerda siempre:</strong> Para que StateFlow emita un nuevo estado, debes crear un nuevo objeto usando <code>copy()</code>. Sin un nuevo objeto, no hay emisión.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
