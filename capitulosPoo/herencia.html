@@ -1,11 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Herencia - POO</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="../style/style_herencia.css">
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <link rel="icon" type="image/x-icon" href="../img/java.png">
 </head>
 <body>
-    <h1>Herencia</h1>
+    <div class="container">
+        <div class="header">
+            <a href="#" class="back-button">← Volver a Temas</a>
+            <h1>☕ Herencia</h1>
+            <p class="subtitle">Fundamentos de la Programación Orientada a Objetos</p>
+        </div>
+
+        <div class="content">
+            <h2>¿Qué es la Herencia?</h2>
+            
+            <div class="diagram-container">
+                <div class="mermaid">
+classDiagram
+    class Persona {
+        -nombre : String
+        -edad : int
+        +Persona(edad : int)
+        +getNombre() : String
+        +getEdad() : int
+    }
+
+    class Estudiante {
+        -codigo : String
+        +Estudiante(edad : int, codigo : String)
+        +getCodigo() : String
+        +estudiar() : void
+    }
+
+    Persona <|-- Estudiante
+                </div>
+            </div>
+
+            <p>La herencia permite a una clase hija heredar los atributos y métodos de la clase padre. Además, podemos crear nuevas clases a partir de una clase base y podemos agregar y modificar comportamientos sin necesidad de reescribir código.</p>
+
+            <p>En Java le indicamos que vamos a heredar utilizando la palabra reservada <span class="highlight">extends</span>, por ejemplo:</p>
+
+            <pre><code>class Persona {
+    int edad = 23;
+}
+
+class Estudiante extends Persona {
+    
+}
+
+// En el método main
+Estudiante es = new Estudiante();
+System.out.println(es.edad); // resultado: 23</code></pre>
+
+            <p>En este caso la clase Persona no tiene un constructor y hasta ahora funciona correctamente. Lo siguiente que haremos será crear un constructor en la clase base.</p>
+
+            <h2>Importante</h2>
+            
+            <div class="important-box">
+                <p><strong>Regla fundamental:</strong> Cuando una clase hereda de otra, se debe invocar al constructor de la clase padre para inicializar los atributos heredados antes de invocar al constructor de la clase hija.</p>
+            </div>
+
+            <p>Para invocar al constructor de la clase padre se realiza utilizando la palabra reservada <span class="highlight">super</span>.</p>
+
+            <p>Utilizamos el constructor de la clase hija para pasar los parámetros que necesita la clase base para ser inicializada:</p>
+
+            <pre><code>class Estudiante extends Persona {
+    
+    public Estudiante(int edad) {
+        super(edad);
+    }
+}</code></pre>
+
+            <div class="activities">
+                <h2>Actividades</h2>
+                <p>Pedir al usuario que ingrese datos para llenar el constructor de la clase hija y luego imprimir su información.</p>
+                <p>Crear un segundo objeto e imprimir su información. De igual forma, pedir al usuario que ingrese por teclado los datos.</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
