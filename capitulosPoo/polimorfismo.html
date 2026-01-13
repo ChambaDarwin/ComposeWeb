@@ -1,11 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Polimorfismo en Java</title>
+    <link rel="stylesheet" href="../style/style_polimorfismo.css">
+    <link rel="icon" type="image/x-icon" href="../img/java.png">
 </head>
 <body>
-    
+    <div class="container">
+        <div class="header">
+            <h1>Polimorfismo en Java</h1>
+            <p class="subtitle">Una forma, múltiples comportamientos</p>
+        </div>
+
+        <div class="content">
+            <h2>¿Qué es el Polimorfismo?</h2>
+            <p>El polimorfismo es uno de los pilares fundamentales de la Programación Orientada a Objetos. Permite que una misma referencia de una clase padre pueda apuntar a objetos de diferentes clases hijas, y que cada objeto ejecute su propia versión de un método compartido.</p>
+
+            <div class="important-box">
+                <p><strong>Definición clave:</strong> El polimorfismo permite que una única referencia represente múltiples tipos de objetos, y que un mismo método se comporte de manera diferente según el objeto real al que apunte la referencia.</p>
+            </div>
+
+            <div class="analogy-box">
+                <p><strong>💡 Analogía del Control Remoto:</strong> Imagina que tienes un control remoto universal (la referencia). Puedes usarlo para controlar diferentes dispositivos: un televisor, un reproductor de DVD o un equipo de música. Cuando presionas el botón "Play" (el método), cada dispositivo responde de manera diferente: el TV cambia de canal, el DVD reproduce una película y el equipo reproduce música. Es el mismo botón, pero el comportamiento cambia según el dispositivo conectado.</p>
+            </div>
+
+            <h2>Diagrama de Clases</h2>
+            <div class="diagram-container">
+                <div class="mermaid">
+classDiagram
+    class Empleado {
+        &lt;&lt;abstract&gt;&gt;
+        +salario() float
+    }
+    class Docente {
+        +salario() float
+    }
+    class Administrativo {
+        +salario() float
+    }
+    class Obrero {
+        +salario() float
+    }
+    class Main {
+        +main(args: String[]) void
+    }
+    Empleado <|-- Docente
+    Empleado <|-- Administrativo
+    Empleado <|-- Obrero
+    Main --> Empleado : usa
+                </div>
+            </div>
+
+            <h2>Ejemplo Práctico</h2>
+            <p>Veamos cómo funciona el polimorfismo con un ejemplo de empleados en una empresa. Todos los empleados tienen un salario, pero cada tipo de empleado lo calcula de forma diferente.</p>
+
+            <p>Primero, creamos una referencia de tipo <span class="highlight">Empleado</span> (la clase padre):</p>
+
+            <pre><code>Empleado e;  // Referencia de tipo Empleado</code></pre>
+
+            <p>Ahora, esta referencia puede apuntar a cualquier objeto de las clases hijas y ejecutar su propia implementación del método <span class="highlight">salario()</span>:</p>
+
+            <pre><code>// La referencia 'e' apunta a un objeto Docente
+e = new Docente();
+System.out.println(e.salario());  // Ejecuta salario() de Docente
+
+// La misma referencia 'e' ahora apunta a un objeto Administrativo
+e = new Administrativo();
+System.out.println(e.salario());  // Ejecuta salario() de Administrativo
+
+// Ahora apunta a un objeto Obrero
+e = new Obrero();
+System.out.println(e.salario());  // Ejecuta salario() de Obrero</code></pre>
+
+            <div class="important-box">
+                <p><strong>Observa que:</strong> La referencia <span class="highlight">e</span> permanece del mismo tipo (Empleado), pero los objetos a los que apunta son diferentes. Cada llamada a <span class="highlight">salario()</span> ejecuta la implementación específica de cada clase hija.</p>
+            </div>
+
+            <div class="analogy-box">
+                <p><strong>💡 Analogía del Actor:</strong> Piensa en un actor profesional (la referencia). En una película puede interpretar a un doctor, en otra a un policía y en otra a un maestro. Es la misma persona (referencia), pero su comportamiento y forma de actuar cambia según el personaje que interprete (el objeto real). Cuando le piden "actuar" (llamar al método), lo hace según el rol que esté desempeñando en ese momento.</p>
+            </div>
+
+            <h2>Ventajas del Polimorfismo</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Ventaja</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Flexibilidad</strong></td>
+                        <td>El código puede trabajar con objetos de diferentes tipos sin conocer su tipo específico en tiempo de compilación.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reutilización</strong></td>
+                        <td>Una misma función o método puede trabajar con múltiples tipos de objetos relacionados.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mantenibilidad</strong></td>
+                        <td>Es más fácil agregar nuevas clases hijas sin modificar el código existente que usa la clase padre.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Extensibilidad</strong></td>
+                        <td>El sistema puede crecer añadiendo nuevas clases que hereden de la clase base sin afectar el funcionamiento actual.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Ejemplo Completo del Sistema</h2>
+
+            <pre><code>// Clase abstracta padre
+abstract class Empleado {
+    public abstract float salario();
+}
+
+// Clases hijas con implementaciones específicas
+class Docente extends Empleado {
+    @Override
+    public float salario() {
+        return 2500.0f;  // Salario base de docente
+    }
+}
+
+class Administrativo extends Empleado {
+    @Override
+    public float salario() {
+        return 2000.0f;  // Salario base de administrativo
+    }
+}
+
+class Obrero extends Empleado {
+    @Override
+    public float salario() {
+        return 1800.0f;  // Salario base de obrero
+    }
+}
+
+// Clase principal que demuestra el polimorfismo
+public class Main {
+    public static void main(String[] args) {
+        Empleado e;  // Una sola referencia
+        
+        // La magia del polimorfismo
+        e = new Docente();
+        System.out.println("Salario Docente: $" + e.salario());
+        
+        e = new Administrativo();
+        System.out.println("Salario Administrativo: $" + e.salario());
+        
+        e = new Obrero();
+        System.out.println("Salario Obrero: $" + e.salario());
+    }
+}</code></pre>
+
+            <div class="analogy-box">
+                <p><strong>💡 Analogía Final - La Toma de Corriente:</strong> Una toma de corriente (la referencia de tipo Empleado) puede recibir diferentes electrodomésticos: una licuadora, una tostadora o una cafetera (diferentes objetos de clases hijas). Cuando enciendes el interruptor (llamas al método), cada aparato hace su trabajo específico: licuar, tostar o hacer café. Es la misma toma de corriente, pero el resultado cambia según lo que esté conectado.</p>
+            </div>
+
+            <h2>Conceptos Clave para Recordar</h2>
+
+            <p><strong>1. Una referencia, múltiples objetos:</strong> Una variable de tipo clase padre puede referenciar objetos de cualquier clase hija.</p>
+
+            <p><strong>2. Comportamiento dinámico:</strong> El método que se ejecuta se determina en tiempo de ejecución según el objeto real, no según el tipo de la referencia.</p>
+
+            <p><strong>3. Contrato compartido:</strong> Todas las clases hijas deben implementar los métodos definidos en la clase padre, pero cada una lo hace a su manera.</p>
+
+            <div class="important-box">
+                <p><strong>El polimorfismo es esencial porque:</strong> Permite escribir código más genérico y flexible que puede trabajar con familias enteras de objetos relacionados sin necesidad de conocer sus detalles específicos de implementación.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
 </body>
 </html>
