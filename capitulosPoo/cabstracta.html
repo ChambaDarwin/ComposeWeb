@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases Abstractas en Java</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+   <link rel="stylesheet" href="../style/style_cabstracta.css">
+   <link rel="icon" type="image/x-icon" href="../img/java.png">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Clases Abstractas en Java</h1>
+            <p class="subtitle">Aprende a crear jerarquías de objetos relacionados</p>
+        </div>
+
+        <div class="content">
+            <h2>¿Qué es una Clase Abstracta?</h2>
+            <p>Una clase abstracta se utiliza para representar una <strong>jerarquía de objetos relacionados</strong>. No se puede instanciar directamente (no puedes crear objetos de ella), pero sirve como plantilla o base para otras clases que heredan de ella.</p>
+
+            <div class="analogy-box">
+                <p><strong>🏗️ Analogía:</strong> Imagina que una clase abstracta es como un <strong>plano arquitectónico genérico de "Edificio"</strong>. Este plano define que todo edificio debe tener ciertos elementos básicos (puertas, ventanas, estructura), pero no especifica todos los detalles. No puedes construir un "edificio genérico" directamente, necesitas especificar si será una casa, un hospital o una escuela. Cada tipo de edificio hereda las características básicas del plano genérico, pero añade sus propias especificaciones. La clase abstracta es ese plano base que dice "todo lo que herede de mí debe tener estos métodos", pero no es útil por sí sola.</p>
+            </div>
+
+            <h2>Ejemplo Práctico: Sistema de Empleados</h2>
+            <p>Para entender cómo trabajan las clases abstractas, crearemos una clase general llamada <span class="highlight">Empleado</span> (abstracta) y una clase específica llamada <span class="highlight">Docente</span> que hereda de ella:</p>
+
+            <div class="diagram-container">
+                <div class="mermaid">
+classDiagram
+    class Empleado {
+        &lt;&lt;abstract&gt;&gt;
+        -nombre: String
+        -cedula: String
+        +salario()* float
+        +mostrarInfo() void
+    }
+
+    class Docente {
+        -horasClase: int
+        -tarifaHora: float
+        +salario() float
+    }
+
+    class Main {
+        +main(args: String[]) void
+    }
+
+    Empleado <|-- Docente : hereda
+    Main --> Docente : crea y usa
+                </div>
+            </div>
+
+            <h2>Creando la Clase Abstracta</h2>
+            <p>Para declarar una clase como abstracta, utilizamos la palabra reservada <span class="highlight">abstract</span>. Dentro de ella podemos tener métodos normales (con implementación) y métodos abstractos (sin implementación):</p>
+
+            <pre><code>abstract class Empleado {
+    // Atributos comunes a todos los empleados
+    protected String nombre;
+    protected String cedula;
+    
+    // Constructor
+    public Empleado(String nombre, String cedula) {
+        this.nombre = nombre;
+        this.cedula = cedula;
+    }
+    
+    // Método abstracto: cada tipo de empleado calculará su salario
+    public abstract float salario();
+    
+    // Método concreto: todos los empleados pueden usar este método
+    public void mostrarInfo() {
+        System.out.println("Empleado: " + nombre);
+        System.out.println("Cédula: " + cedula);
+        System.out.println("Salario: $" + salario());
+    }
+}</code></pre>
+
+            <div class="important-box">
+                <p><strong>⚠️ Nota importante:</strong> Los métodos marcados como <span class="highlight">abstract</span> no tienen cuerpo (no llevan llaves). Las clases que hereden de <span class="highlight">Empleado</span> están obligadas a implementar el método <span class="highlight">salario()</span>.</p>
+            </div>
+
+            <h2>Implementando la Clase Concreta</h2>
+            <p>Ahora creamos la clase <span class="highlight">Docente</span> que hereda de <span class="highlight">Empleado</span>. Para heredar, utilizamos la palabra reservada <span class="highlight">extends</span>:</p>
+
+            <pre><code>class Docente extends Empleado {
+    private int horasClase;
+    private float tarifaHora;
+    
+    // Constructor
+    public Docente(String nombre, String cedula, int horasClase, float tarifaHora) {
+        super(nombre, cedula); // Llamamos al constructor de la clase padre
+        this.horasClase = horasClase;
+        this.tarifaHora = tarifaHora;
+    }
+    
+    // Implementación obligatoria del método abstracto
+    @Override
+    public float salario() {
+        return horasClase * tarifaHora;
+    }
+}</code></pre>
+
+            <div class="analogy-box">
+                <p><strong>👨‍🏫 Analogía:</strong> Si <span class="highlight">Empleado</span> es un contrato que dice "todos los empleados deben poder calcular su salario", entonces <span class="highlight">Docente</span> es una persona específica que firma ese contrato y explica exactamente cómo calculará su salario (horas × tarifa). Otros tipos de empleados podrían calcular su salario de manera diferente (salario fijo mensual, por comisiones, etc.).</p>
+            </div>
+
+            <h2>Uso de la Clase Concreta</h2>
+            <p>Ahora podemos crear objetos de la clase <span class="highlight">Docente</span> y utilizar tanto los métodos heredados como los propios:</p>
+
+            <pre><code>public class Main {
+    public static void main(String[] args) {
+        // Creamos un objeto de tipo Docente
+        Docente docente = new Docente("María González", "1234567890", 120, 15.5f);
+        
+        // Usamos el método implementado
+        System.out.println("Salario del docente: $" + docente.salario());
+        
+        // También podemos usar el método heredado
+        docente.mostrarInfo();
+        
+        // ❌ ESTO NO ES POSIBLE:
+        // Empleado emp = new Empleado("Juan", "9876543210");
+        // No podemos instanciar directamente una clase abstracta
+    }
+}</code></pre>
+
+            <p>La salida del programa sería:</p>
+            <pre><code>Salario del docente: $1860.0
+Empleado: María González
+Cédula: 1234567890
+Salario: $1860.0</code></pre>
+
+            <h2>Diferencias Clave</h2>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Clase Abstracta</th>
+                        <th>Clase Concreta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Instanciación</strong></td>
+                        <td>❌ No se puede crear objetos directamente</td>
+                        <td>✅ Se pueden crear objetos</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Métodos</strong></td>
+                        <td>Puede tener métodos abstractos y concretos</td>
+                        <td>Solo métodos concretos (implementados)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Propósito</strong></td>
+                        <td>Servir como plantilla para otras clases</td>
+                        <td>Representar objetos específicos del mundo real</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Palabra clave</strong></td>
+                        <td><span class="highlight">abstract class</span></td>
+                        <td><span class="highlight">class</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="important-box">
+                <p><strong>💡 Punto clave:</strong> En Java no existen atributos abstractos. La palabra <span class="highlight">abstract</span> solo se utiliza para métodos y clases. ¿Por qué? Porque un atributo no tiene comportamiento, solo almacena información. Lo que necesita implementación es el <em>comportamiento</em> (los métodos), no los datos (los atributos).</p>
+            </div>
+
+            <h2>¿Cuándo Usar Clases Abstractas?</h2>
+            <p>Las clases abstractas son útiles cuando tienes un grupo de clases relacionadas que comparten características comunes pero tienen comportamientos específicos diferentes. Por ejemplo, todos los empleados tienen nombre y cédula (atributos comunes), y todos deben poder calcular su salario (comportamiento común), pero cada tipo de empleado lo calcula de forma diferente (comportamiento específico).</p>
+
+            <p>Otros ejemplos del mundo real podrían ser una clase abstracta <span class="highlight">Vehiculo</span> con subclases <span class="highlight">Auto</span>, <span class="highlight">Moto</span> y <span class="highlight">Camion</span>, o una clase abstracta <span class="highlight">FiguraGeometrica</span> con subclases <span class="highlight">Circulo</span>, <span class="highlight">Rectangulo</span> y <span class="highlight">Triangulo</span>.</p>
+        </div>
+    </div>
+</body>
+</html>

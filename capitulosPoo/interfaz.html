@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaces en Java</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <link rel="stylesheet" href="../style/style_interfaz.css">
+    <link rel="icon" type="image/x-icon" href="../img/java.png">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Interfaces en Java</h1>
+            <p class="subtitle">Aprende a crear contratos entre clases</p>
+        </div>
+
+        <div class="content">
+            <h2>¿Qué es una Interfaz?</h2>
+            <p>Una interfaz es una colección de métodos abstractos que establece un <strong>contrato</strong> con las clases que la implementan. Cuando una clase implementa una interfaz, está obligada a proporcionar una implementación concreta de todos los métodos abstractos definidos en ella.</p>
+
+            <div class="analogy-box">
+                <p><strong>🔌 Analogía:</strong> Piensa en una interfaz como un <strong>enchufe eléctrico estándar</strong>. El enchufe define la forma y el voltaje que debe tener cualquier dispositivo para conectarse (el contrato), pero no especifica qué hará el dispositivo una vez conectado. Una lámpara, un televisor o una licuadora pueden usar el mismo tipo de enchufe, pero cada uno hace algo completamente diferente. La interfaz solo dice "si quieres conectarte aquí, debes tener estas características", pero tú decides qué hacer con la electricidad.</p>
+            </div>
+
+            <p>Es importante entender que <strong>la interfaz solo define los métodos, no cómo deben implementarse</strong>. Esto significa que distintas clases pueden implementar la misma interfaz y comportarse de manera completamente diferente.</p>
+
+            <h2>Ejemplo Práctico: Calculadora Básica</h2>
+            <p>Para comprender mejor el uso de interfaces, vamos a crear una calculadora básica con métodos para sumar, restar, multiplicar y dividir. A continuación, se muestra el diagrama de clases:</p>
+
+            <div class="diagram-container">
+                <div class="mermaid">
+classDiagram
+    direction LR
+
+    class Operacion {
+        &lt;&lt;interface&gt;&gt;
+        +sumar(a:int, b:int) int
+        +restar(a:int, b:int) int
+        +multiplicar(a:int, b:int) int
+        +dividir(a:int, b:int) float
+    }
+    
+    class Matematica {
+        -num1: int
+        -num2: int
+        +sumar(a:int, b:int) int
+        +restar(a:int, b:int) int
+        +multiplicar(a:int, b:int) int
+        +dividir(a:int, b:int) float
+    }
+
+    Operacion <|.. Matematica : implementa
+                </div>
+            </div>
+
+            <h2>Sintaxis para Crear una Interfaz</h2>
+            <p>Una interfaz se crea utilizando la palabra reservada <span class="highlight">interface</span>, seguida del nombre de la interfaz. Dentro de las llaves, declaramos los métodos abstractos sin implementación:</p>
+
+            <pre><code>interface Operacion {
+    // Métodos abstractos (solo declaración, sin cuerpo)
+}</code></pre>
+
+            <h2>Cómo Crear Métodos Abstractos</h2>
+            <p>Los métodos en una interfaz se declaran especificando el tipo de retorno, el nombre del método y los parámetros. Si el método no devuelve ningún valor, utilizamos <span class="highlight">void</span>. Si devuelve un valor, especificamos el tipo de dato como <span class="highlight">int</span>, <span class="highlight">float</span>, <span class="highlight">String</span>, etc.</p>
+
+            <pre><code>interface Operacion {
+    int sumar(int a, int b);
+    int restar(int a, int b);
+    int multiplicar(int a, int b);
+    float dividir(int a, int b);
+}</code></pre>
+
+            <div class="important-box">
+                <p><strong>⚠️ Importante:</strong> En una interfaz, los métodos solo se declaran, NO se implementan. No llevan llaves ni código dentro. La implementación se realiza en la clase que implementa la interfaz.</p>
+            </div>
+
+            <h2>Implementando la Interfaz</h2>
+            <p>Ahora creamos una clase llamada <span class="highlight">Matematica</span> que implementará los métodos abstractos de la interfaz. Para ello, utilizamos la palabra reservada <span class="highlight">implements</span> seguida del nombre de la interfaz:</p>
+
+            <pre><code>class Matematica implements Operacion {
+    int num1, num2;
+    
+    // Constructor
+    public Matematica(int num1, int num2) {
+        this.num1 = num1;
+        this.num2 = num2;
+    }
+    
+    // Implementación del método sumar
+    public int sumar(int a, int b) {
+        return a + b;
+    }
+    
+    // Implementación del método restar
+    public int restar(int a, int b) {
+        return a - b;
+    }
+    
+    // Implementación del método multiplicar
+    public int multiplicar(int a, int b) {
+        return a * b;
+    }
+    
+    // Implementación del método dividir
+    public float dividir(int a, int b) {
+        if (b != 0) {
+            return (float) a / b;
+        } else {
+            System.out.println("Error: No se puede dividir por cero");
+            return 0;
+        }
+    }
+}</code></pre>
+
+            <p>La clase <span class="highlight">Matematica</span> está obligada a implementar todos los métodos declarados en la interfaz <span class="highlight">Operacion</span>. Observa que ahora los métodos tienen llaves y contienen el código que ejecuta la operación correspondiente.</p>
+
+            <div class="analogy-box">
+                <p><strong>📝 Analogía:</strong> Si la interfaz es como un <strong>contrato de trabajo</strong>, la clase que implementa es como el <strong>empleado que firma ese contrato</strong>. El contrato dice "debes realizar estas tareas" (los métodos abstractos), pero no especifica exactamente cómo hacerlas. El empleado (la clase) es quien decide la mejor manera de cumplir con cada tarea, siempre y cuando las complete todas.</p>
+            </div>
+
+            <h2>Usando la Clase que Implementa la Interfaz</h2>
+            <p>Finalmente, creamos un objeto de la clase <span class="highlight">Matematica</span> y utilizamos sus métodos:</p>
+
+            <pre><code>public class Main {
+    public static void main(String[] args) {
+        // Creamos un objeto de la clase Matematica
+        Matematica calculadora = new Matematica(10, 5);
+        
+        // Usamos los métodos implementados
+        System.out.println("Suma: " + calculadora.sumar(10, 5));           // 15
+        System.out.println("Resta: " + calculadora.restar(10, 5));         // 5
+        System.out.println("Multiplicación: " + calculadora.multiplicar(10, 5)); // 50
+        System.out.println("División: " + calculadora.dividir(10, 5));     // 2.0
+    }
+}</code></pre>
+
+            <h2>Ventajas de Usar Interfaces</h2>
+            <p>Las interfaces ofrecen múltiples beneficios en la programación orientada a objetos. Permiten crear código más flexible y mantenible, ya que diferentes clases pueden implementar la misma interfaz de formas distintas. Esto facilita el polimorfismo, permite cambiar implementaciones sin afectar el resto del código, y establece un estándar claro sobre qué métodos debe tener una clase.</p>
+
+            <div class="activities">
+                <h2>Actividades Prácticas</h2>
+                <p>Completa la interfaz <span class="highlight">Operacion</span> creando una clase diferente llamada <span class="highlight">CalculadoraCientifica</span> que implemente los mismos métodos pero agregue funcionalidad para potencias y raíces cuadradas.</p>
+                <p>Crea una interfaz llamada <span class="highlight">FiguraGeometrica</span> con métodos abstractos para calcular el área y perímetro. Luego, crea dos clases: <span class="highlight">Cuadrado</span> y <span class="highlight">Rectangulo</span> que implementen esta interfaz.</p>
+                <p>Investiga qué sucede si una clase implementa una interfaz pero no implementa todos sus métodos. Documenta el error que genera el compilador.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

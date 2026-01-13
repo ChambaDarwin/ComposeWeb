@@ -41,27 +41,6 @@
             animation: fadeInDown 1s ease;
         }
 
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateX(-5px);
-        }
-
         h1 {
             color: white;
             font-size: 3.5rem;
@@ -145,6 +124,24 @@
             color: #3b82f6;
         }
 
+        .analogy-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .analogy-box p {
+            margin: 0;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .analogy-box strong {
+            color: #f59e0b;
+        }
+
         pre {
             background: #1e293b;
             color: #e2e8f0;
@@ -174,17 +171,17 @@
         }
 
         .activities {
-            padding: 35px;
-            border-radius: 16px;
+            padding: 35px 0;
             margin-top: 50px;
         }
 
         .activities h2 {
-            border-bottom-color: rgba(255,255,255,0.3);
+            color: #1e3c72;
+            border-bottom-color: #3b82f6;
         }
 
         .activities p {
-    
+            color: #475569;
             font-size: 1.1rem;
             margin: 20px 0;
             padding-left: 35px;
@@ -197,6 +194,7 @@
             left: 0;
             font-weight: bold;
             font-size: 1.5rem;
+            color: #10b981;
         }
 
         .diagram-container {
@@ -237,4 +235,3 @@
                 padding: 15px;
             }
         }
- 

@@ -41,27 +41,6 @@
             animation: fadeInDown 1s ease;
         }
 
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateX(-5px);
-        }
-
         h1 {
             color: white;
             font-size: 3.5rem;
@@ -145,6 +124,24 @@
             color: #3b82f6;
         }
 
+        .analogy-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .analogy-box p {
+            margin: 0;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .analogy-box strong {
+            color: #f59e0b;
+        }
+
         pre {
             background: #1e293b;
             color: #e2e8f0;
@@ -173,32 +170,6 @@
             line-height: 1.6;
         }
 
-        .activities {
-            padding: 35px;
-            border-radius: 16px;
-            margin-top: 50px;
-        }
-
-        .activities h2 {
-            border-bottom-color: rgba(255,255,255,0.3);
-        }
-
-        .activities p {
-    
-            font-size: 1.1rem;
-            margin: 20px 0;
-            padding-left: 35px;
-            position: relative;
-        }
-
-        .activities p::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
         .diagram-container {
             background: #f8fafc;
             padding: 30px;
@@ -214,6 +185,38 @@
             font-family: 'Consolas', monospace;
             color: #3b82f6;
             font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8fafc;
         }
 
         @media (max-width: 768px) {
@@ -237,4 +240,3 @@
                 padding: 15px;
             }
         }
- 
