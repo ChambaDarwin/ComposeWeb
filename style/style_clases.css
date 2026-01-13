@@ -191,20 +191,17 @@
         }
 
         .activities {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
             padding: 35px;
             border-radius: 16px;
             margin-top: 50px;
         }
 
         .activities h2 {
-            color: white;
+        
             border-bottom-color: rgba(255,255,255,0.3);
         }
 
         .activities p {
-            color: rgba(255,255,255,0.95);
             font-size: 1.1rem;
             margin: 15px 0;
             padding-left: 30px;
