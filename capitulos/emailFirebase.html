@@ -3,388 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Authentication - Guía Completa</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style/style_email_firebase.css">
-    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
-    
+    <title>Guía: Autenticación con Firebase</title>
+   <link rel="stylesheet" href="../style/style_email_firebase.css">
+   <link rel="icon" type="image/x-icon" href="../img/java.png">
 </head>
 <body>
-
-    <div class="header">
-        <h1>🔥 Firebase Authentication</h1>
-        <p>Guía completa para implementar autenticación con Email/Password en Android</p>
-    </div>
-
     <div class="container">
+        <h1>Autenticación con Firebase: Email/Password</h1>
         
-        <div class="nav">
-            <h3>📚 Contenido</h3>
-            <ul>
-                <li><a href="#conceptos">Conceptos Fundamentales</a></li>
-                <li><a href="#configuracion">Configuración Inicial</a></li>
-                <li><a href="#metodos">Métodos de FirebaseAuth</a></li>
-                <li><a href="#listeners">Listeners y Callbacks</a></li>
-                <li><a href="#stateflow">StateFlow y UI</a></li>
-                <li><a href="#sealed">Sealed Classes</a></li>
-                <li><a href="#mejores-practicas">Mejores Prácticas</a></li>
-            </ul>
+        <h2>Conceptos Fundamentales</h2>
+        
+        <div class="concept-box">
+            <strong>Lambda:</strong> Una expresión lambda es una función anónima que se escribe de forma concisa. En Kotlin, se representa entre llaves <code>{ }</code>.
         </div>
+        
+        <div class="concept-box">
+            <strong>Callback:</strong> Es una función que pasas como parámetro a otra función para que sea ejecutada posteriormente. No es una sintaxis específica, sino un patrón de diseño.
+        </div>
+        
+        <h3>Ejemplo de Lambda y Callback</h3>
+        <pre><code>// Lambda - función anónima
+val saludo = { println("Hola") }
 
-        <div class="section" id="conceptos">
-            <h2>🎯 Conceptos Fundamentales</h2>
-            
-            <h3>Lambda y Callback</h3>
-            <p>Antes de comenzar con Firebase Authentication, es importante comprender dos conceptos clave:</p>
-            
-            <div class="info-box">
-                <p><strong>Lambda:</strong> Es una función anónima escrita de forma concisa. En Kotlin, se representa con la sintaxis <code>{ }</code>.</p>
-            </div>
-
-            <div class="info-box">
-                <p><strong>Callback:</strong> Es una función que se pasa como parámetro a otra función para que sea ejecutada en un momento posterior, típicamente cuando se completa una operación asíncrona.</p>
-            </div>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>// Ejemplo de lambda
-val saludar = { println("¡Hola, Firebase!") }
-
-// Ejemplo de callback
-fun ejecutarOperacion(callback: () -> Unit) {
-    println("Iniciando operación...")
-    // Operación asíncrona aquí
-    callback() // Se ejecuta después
-    println("Operación completada")
+// Callback - función pasada como parámetro
+fun ejecutar(callback: () -> Unit) {
+    println("Antes")
+    callback() // Se ejecuta el callback
+    println("Después")
 }
 
 // Uso
-ejecutarOperacion {
-    println("Este es el callback ejecutándose")
-}</code></pre>
-            </div>
-        </div>
+ejecutar { println("Hola desde el callback") }</code></pre>
 
-        <div class="section" id="configuracion">
-            <h2>⚙️ Configuración Inicial</h2>
-            
-            <h3>Dependencias requeridas</h3>
-            <p>Para utilizar Firebase Authentication, primero debemos agregar las siguientes dependencias en el archivo <code>build.gradle</code> del módulo:</p>
-
-            <div class="code-block" data-lang="gradle">
-<pre><code>// Firebase BOM (Bill of Materials) - gestiona las versiones automáticamente
+        <h2>Configuración Inicial</h2>
+        
+        <p>Para implementar la autenticación con email y contraseña en Firebase, necesitas agregar las siguientes dependencias a tu archivo <code>build.gradle</code>:</p>
+        
+        <pre><code>// Firebase BOM (Bill of Materials) - gestiona versiones automáticamente
 implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
 
 // Firebase Authentication
 implementation("com.google.firebase:firebase-auth-ktx")</code></pre>
-            </div>
 
-            <h3>Instancia de FirebaseAuth</h3>
-            <p>Una vez agregadas las dependencias, creamos una instancia de FirebaseAuth en nuestro ViewModel o repositorio:</p>
+        <h3>Crear la Instancia de FirebaseAuth</h3>
+        <pre><code>private val firebaseAuth = FirebaseAuth.getInstance()</code></pre>
 
-            <div class="code-block" data-lang="kotlin">
-<pre><code>private val firebaseAuth = FirebaseAuth.getInstance()</code></pre>
-            </div>
+        <h2>¿Qué es FirebaseAuth?</h2>
+        
+        <p><strong>FirebaseAuth</strong> es la clase principal que gestiona toda la autenticación de usuarios en tu aplicación. Proporciona múltiples funcionalidades integradas:</p>
+        
+        <ul>
+            <li><strong>Persistencia automática:</strong> La sesión del usuario se mantiene incluso después de cerrar la aplicación</li>
+            <li><strong>Seguridad:</strong> Las contraseñas se cifran automáticamente</li>
+            <li><strong>Verificación de email:</strong> Permite enviar correos de verificación</li>
+            <li><strong>Recuperación de contraseña:</strong> Utilizando <code>sendPasswordResetEmail()</code></li>
+            <li><strong>Plan gratuito:</strong> Hasta 50,000 autenticaciones mensuales sin costo</li>
+        </ul>
 
-            <div class="info-box success">
-                <p><strong>¿Qué es FirebaseAuth?</strong> Es la clase principal de Firebase Authentication que gestiona toda la autenticación de usuarios en tu aplicación.</p>
-            </div>
+        <h3>Métodos Principales de FirebaseAuth</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>createUserWithEmailAndPassword(email, password)</code></td>
+                    <td>Crea un nuevo usuario con email y contraseña</td>
+                </tr>
+                <tr>
+                    <td><code>signInWithEmailAndPassword(email, password)</code></td>
+                    <td>Inicia sesión con credenciales existentes</td>
+                </tr>
+                <tr>
+                    <td><code>signOut()</code></td>
+                    <td>Cierra la sesión del usuario actual</td>
+                </tr>
+                <tr>
+                    <td><code>currentUser</code></td>
+                    <td>Obtiene el usuario actual (retorna null si no hay sesión activa)</td>
+                </tr>
+            </tbody>
+        </table>
 
-            <h3>Características principales</h3>
-            <div class="feature-list">
-                <div class="feature-item">
-                    <strong>🔐 Persistencia Automática</strong>
-                    La sesión se mantiene incluso si cierras la aplicación
-                </div>
-                <div class="feature-item">
-                    <strong>🛡️ Seguridad</strong>
-                    Las contraseñas se encriptan automáticamente
-                </div>
-                <div class="feature-item">
-                    <strong>✉️ Verificación de Email</strong>
-                    Envío de correos de verificación integrado
-                </div>
-                <div class="feature-item">
-                    <strong>🔄 Recuperación de Contraseña</strong>
-                    Con el método sendPasswordResetEmail()
-                </div>
-                <div class="feature-item">
-                    <strong>💰 Gratuito</strong>
-                    Hasta 50,000 autenticaciones mensuales sin costo
-                </div>
-                <div class="feature-item">
-                    <strong>🌐 Multi-plataforma</strong>
-                    Compatible con Android, iOS, Web y más
-                </div>
-            </div>
-        </div>
+        <h2>Listeners de Firebase</h2>
 
-        <div class="section" id="metodos">
-            <h2>🔧 Métodos Principales de FirebaseAuth</h2>
-            
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Método</th>
-                        <th>Descripción</th>
-                        <th>Uso</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>createUserWithEmailAndPassword()</code></td>
-                        <td>Crea un nuevo usuario</td>
-                        <td>Registro</td>
-                    </tr>
-                    <tr>
-                        <td><code>signInWithEmailAndPassword()</code></td>
-                        <td>Inicia sesión con credenciales</td>
-                        <td>Login</td>
-                    </tr>
-                    <tr>
-                        <td><code>signOut()</code></td>
-                        <td>Cierra la sesión actual</td>
-                        <td>Logout</td>
-                    </tr>
-                    <tr>
-                        <td><code>currentUser</code></td>
-                        <td>Obtiene el usuario actual (null si no hay sesión)</td>
-                        <td>Estado de sesión</td>
-                    </tr>
-                    <tr>
-                        <td><code>sendPasswordResetEmail()</code></td>
-                        <td>Envía email de recuperación</td>
-                        <td>Recuperar contraseña</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <h3>1. addOnCompleteListener</h3>
+        <p>Se ejecuta <strong>siempre</strong>, sin importar si la operación fue exitosa o falló. Es útil cuando necesitas manejar ambos casos (éxito y error) en un mismo lugar.</p>
 
-        <div class="section" id="listeners">
-            <h2>👂 Listeners y Manejo de Resultados</h2>
-            
-            <h3>addOnCompleteListener</h3>
-            <p>Se ejecuta <strong>siempre</strong>, independientemente del resultado de la operación. Es útil cuando necesitas manejar tanto el éxito como el error en un mismo lugar.</p>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>firebaseAuth.createUserWithEmailAndPassword(email, password)
+        <pre><code>firebaseAuth.createUserWithEmailAndPassword(email, password)
     .addOnCompleteListener { task ->
         if (task.isSuccessful) {
-            // ✅ Operación exitosa
+            // Operación exitosa
             val authResult = task.result
             val user = authResult?.user
             println("Usuario creado: ${user?.email}")
         } else {
-            // ❌ Ocurrió un error
-            val exception = task.exception
-            println("Error: ${exception?.message}")
+            // Error en la operación
+            val error = task.exception
+            println("Error: ${error?.message}")
         }
     }</code></pre>
-            </div>
 
-            <div class="info-box">
-                <p><strong>El objeto Task:</strong> Es un contenedor que encapsula el resultado de la operación asíncrona. Contiene:
-                    <br>• <code>isSuccessful</code>: Boolean
-                    <br>• <code>exception</code>: Exception?
-                    <br>• <code>result</code>: AuthResult? (solo si fue exitoso)
-                </p>
-            </div>
-
-            <h3>addOnSuccessListener & addOnFailureListener</h3>
-            <p>Estos métodos separan el manejo de éxito y error en listeners independientes, proporcionando un código más limpio y organizado.</p>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>firebaseAuth.createUserWithEmailAndPassword(email, password)
-    .addOnSuccessListener { authResult ->
-        // ✅ Solo se ejecuta si la operación fue exitosa
-        val user = authResult.user
-        println("Bienvenido: ${user?.email}")
-    }
-    .addOnFailureListener { exception ->
-        // ❌ Solo se ejecuta si ocurrió un error
-        println("Error en autenticación: ${exception.message}")
-    }</code></pre>
-            </div>
-
-            <div class="info-box warning">
-                <p><strong>Nota importante:</strong> Con <code>addOnSuccessListener</code>, recibes directamente el objeto <code>AuthResult</code> porque el listener solo se ejecuta cuando la operación es exitosa.</p>
-            </div>
-
-            <h3>Objeto AuthResult y FirebaseUser</h3>
-            <p>El objeto <code>AuthResult</code> contiene información sobre el resultado de la autenticación. Su propiedad <code>user</code> devuelve un objeto <code>FirebaseUser</code> con los siguientes datos:</p>
-
-            <div class="feature-list">
-                <div class="feature-item">
-                    <strong>uid</strong>
-                    Identificador único del usuario (String)
-                </div>
-                <div class="feature-item">
-                    <strong>email</strong>
-                    Correo electrónico del usuario (String?)
-                </div>
-                <div class="feature-item">
-                    <strong>displayName</strong>
-                    Nombre para mostrar (String?)
-                </div>
-                <div class="feature-item">
-                    <strong>photoUrl</strong>
-                    URL de la foto de perfil (Uri?)
-                </div>
-                <div class="feature-item">
-                    <strong>isEmailVerified</strong>
-                    Estado de verificación del email (Boolean)
-                </div>
-                <div class="feature-item">
-                    <strong>phoneNumber</strong>
-                    Número de teléfono (String?)
-                </div>
-            </div>
+        <div class="info">
+            <strong>Objeto Task&lt;AuthResult&gt;:</strong><br>
+            • <code>isSuccessful</code>: Boolean - Indica si la operación fue exitosa<br>
+            • <code>exception</code>: Exception? - Contiene el error si hubo uno<br>
+            • <code>result</code>: AuthResult? - Contiene el resultado si fue exitoso
         </div>
 
-        <div class="section" id="stateflow">
-            <h2>🔄 Integración con StateFlow y Compose</h2>
-            
-            <h3>Gestión del estado en el ViewModel</h3>
-            <p>Para comunicar el estado de autenticación desde el ViewModel hacia la UI, utilizamos StateFlow:</p>
+        <h3>2. addOnSuccessListener</h3>
+        <p>Se ejecuta <strong>solo si la operación fue exitosa</strong>. Recibe directamente el objeto <code>AuthResult</code>, lo que simplifica el código cuando solo te interesa el caso de éxito.</p>
 
-            <div class="code-block" data-lang="kotlin">
-<pre><code>class AuthViewModel : ViewModel() {
+        <pre><code>firebaseAuth.createUserWithEmailAndPassword(email, password)
+    .addOnSuccessListener { authResult ->
+        // Solo se ejecuta si fue exitoso
+        val user = authResult.user
+        println("Usuario: ${user?.email}")
+    }
+    .addOnFailureListener { exception ->
+        // Solo se ejecuta si hubo error
+        println("Error: ${exception.message}")
+    }</code></pre>
+
+        <h3>Objeto FirebaseUser</h3>
+        <p>Cuando la autenticación es exitosa, obtienes un objeto <code>FirebaseUser</code> que contiene la información del usuario autenticado:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Propiedad</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>uid</code></td>
+                    <td>String</td>
+                    <td>ID único del usuario</td>
+                </tr>
+                <tr>
+                    <td><code>email</code></td>
+                    <td>String?</td>
+                    <td>Email del usuario</td>
+                </tr>
+                <tr>
+                    <td><code>displayName</code></td>
+                    <td>String?</td>
+                    <td>Nombre del usuario</td>
+                </tr>
+                <tr>
+                    <td><code>photoUrl</code></td>
+                    <td>Uri?</td>
+                    <td>URL de la foto de perfil</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Implementación en ViewModel</h2>
+
+        <p>Para exponer el estado de la autenticación a la UI, utilizamos <code>StateFlow</code>, que es un flujo de datos observable en Kotlin:</p>
+
+        <pre><code>class AuthViewModel : ViewModel() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     
     // StateFlow privado (mutable)
-    private val _firebaseUser = MutableStateFlow<FirebaseUser?>(null)
+    private val _firebaseUser = MutableStateFlow&lt;FirebaseUser?&gt;(null)
     
     // StateFlow público (inmutable)
-    val firebaseUser: StateFlow<FirebaseUser?> = _firebaseUser
+    val firebaseUser: StateFlow&lt;FirebaseUser?&gt; = _firebaseUser
     
     fun createUser(email: String, password: String) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult ->
-                // Actualizar el estado
-                _firebaseUser.value = authResult.user
-            }
-            .addOnFailureListener { exception ->
-                // Manejar error (veremos más adelante con Sealed Classes)
-                println("Error: ${exception.message}")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Actualizar el estado con el usuario autenticado
+                    _firebaseUser.value = task.result?.user
+                } else {
+                    // Actualizar con null en caso de error
+                    _firebaseUser.value = null
+                }
             }
     }
 }</code></pre>
-            </div>
 
-            <h3>Observando el estado en Compose</h3>
-            <p>En tu composable, observa el StateFlow usando <code>collectAsState()</code>:</p>
+        <h2>Integración con Jetpack Compose</h2>
 
-            <div class="code-block" data-lang="kotlin">
-<pre><code>@Composable
-fun LoginScreen(viewModel: AuthViewModel) {
-    // Convertir StateFlow a State observable por Compose
-    val firebaseUser by viewModel.firebaseUser.collectAsState()
+        <p>En la UI, utilizamos <code>collectAsState()</code> para convertir el <code>StateFlow</code> en un <code>State</code> observable por Compose:</p>
+
+        <pre><code>@Composable
+fun RegisterScreen(viewModel: AuthViewModel) {
     val context = LocalContext.current
     
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        // ... campos de email y password
+    // Observar el estado del usuario
+    val firebaseUser by viewModel.firebaseUser.collectAsState()
+    
+    Column {
+        // UI de registro...
         
-        Button(onClick = { 
-            viewModel.createUser(email, password) 
+        Button(onClick = {
+            viewModel.createUser(email, password)
         }) {
             Text("Registrar")
         }
         
-        // Reaccionar a cambios de estado
-        if (firebaseUser != null) {
-            LaunchedEffect(firebaseUser) {
+        // Reaccionar al cambio de estado
+        LaunchedEffect(firebaseUser) {
+            firebaseUser?.let { user ->
+                println("Email: ${user.email}")
+                println("Name: ${user.displayName}")
+                println("UID: ${user.uid}")
                 Toast.makeText(
-                    context,
-                    "Usuario creado: ${firebaseUser?.email}",
+                    context, 
+                    "Usuario creado exitosamente", 
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
     }
 }</code></pre>
-            </div>
 
-            <div class="info-box">
-                <p><strong>collectAsState():</strong> Convierte un Flow en un State que Compose puede observar, lo que permite que la UI se recomponga automáticamente cuando el valor cambia.</p>
-            </div>
+        <div class="warning">
+            <strong>Nota importante:</strong> Al crear un usuario con email y contraseña, <code>displayName</code> será <code>null</code> por defecto, ya que solo se proporciona el email y contraseña. Para establecer un nombre, debes actualizarlo explícitamente.
+        </div>
 
-            <h3>Actualizando el perfil del usuario</h3>
-            <p>Por defecto, el <code>displayName</code> es <code>null</code> al crear un usuario con email/password. Para actualizarlo:</p>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>val user = FirebaseAuth.getInstance().currentUser
+        <h3>Actualizar el Perfil del Usuario</h3>
+        <pre><code>val user = FirebaseAuth.getInstance().currentUser
 
 val profileUpdates = userProfileChangeRequest {
     displayName = "Juan Pérez"
-    photoUri = Uri.parse("https://ejemplo.com/foto.jpg")
+    photoUri = Uri.parse("https://example.com/photo.jpg")
 }
 
 user?.updateProfile(profileUpdates)
-    ?.addOnSuccessListener {
-        println("Perfil actualizado correctamente")
-    }
-    ?.addOnFailureListener { exception ->
-        println("Error al actualizar perfil: ${exception.message}")
+    ?.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            println("Perfil actualizado")
+        }
     }</code></pre>
-            </div>
 
-            <div class="info-box warning">
-                <p><strong>Recomendación:</strong> Para almacenar información adicional del usuario (biografía, preferencias, etc.), es mejor utilizar Firestore o Realtime Database. Firebase Auth solo debe gestionar la autenticación, mientras que las bases de datos manejan los datos del perfil.</p>
-            </div>
+        <div class="info">
+            <strong>Recomendación:</strong> Para almacenar información adicional del usuario (edad, dirección, preferencias, etc.), es mejor utilizar Firestore o Realtime Database:
+            <ul>
+                <li><strong>Auth:</strong> Solo para autenticación</li>
+                <li><strong>Firestore/Realtime DB:</strong> Para datos del perfil y otra información</li>
+            </ul>
         </div>
 
-        <div class="section" id="sealed">
-            <h2>🔒 Sealed Classes para Gestión de Estados</h2>
-            
-            <h3>¿Qué es una Sealed Class?</h3>
-            <p>Una <strong>sealed class</strong> representa un conjunto cerrado de tipos. "Cerrado" significa que solo ciertas clases pueden heredar de ella y deben estar definidas en el mismo archivo.</p>
+        <h2>Manejo de Errores con Sealed Classes</h2>
 
-            <div class="info-box">
-                <p><strong>Ventajas:</strong>
-                    <br>• Representa estados mutuamente excluyentes de forma segura
-                    <br>• El compilador conoce todos los subtipos posibles
-                    <br>• Permite exhaustividad en expresiones <code>when</code>
-                    <br>• Evita errores por estados no manejados
-                </p>
-            </div>
+        <p>Una <strong>sealed class</strong> representa un conjunto cerrado de tipos. Solo las clases definidas dentro del mismo archivo pueden heredar de ella, lo que garantiza seguridad en tiempo de compilación.</p>
 
-            <h3>Diseño de UiState</h3>
-            <p>Creamos una sealed class genérica para representar diferentes estados de la UI:</p>
+        <h3>Características de Sealed Classes</h3>
+        <ul>
+            <li>Define un número limitado de subtipos posibles</li>
+            <li>Todas las subclases deben estar en el mismo archivo</li>
+            <li>No se puede instanciar directamente</li>
+            <li>Permite usar <code>when</code> exhaustivo sin else</li>
+            <li>Implementa polimorfismo de manera segura</li>
+        </ul>
 
-            <div class="code-block" data-lang="kotlin">
-<pre><code>sealed class UiState<out T> {
-    // Estado inicial - no se ha realizado ninguna acción
-    object Idle : UiState<Nothing>()
+        <h3>Implementación de UiState</h3>
+        <pre><code>sealed class UiState&lt;out T&gt; {
+    // Estado inicial
+    object Idle : UiState&lt;Nothing&gt;()
     
-    // Estado de carga - operación en progreso
-    object Loading : UiState<Nothing>()
+    // Estado de carga
+    object Loading : UiState&lt;Nothing&gt;()
     
-    // Estado de éxito - operación completada con datos
-    data class Success<T>(val data: T?) : UiState<T>()
+    // Estado de error con mensaje
+    data class Error(val message: String) : UiState&lt;Nothing&gt;()
     
-    // Estado de error - operación falló
-    data class Error(val message: String) : UiState<Nothing>()
+    // Estado de éxito con datos
+    data class Success&lt;T&gt;(val data: T?) : UiState&lt;T&gt;()
 }</code></pre>
-            </div>
 
-            <div class="info-box">
-                <p><strong>Sobre los genéricos:</strong>
-                    <br>• <code>T</code>: Tipo genérico que se define al usar la clase
-                    <br>• <code>Nothing</code>: Tipo especial que indica que no hay valor (tipo "vacío")
-                    <br>• <code>out T</code>: Covarianza - permite devolver subtipos de T
-                </p>
-            </div>
+        <div class="concept-box">
+            <strong>Genéricos en Sealed Classes:</strong><br>
+            • <code>Nothing</code>: Tipo especial que representa la ausencia de valor<br>
+            • <code>T</code>: Tipo genérico que se define al momento de usar la clase<br>
+            • <code>out T</code>: Covarianza - el tipo T solo puede ser retornado, no recibido como parámetro
+        </div>
 
-            <h3>Implementación en el ViewModel</h3>
-            <div class="code-block" data-lang="kotlin">
-<pre><code>class AuthViewModel : ViewModel() {
+        <h3>Uso en ViewModel</h3>
+        <pre><code>class AuthViewModel : ViewModel() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     
-    private val _authState = MutableStateFlow<UiState<FirebaseUser>>(UiState.Idle)
-    val authState: StateFlow<UiState<FirebaseUser>> = _authState
+    private val _authState = MutableStateFlow&lt;UiState&lt;FirebaseUser&gt;&gt;(UiState.Idle)
+    val authState: StateFlow&lt;UiState&lt;FirebaseUser&gt;&gt; = _authState
     
     fun createUser(email: String, password: String) {
         // Cambiar a estado de carga
@@ -392,347 +302,109 @@ user?.updateProfile(profileUpdates)
         
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
-                // Éxito - actualizar con el usuario
+                // Estado de éxito
                 _authState.value = UiState.Success(authResult.user)
             }
             .addOnFailureListener { exception ->
-                // Error - actualizar con mensaje de error
+                // Estado de error
                 _authState.value = UiState.Error(
                     exception.message ?: "Error desconocido"
                 )
             }
     }
-    
-    fun signIn(email: String, password: String) {
-        _authState.value = UiState.Loading
-        
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult ->
-                _authState.value = UiState.Success(authResult.user)
-            }
-            .addOnFailureListener { exception ->
-                _authState.value = UiState.Error(
-                    exception.message ?: "Error al iniciar sesión"
-                )
-            }
-    }
 }</code></pre>
-            </div>
 
-            <h3>Uso en Compose con when</h3>
-            <p>En tu composable, maneja todos los estados posibles con una expresión <code>when</code>:</p>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>@Composable
-fun AuthScreen(viewModel: AuthViewModel) {
-    val authState by viewModel.authState.collectAsState()
+        <h3>Manejo en la UI</h3>
+        <pre><code>@Composable
+fun RegisterScreen(viewModel: AuthViewModel) {
     val context = LocalContext.current
+    val authState by viewModel.authState.collectAsState()
     
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // ... campos de formulario
+    Column {
+        // UI de registro...
         
-        Button(onClick = { 
-            viewModel.createUser(email, password) 
+        Button(onClick = {
+            viewModel.createUser(email, password)
         }) {
             Text("Registrar")
         }
         
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Manejar estados con when
+        // Manejo exhaustivo de estados
         when (val state = authState) {
             is UiState.Idle -> {
-                // Estado inicial - no mostrar nada especial
+                // Estado inicial, no hacer nada
             }
             
             is UiState.Loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(48.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text("Procesando...", style = MaterialTheme.typography.bodyMedium)
-            }
-            
-            is UiState.Success -> {
-                LaunchedEffect(state) {
-                    Toast.makeText(
-                        context,
-                        "Bienvenido ${state.data?.email}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // Navegar a la siguiente pantalla
-                }
+                CircularProgressIndicator()
             }
             
             is UiState.Error -> {
-                Text(
-                    text = "❌ ${state.message}",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                
-                LaunchedEffect(state) {
-                    Toast.makeText(
-                        context,
-                        state.message,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                Toast.makeText(
+                    context, 
+                    state.message, 
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            
+            is UiState.Success -> {
+                val user = state.data
+                Toast.makeText(
+                    context, 
+                    "Bienvenido ${user?.email}", 
+                    Toast.LENGTH_SHORT
+                ).show()
+                // Navegar a la siguiente pantalla
             }
         }
     }
 }</code></pre>
-            </div>
 
-            <div class="info-box success">
-                <p><strong>Ventaja de usar when:</strong> El compilador de Kotlin verifica que manejes todos los casos posibles de la sealed class. Si agregas un nuevo estado, el compilador te alertará sobre los lugares donde falta manejarlo.</p>
-            </div>
-        </div>
+        <h2>Errores Comunes de Firebase Auth</h2>
 
-        <div class="section" id="mejores-practicas">
-            <h2>✨ Mejores Prácticas</h2>
-            
-            <h3>1. Validación de datos</h3>
-            <div class="code-block" data-lang="kotlin">
-<pre><code>fun validateEmail(email: String): Boolean {
-    return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-}
+        <table>
+            <thead>
+                <tr>
+                    <th>Código de Error</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ERROR_INVALID_EMAIL</code></td>
+                    <td>El email no tiene un formato válido</td>
+                </tr>
+                <tr>
+                    <td><code>ERROR_WEAK_PASSWORD</code></td>
+                    <td>La contraseña es demasiado débil (menos de 6 caracteres)</td>
+                </tr>
+                <tr>
+                    <td><code>ERROR_EMAIL_ALREADY_IN_USE</code></td>
+                    <td>El email ya está registrado</td>
+                </tr>
+                <tr>
+                    <td><code>ERROR_USER_NOT_FOUND</code></td>
+                    <td>No existe un usuario con ese email</td>
+                </tr>
+                <tr>
+                    <td><code>ERROR_WRONG_PASSWORD</code></td>
+                    <td>La contraseña es incorrecta</td>
+                </tr>
+            </tbody>
+        </table>
 
-fun validatePassword(password: String): Boolean {
-    return password.length >= 6
-}
+        <h2>Resumen de Buenas Prácticas</h2>
 
-// En el ViewModel
-fun createUser(email: String, password: String) {
-    when {
-        !validateEmail(email) -> {
-            _authState.value = UiState.Error("Email inválido")
-            return
-        }
-        !validatePassword(password) -> {
-            _authState.value = UiState.Error("La contraseña debe tener al menos 6 caracteres")
-            return
-        }
-    }
-    
-    // Continuar con el registro
-    _authState.value = UiState.Loading
-    // ...
-}</code></pre>
-            </div>
-
-            <h3>2. Manejo de errores específicos</h3>
-            <div class="code-block" data-lang="kotlin">
-<pre><code>import com.google.firebase.auth.FirebaseAuthException
-
-fun handleAuthException(exception: Exception): String {
-    return when (exception) {
-        is FirebaseAuthException -> {
-            when (exception.errorCode) {
-                "ERROR_EMAIL_ALREADY_IN_USE" -> 
-                    "Este correo ya está registrado"
-                "ERROR_INVALID_EMAIL" -> 
-                    "Formato de correo inválido"
-                "ERROR_WEAK_PASSWORD" -> 
-                    "La contraseña es muy débil"
-                "ERROR_WRONG_PASSWORD" -> 
-                    "Contraseña incorrecta"
-                "ERROR_USER_NOT_FOUND" -> 
-                    "Usuario no encontrado"
-                else -> 
-                    exception.message ?: "Error de autenticación"
-            }
-        }
-        else -> exception.message ?: "Error desconocido"
-    }
-}
-
-// Uso en el listener
-.addOnFailureListener { exception ->
-    val errorMessage = handleAuthException(exception)
-    _authState.value = UiState.Error(errorMessage)
-}</code></pre>
-            </div>
-
-            <h3>3. Verificación de sesión al iniciar</h3>
-            <div class="code-block" data-lang="kotlin">
-<pre><code>class AuthViewModel : ViewModel() {
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    
-    init {
-        checkCurrentUser()
-    }
-    
-    private fun checkCurrentUser() {
-        val currentUser = firebaseAuth.currentUser
-        _authState.value = if (currentUser != null) {
-            UiState.Success(currentUser)
-        } else {
-            UiState.Idle
-        }
-    }
-}</code></pre>
-            </div>
-
-            <h3>4. Separación de responsabilidades</h3>
-            <p>Es recomendable crear un repositorio para encapsular la lógica de Firebase:</p>
-
-            <div class="code-block" data-lang="kotlin">
-<pre><code>// AuthRepository.kt
-class AuthRepository {
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    
-    suspend fun createUser(email: String, password: String): Result<FirebaseUser> {
-        return try {
-            val result = firebaseAuth
-                .createUserWithEmailAndPassword(email, password)
-                .await()
-            Result.success(result.user!!)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    
-    suspend fun signIn(email: String, password: String): Result<FirebaseUser> {
-        return try {
-            val result = firebaseAuth
-                .signInWithEmailAndPassword(email, password)
-                .await()
-            Result.success(result.user!!)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    
-    fun signOut() {
-        firebaseAuth.signOut()
-    }
-    
-    fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
-}
-
-// ViewModel actualizado
-class AuthViewModel(
-    private val authRepository: AuthRepository
-) : ViewModel() {
-    
-    private val _authState = MutableStateFlow<UiState<FirebaseUser>>(UiState.Idle)
-    val authState: StateFlow<UiState<FirebaseUser>> = _authState
-    
-    fun createUser(email: String, password: String) {
-        viewModelScope.launch {
-            _authState.value = UiState.Loading
-            
-            authRepository.createUser(email, password)
-                .onSuccess { user ->
-                    _authState.value = UiState.Success(user)
-                }
-                .onFailure { exception ->
-                    _authState.value = UiState.Error(
-                        handleAuthException(exception)
-                    )
-                }
-        }
-    }
-}</code></pre>
-            </div>
-
-            <h3>5. Almacenamiento de datos adicionales</h3>
-            <div class="code-block" data-lang="kotlin">
-<pre><code>// UserProfile.kt
-data class UserProfile(
-    val uid: String,
-    val email: String,
-    val displayName: String,
-    val photoUrl: String? = null,
-    val createdAt: Long = System.currentTimeMillis()
-)
-
-// Después de crear el usuario
-firebaseAuth.createUserWithEmailAndPassword(email, password)
-    .addOnSuccessListener { authResult ->
-        val user = authResult.user!!
-        
-        // Guardar perfil en Firestore
-        val userProfile = UserProfile(
-            uid = user.uid,
-            email = user.email!!,
-            displayName = displayName
-        )
-        
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(user.uid)
-            .set(userProfile)
-            .addOnSuccessListener {
-                _authState.value = UiState.Success(user)
-            }
-    }</code></pre>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>📚 Resumen de Conceptos Clave</h2>
-            
-            <div class="feature-list">
-                <div class="feature-item">
-                    <strong>FirebaseAuth</strong>
-                    Clase principal para gestionar autenticación
-                </div>
-                <div class="feature-item">
-                    <strong>StateFlow</strong>
-                    Para comunicar estados del ViewModel a la UI
-                </div>
-                <div class="feature-item">
-                    <strong>Sealed Class</strong>
-                    Para representar estados mutuamente excluyentes
-                </div>
-                <div class="feature-item">
-                    <strong>Listeners</strong>
-                    Callbacks para manejar resultados asíncronos
-                </div>
-                <div class="feature-item">
-                    <strong>Validación</strong>
-                    Esencial antes de realizar operaciones
-                </div>
-                <div class="feature-item">
-                    <strong>Repository Pattern</strong>
-                    Separar lógica de datos del ViewModel
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>🎓 Conclusión</h2>
-            <p>
-                Firebase Authentication proporciona una solución robusta y fácil de implementar para la autenticación de usuarios. 
-                Al combinarla con arquitecturas modernas como MVVM, StateFlow y Sealed Classes, puedes crear aplicaciones 
-                Android seguras y mantenibles.
-            </p>
-            <p>
-                Recuerda siempre validar los datos del usuario, manejar errores de forma específica y separar las responsabilidades 
-                usando el patrón Repository para facilitar el testing y el mantenimiento de tu código.
-            </p>
-            
-            <div class="info-box success">
-                <p><strong>Siguiente paso:</strong> Explora otros métodos de autenticación como Google Sign-In, autenticación con número telefónico, o autenticación anónima para ofrecer más opciones a tus usuarios.</p>
-            </div>
-        </div>
+        <ol>
+            <li><strong>Usar StateFlow</strong> para exponer el estado de autenticación al UI</li>
+            <li><strong>Implementar Sealed Classes</strong> para manejar diferentes estados (Loading, Success, Error)</li>
+            <li><strong>Separar responsabilidades:</strong> Auth para autenticación, Firestore/Realtime DB para datos</li>
+            <li><strong>Validar entradas</strong> antes de enviarlas a Firebase</li>
+            <li><strong>Manejar errores apropiadamente</strong> con mensajes claros para el usuario</li>
+            <li><strong>Usar LaunchedEffect</strong> en Compose para reaccionar a cambios de estado</li>
+            <li><strong>No almacenar contraseñas</strong> en texto plano ni en SharedPreferences</li>
+        </ol>
 
     </div>
-
-    <div class="footer">
-        <p>Documentación creada para desarrolladores Android • Firebase Authentication Guide</p>
-        <p style="margin-top: 0.5rem;">
-            <span class="badge primary">Kotlin</span>
-            <span class="badge secondary">Jetpack Compose</span>
-            <span class="badge accent">Firebase</span>
-        </p>
-    </div>
-
 </body>
 </html>
