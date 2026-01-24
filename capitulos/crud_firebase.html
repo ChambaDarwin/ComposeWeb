@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD en Firebase Realtime Database</title>
+     <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="google-adsense-account" content="ca-pub-4427236235707034">
+    <link rel="stylesheet" href="../style/realtime.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CRUD en Firebase Realtime Database</h1>
+            <p>Tutorial completo con Kotlin y Firebase</p>
+        </header>
+
+        <div class="content">
+            <!-- Video Tutorial -->
+            <h2>📹 Video Tutorial</h2>
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                    title="CRUD Firebase Realtime Database Tutorial" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p><em>Nota: Reemplaza el ID del video de YouTube en el código con tu video real</em></p>
+
+            <!-- Dependencias -->
+            <h2>📦 Dependencias necesarias</h2>
+            <p>Para implementar un CRUD en Firebase Realtime Database, necesitarás agregar las siguientes dependencias en tu archivo <code>build.gradle</code> a nivel de aplicación:</p>
+            
+            <pre><code>implementation("com.google.firebase:firebase-database-ktx")
+implementation("com.google.code.gson:gson:2.10.1")</code></pre>
+
+            <p>La dependencia principal que utilizaremos es:</p>
+            <pre><code>implementation("com.google.firebase:firebase-database-ktx")</code></pre>
+
+            <!-- Referencia -->
+            <h2>🔗 Obtener una referencia a la base de datos</h2>
+            <p>Cuando seleccionas Realtime Database en Firebase, obtienes una URL raíz similar a esta:</p>
+            <pre><code>https://pruebas-a5600-default-rtdb.firebaseio.com/</code></pre>
+
+            <p>Para obtener una referencia a un nodo específico de la base de datos:</p>
+            <pre><code>val database = FirebaseDatabase.getInstance().getReference("products")</code></pre>
+
+            <div class="info-box">
+                <strong>¿Qué hace getReference("products")?</strong>
+                <p>Este método obtiene una referencia al nodo <code>products</code> de la base de datos. Esta referencia apunta a la ruta <code>/products</code>, y todas las operaciones (como <code>setValue</code>, <code>push</code>, etc.) se realizarán dentro de este nodo. Si el nodo <code>products</code> no existe, Firebase lo creará automáticamente cuando escribas datos en él.</p>
+            </div>
+
+            <h3>Ejemplo de ruta completa:</h3>
+            <pre><code>https://pruebas-a5600-default-rtdb.firebaseio.com/products</code></pre>
+
+            <!-- Insertar -->
+            <h2>➕ Insertar datos (CREATE)</h2>
+            <p>Para insertar datos en la base de datos, utilizamos el método <code>setValue()</code>. Antes de insertar, es importante crear una referencia a un subnodo único usando <code>push().key</code>, ya que si no lo hacemos, los datos se sobrescribirán entre sí.</p>
+
+            <pre><code>val uid = database.push().key!!
+val product = Product(id = uid, precio = 34.5f, nameProduct = "teclado")
+database.child(uid).setValue(product)</code></pre>
+
+            <h3>Explicación:</h3>
+            <ul>
+                <li><code>push().key</code> genera un ID único para cada producto</li>
+                <li><code>child(uid)</code> crea una referencia al subnodo con ese ID</li>
+                <li><code>setValue(product)</code> guarda el objeto en ese nodo</li>
+            </ul>
+
+            <!-- Leer -->
+            <h2>📖 Leer datos (READ)</h2>
+            <p>Para recuperar los registros de la base de datos, utilizamos el método <code>addValueEventListener()</code>. Este método recibe como parámetro un <code>ValueEventListener</code>, que es una interfaz con métodos que debemos implementar.</p>
+
+            <p>Usamos <code>object</code> para crear un objeto anónimo que implemente esta interfaz. Esto es útil cuando solo necesitamos usar la implementación una vez, evitando crear una clase completa.</p>
+
+            <pre><code>database.addValueEventListener(object : ValueEventListener {
+    override fun onDataChange(snapshot: DataSnapshot) {
+        val lista = mutableListOf&lt;Product&gt;()
+        
+        for (data in snapshot.children) {
+            val product = data.getValue(Product::class.java)
+            product?.let {
+                lista.add(it)
+            }
+        }
+    }
+
+    override fun onCancelled(error: DatabaseError) {
+        // Manejar errores
+    }
+})</code></pre>
+
+            <div class="info-box">
+                <strong>¿Qué hace getValue(Product::class.java)?</strong>
+                <p>Este método toma el JSON almacenado en ese nodo y lo deserializa (convierte) a un objeto de tipo <code>Product</code>.</p>
+            </div>
+
+            <h3>Proceso de deserialización:</h3>
+            <ol>
+                <li>Firebase lee el JSON en ese nodo</li>
+                <li>Compara las propiedades del JSON con los atributos de la clase <code>Product</code></li>
+                <li>Crea un objeto <code>Product</code> y asigna los valores del JSON a sus propiedades</li>
+            </ol>
+
+            <div class="important-box">
+                <strong>⚠️ Importante:</strong>
+                <p>La clase <code>Product</code> debe tener un constructor vacío para que Firebase pueda crear instancias del objeto correctamente.</p>
+            </div>
+
+            <pre><code>data class Product(
+    var id: String = "",
+    var precio: Float = 0f,
+    var nameProduct: String = ""
+)</code></pre>
+
+            <!-- Eliminar -->
+            <h2>🗑️ Eliminar datos (DELETE)</h2>
+            <p>Para eliminar un registro, necesitamos el ID del producto que queremos eliminar:</p>
+
+            <pre><code>fun eliminarProducto(id: String) {
+    database.child(id).removeValue()
+}</code></pre>
+
+            <h3>¿Cómo funciona?</h3>
+            <p>Recordemos que <code>database</code> apunta al nodo <code>products</code>:</p>
+            <pre><code>https://pruebas-a5600-default-rtdb.firebaseio.com/products</code></pre>
+
+            <p>Cuando usamos <code>child(id)</code>, creamos una referencia a un registro específico:</p>
+            <pre><code>https://pruebas-a5600-default-rtdb.firebaseio.com/products/-Oj_zJL9UanHWHcO_LgO</code></pre>
+
+            <p>Finalmente, <code>removeValue()</code> elimina ese registro específico de la base de datos.</p>
+
+            <!-- Modificar -->
+            <h2>✏️ Modificar datos (UPDATE)</h2>
+            <p>Para modificar un registro, seguimos el mismo concepto que para eliminar, pero en lugar de usar <code>removeValue()</code>, utilizamos <code>setValue()</code>:</p>
+
+            <pre><code>fun modificarProducto(id: String, productoActualizado: Product) {
+    database.child(id).setValue(productoActualizado)
+}</code></pre>
+
+            <h3>Proceso:</h3>
+            <ol>
+                <li>Obtenemos la referencia al nodo específico usando <code>child(id)</code></li>
+                <li>Usamos <code>setValue()</code> con el objeto actualizado</li>
+                <li>Firebase reemplaza los datos antiguos con los nuevos</li>
+            </ol>
+
+            <h3>Ejemplo completo:</h3>
+            <pre><code>val productoModificado = Product(
+    id = "-Oj_zJL9UanHWHcO_LgO",
+    precio = 45.0f,
+    nameProduct = "Teclado Mecánico"
+)
+
+database.child(productoModificado.id).setValue(productoModificado)</code></pre>
+
+            <!-- Resumen -->
+            <h2>📋 Resumen de operaciones CRUD</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operación</th>
+                        <th>Método</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Crear</strong></td>
+                        <td><code>child(uid).setValue(objeto)</code></td>
+                        <td>Inserta un nuevo registro con ID único</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Leer</strong></td>
+                        <td><code>addValueEventListener()</code></td>
+                        <td>Escucha cambios y recupera datos</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Actualizar</strong></td>
+                        <td><code>child(id).setValue(objetoActualizado)</code></td>
+                        <td>Modifica un registro existente</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Eliminar</strong></td>
+                        <td><code>child(id).removeValue()</code></td>
+                        <td>Elimina un registro específico</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Navegación -->
+            <div class="nav-buttons">
+                <a href="#" class="btn">← Capítulo Anterior</a>
+                <a href="#" class="btn">Siguiente Capítulo →</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Tutorial Firebase Realtime Database | Desarrollado Full Stack</p>
+        </footer>
+    </div>
+</body>
+</html>
