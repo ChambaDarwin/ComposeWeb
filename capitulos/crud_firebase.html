@@ -23,25 +23,30 @@
             <!-- Video Tutorial -->
             <h2>📹 Video Tutorial</h2>
             <div class="video-container">
-                <iframe 
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-                    title="CRUD Firebase Realtime Database Tutorial" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/aXQJRYK3Ni4?si=2_hSjlly2qGOghau" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <p><em>Nota: Reemplaza el ID del video de YouTube en el código con tu video real</em></p>
 
             <!-- Dependencias -->
             <h2>📦 Dependencias necesarias</h2>
             <p>Para implementar un CRUD en Firebase Realtime Database, necesitarás agregar las siguientes dependencias en tu archivo <code>build.gradle</code> a nivel de aplicación:</p>
-            
-            <pre><code>implementation("com.google.firebase:firebase-database-ktx")
-implementation("com.google.code.gson:gson:2.10.1")</code></pre>
 
-            <p>La dependencia principal que utilizaremos es:</p>
-            <pre><code>implementation("com.google.firebase:firebase-database-ktx")</code></pre>
+              <pre><code>
+    implementation("androidx.navigation:navigation-compose:2.8.4")
+              
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+
+    // Firebase Authentication
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    implementation("com.google.firebase:firebase-database-ktx")
+
+    implementation ("com.google.code.gson:gson:2.10.1")
+    </code></pre>  
+            
+            
 
             <!-- Referencia -->
             <h2>🔗 Obtener una referencia a la base de datos</h2>
