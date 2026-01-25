@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes en Android - Tutorial</title>
+   <link rel="stylesheet" href="../style/galeria.css">
+   <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📸 Seleccionar y Almacenar Imágenes</h1>
+            <p>Guía completa para Android con Jetpack Compose</p>
+        </header>
+
+        <div class="content">
+            <p>En este tutorial aprenderás a seleccionar imágenes desde la galería, almacenarlas en el directorio interno de la aplicación y mostrarlas correctamente en tu app Android.</p>
+
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/tEeikTDmpiU?si=Wnm-4-WJW1YoUuTN" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+
+            <h2>🔧 Dependencias Necesarias</h2>
+            <p>Añade la siguiente dependencia en el archivo <code>build.gradle</code> del módulo de tu aplicación:</p>
+            <pre><code>implementation("io.coil-kt:coil-compose:2.6.0")</code></pre>
+
+            <h2>📂 Activity Result Launcher</h2>
+            <p>Para abrir la galería del teléfono y seleccionar archivos, utilizamos <code>rememberLauncherForActivityResult</code>:</p>
+            <pre><code>val launcher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.GetContent()
+) { uri: Uri? ->
+    // Aquí manejas la URI de la imagen seleccionada
+}</code></pre>
+
+            <p>Este componente nos permite abrir actividades del sistema para realizar acciones como:</p>
+            <ol>
+                <li>Abrir la cámara</li>
+                <li>Seleccionar archivos de la galería</li>
+                <li>Solicitar permisos al usuario</li>
+                <li>Capturar fotografías</li>
+            </ol>
+
+            <p>Recibe como parámetro un <strong>contrato</strong> que define qué se enviará a la actividad y qué resultado se obtendrá.</p>
+
+            <h2>📋 Contratos Disponibles</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Contrato</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>TakePicture()</code></td>
+                        <td>Captura una foto utilizando la cámara del dispositivo</td>
+                    </tr>
+                    <tr>
+                        <td><code>GetContent()</code></td>
+                        <td>Permite elegir cualquier tipo de archivo (imagen, PDF, etc.)</td>
+                    </tr>
+                    <tr>
+                        <td><code>PickVisualMedia()</code></td>
+                        <td>Selector optimizado para imágenes y videos</td>
+                    </tr>
+                    <tr>
+                        <td><code>RequestPermission()</code></td>
+                        <td>Solicita permisos específicos al usuario</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>🖼️ Mostrar una Imagen con AsyncImage</h2>
+            <p>Para mostrar la imagen seleccionada, utiliza el componente <code>AsyncImage</code> de Coil:</p>
+            <pre><code>AsyncImage(
+    model = uri,
+    contentDescription = "Imagen seleccionada",
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(300.dp)
+)</code></pre>
+
+            <h2>💾 Convertir URI a Archivo Físico</h2>
+            <p>Para almacenar permanentemente la imagen en el almacenamiento interno de la aplicación, sigue estos pasos:</p>
+
+            <p><strong>1. Leer la imagen desde su ubicación original:</strong></p>
+            <pre><code>val inputStream = context.contentResolver.openInputStream(uri)!!</code></pre>
+
+            <p><strong>2. Crear un archivo en el directorio privado de la app:</strong></p>
+            <p>El objeto <code>File</code> representa la ubicación donde se guardará la imagen. <code>context.filesDir</code> es una carpeta privada que Android asigna exclusivamente a tu aplicación.</p>
+            <pre><code>val file = File(context.filesDir, "${System.currentTimeMillis()}.jpg")</code></pre>
+
+            <p><strong>3. Crear un flujo de salida para escribir los datos:</strong></p>
+            <pre><code>val outputStream = FileOutputStream(file)</code></pre>
+
+            <p><strong>4. Copiar los bytes y cerrar los flujos:</strong></p>
+            <pre><code>inputStream.copyTo(outputStream)
+inputStream.close()
+outputStream.close()
+return file.absolutePath</code></pre>
+
+            <div class="note">
+                <strong>💡 Nota:</strong> Este proceso copia físicamente la imagen al almacenamiento interno de tu aplicación, permitiendo acceder a ella incluso si el archivo original es eliminado.
+            </div>
+
+            <h2>👁️ Mostrar la Imagen Almacenada</h2>
+            <p><strong>1. Crear un objeto File con la ruta:</strong></p>
+            <p>Este objeto apunta a la ubicación física del archivo en el sistema de archivos de Android.</p>
+            <pre><code>val file = File(ruta)</code></pre>
+
+            <p><strong>2. Validar existencia y decodificar la imagen:</strong></p>
+            <pre><code>if (file.exists()) {
+    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+    bitmap?.let {
+        Image(
+            bitmap = it.asImageBitmap(),
+            contentDescription = "Imagen almacenada",
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}</code></pre>
+
+            <p>El método <code>asImageBitmap()</code> convierte el bitmap al formato que utiliza Jetpack Compose.</p>
+
+            <h2>📋 Listar Todas las Imágenes Almacenadas</h2>
+            <p>Para obtener todos los archivos guardados en el directorio privado:</p>
+            <pre><code>context.filesDir.listFiles()?.forEach { file ->
+    println("Archivo: ${file.name}")
+}</code></pre>
+
+            <h2>🗑️ Eliminar Imágenes</h2>
+            <p>Para eliminar todas las imágenes almacenadas:</p>
+            <pre><code>context.filesDir.listFiles()?.forEach { file ->
+    file.delete()
+}</code></pre>
+
+            <p>Para eliminar un archivo específico:</p>
+            <pre><code>val file = File(ruta)
+if (file.exists()) {
+    file.delete()
+}</code></pre>
+        </div>
+
+        <footer>
+            <p>Tutorial de Android Development • Jetpack Compose</p>
+        </footer>
+    </div>
+</body>
+</html>
