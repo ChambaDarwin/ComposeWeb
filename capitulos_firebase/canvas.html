@@ -1,219 +1,522 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Guía: Crear y Enviar Imágenes Personalizadas por WhatsApp en Android</title>
+    <link rel="stylesheet" href="../style_firebase/canvas.css">
+  
 </head>
 <body>
-    <h1>Como enviar una imagen personalizada a Whatsapp</h1>
-    <p>mira el video completo paso a paso</p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/D9FhcdsV3_A?si=4-4r6YWVlO83wKaj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-    <h2>dependencias</h2>
-    <pre><code>
-        nivel de la aplicacion son:
+    <div class="container">
+        <header>
+            <h1>📱 Cómo Enviar Imágenes Personalizadas por WhatsApp</h1>
+            <p class="subtitle">Guía completa para crear gráficos con Canvas en Android</p>
+        </header>
 
-  implementation("androidx.compose.foundation:foundation:1.6.0")
+        <section class="section">
+            <h2>🎥 Video Tutorial</h2>
+            <p>Mira el video completo paso a paso para entender el proceso completo:</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/D9FhcdsV3_A?si=4-4r6YWVlO83wKaj" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </section>
 
-    // Compose UI (requerido para gráficos)
+        <section class="section">
+            <h2>📦 Dependencias Necesarias</h2>
+            <p>Agrega las siguientes dependencias en el archivo <code>build.gradle</code> a nivel de módulo (app):</p>
+            <pre><code>dependencies {
+    // Compose Foundation para gráficos
+    implementation("androidx.compose.foundation:foundation:1.6.0")
+
+    // Compose UI (requerido para Canvas)
     implementation("androidx.compose.ui:ui:1.6.0")
 
     // Compose UI Graphics (para Paint, Path, etc.)
     implementation("androidx.compose.ui:ui-graphics:1.6.0")
+}</code></pre>
+            
+            <div class="info">
+                <strong>💡 Nota:</strong> Si trabajas con Views tradicionales de Android (no Compose), solo necesitas el SDK de Android estándar ya que <code>android.graphics.Canvas</code> viene incluido.
+            </div>
+        </section>
 
-    </code></pre>
-    <h2>Como crear una imagen con Canvas</h2>
-    <p>lo primero que haremos sera definir la superficie donde vamos a dibujar y el tamaño y la calidad de la imagen para ello creamos un objeto de tipo BitMap que recibe tres parametros el primero es el ancho el segundo es la altura y el tercero es la calidad de la imagen</p>
-    <pre><code>
-        val bitmap = createBitMap(800,600,BitMap.Config.ARGB_8888)
-    </code></pre>
-    <h2>Como crear un objeto Canvas</h2>
-    <p>este objeto ejecuta todas las operaciones que se va a dibujar en el Bitmap por ende recibe como parametro el objeto bitmap que creamos en el paso anterior,  entonces  creamos un objeto de la siguiente forma</p>
-    <pre><code>
-        val canvas = android.grapics.Canvas(bitmap)
-    </code></pre>
-<h2>Importante</h2>
-<p>debes utilizar el import android.grapics.Canvas</p>
+        <section class="section">
+            <h2>🎨 Conceptos Fundamentales</h2>
+            
+            <h3>1. Crear un Bitmap (Lienzo)</h3>
+            <p>El <code>Bitmap</code> es la superficie donde dibujaremos nuestra imagen. Piensa en él como un lienzo en blanco con dimensiones específicas y calidad de color.</p>
+            
+            <pre><code>val bitmap = Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888)</code></pre>
+            
+            <table>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><code>800</code></td>
+                    <td>Ancho en píxeles</td>
+                </tr>
+                <tr>
+                    <td><code>600</code></td>
+                    <td>Alto en píxeles</td>
+                </tr>
+                <tr>
+                    <td><code>ARGB_8888</code></td>
+                    <td>Configuración de color (32 bits: 8 bits para Alpha, Red, Green, Blue)</td>
+                </tr>
+            </table>
 
-<h2>Como crear un objeto Paint()</h2>
-<p>un objeto paint es como crear un lapiz personalizado con color , grosor etc y puedes crear muchos objetos Paint como desees de la siguiente forma</p>
-<pre><code>
-    val lapizRojo = Pain().apply{
-        color=Color.Red
+            <h3>2. Crear un Canvas (Herramienta de Dibujo)</h3>
+            <p>El <code>Canvas</code> es el objeto que ejecuta todas las operaciones de dibujo sobre el <code>Bitmap</code>. Recibe el bitmap como parámetro.</p>
+            
+            <pre><code>val canvas = Canvas(bitmap)</code></pre>
+            
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Debes utilizar el import correcto:<br>
+                <code>import android.graphics.Canvas</code>
+            </div>
+
+            <h3>3. Crear un Paint (Pincel/Estilo)</h3>
+            <p>El objeto <code>Paint</code> define las características de dibujo: color, grosor, tipo de fuente, etc. Puedes crear múltiples objetos Paint con diferentes estilos.</p>
+            
+            <pre><code>val lapizRojo = Paint().apply {
+    color = Color.RED
+    textSize = 30f
+    isAntiAlias = true
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>📐 Sistema de Coordenadas</h2>
+            <p>En Android Canvas, el sistema de coordenadas funciona de la siguiente manera:</p>
+            
+            <div class="coordinate-diagram">
+<pre>(0,0)────100────200────300────400────500──→ X
+  │
+ 100
+  │
+ 200
+  │
+ 300
+  │
+ 400
+  │
+ 500
+  │
+  ↓
+  Y</pre>
+            </div>
+
+            <div class="info">
+                <strong>💡 Puntos clave:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>El origen (0,0) está en la esquina superior izquierda</li>
+                    <li>X aumenta hacia la derecha</li>
+                    <li>Y aumenta hacia abajo (contrario al plano cartesiano tradicional)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>✏️ Dibujar Texto</h2>
+            <p>El método <code>canvas.drawText()</code> dibuja texto en el canvas. Recibe cuatro parámetros:</p>
+            
+            <pre><code>canvas.drawText("Hola Mundo", 200f, 400f, paintTexto)</code></pre>
+            
+            <table>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>Primer parámetro</td>
+                    <td>String</td>
+                    <td>El texto a mostrar</td>
+                </tr>
+                <tr>
+                    <td>Segundo parámetro</td>
+                    <td>Float</td>
+                    <td>Posición en el eje X</td>
+                </tr>
+                <tr>
+                    <td>Tercer parámetro</td>
+                    <td>Float</td>
+                    <td>Posición en el eje Y (baseline del texto)</td>
+                </tr>
+                <tr>
+                    <td>Cuarto parámetro</td>
+                    <td>Paint</td>
+                    <td>Objeto con las características de estilo</td>
+                </tr>
+            </table>
+
+            <div class="coordinate-diagram">
+<pre>canvas.drawText("Hola Mundo", 200f, 400f, lapizRojo)
+
+(0,0)────100────200────300────400────500──→ X
+  │                │
+ 100               │
+  │                │
+ 200               │
+  │                │
+ 300               │
+  │                │
+ 400───────────Hola Mundo
+  │
+ 500
+  │
+  ↓
+  Y</pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🎨 Propiedades del Paint</h2>
+            
+            <h3>Color</h3>
+            <p>Define el color con el que se dibuja (texto, líneas, formas):</p>
+            <pre><code>paint.apply {
+    color = android.graphics.Color.RED
+    // o usando código hexadecimal
+    color = android.graphics.Color.parseColor("#FF5733")
+}</code></pre>
+
+            <h3>Tamaño de Texto</h3>
+            <pre><code>textSize = 30f  // En píxeles</code></pre>
+
+            <h3>Tipo de Fuente (Typeface)</h3>
+            <pre><code>// Fuentes del sistema
+typeface = Typeface.MONOSPACE
+typeface = Typeface.SERIF
+typeface = Typeface.SANS_SERIF
+
+// Fuentes personalizadas
+typeface = Typeface.create("Arial", Typeface.BOLD)
+typeface = Typeface.create("Arial", Typeface.ITALIC)
+typeface = Typeface.create("Arial", Typeface.BOLD_ITALIC)</code></pre>
+
+            <h3>Grosor de Línea</h3>
+            <pre><code>strokeWidth = 10f  // En píxeles</code></pre>
+
+            <h3>Estilo de Relleno</h3>
+            <pre><code>style = Paint.Style.FILL            // Relleno sólido
+style = Paint.Style.STROKE          // Solo contorno
+style = Paint.Style.FILL_AND_STROKE // Ambos</code></pre>
+
+            <div class="tip">
+                <strong>💡 Tip:</strong> Recuerda definir un color antes de usar Paint.Style.FILL
+            </div>
+
+            <h3>Alineación de Texto</h3>
+            <pre><code>textAlign = Paint.Align.CENTER  // Centrado
+textAlign = Paint.Align.LEFT    // Izquierda (predeterminado)
+textAlign = Paint.Align.RIGHT   // Derecha</code></pre>
+
+            <h3>Espaciado entre Letras</h3>
+            <pre><code>letterSpacing = 0.3f   // Aumenta el espacio
+letterSpacing = -0.05f // Reduce el espacio</code></pre>
+
+            <h3>Suavizado de Bordes (Anti-Aliasing)</h3>
+            <pre><code>isAntiAlias = true  // Bordes más suaves y profesionales</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>📏 Dibujar Líneas</h2>
+            <p>El método <code>drawLine()</code> crea una línea entre dos puntos:</p>
+            
+            <pre><code>canvas.drawLine(startX, startY, endX, endY, paint)
+
+// Ejemplo: Línea vertical
+canvas.drawLine(200f, 200f, 200f, 600f, paintLinea)</code></pre>
+
+            <table>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><code>startX</code></td>
+                    <td>Coordenada X del punto inicial</td>
+                </tr>
+                <tr>
+                    <td><code>startY</code></td>
+                    <td>Coordenada Y del punto inicial</td>
+                </tr>
+                <tr>
+                    <td><code>endX</code></td>
+                    <td>Coordenada X del punto final</td>
+                </tr>
+                <tr>
+                    <td><code>endY</code></td>
+                    <td>Coordenada Y del punto final</td>
+                </tr>
+                <tr>
+                    <td><code>paint</code></td>
+                    <td>Objeto Paint con el estilo</td>
+                </tr>
+            </table>
+
+            <div class="coordinate-diagram">
+<pre>canvas.drawLine(200f, 200f, 200f, 600f, paintLinea)
+
+(0,0)────100────200────300────400────500──→ X
+  │                │
+ 100               │
+  │                │
+ 200               │ ← Inicio (200, 200)
+  │                │
+ 300               │
+  │                │
+ 400               │
+  │                │
+ 500               │
+  │                │
+ 600               │ ← Fin (200, 600)
+  │
+  ↓
+  Y</pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>▭ Dibujar Rectángulos</h2>
+            <p>El método <code>drawRect()</code> crea un rectángulo definido por sus bordes:</p>
+            
+            <pre><code>canvas.drawRect(left, top, right, bottom, paint)
+
+// Ejemplo
+canvas.drawRect(100f, 100f, 400f, 200f, paintRectangulo)</code></pre>
+
+            <table>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><code>left</code></td>
+                    <td>Borde izquierdo (coordenada X donde inicia)</td>
+                </tr>
+                <tr>
+                    <td><code>top</code></td>
+                    <td>Borde superior (coordenada Y donde inicia)</td>
+                </tr>
+                <tr>
+                    <td><code>right</code></td>
+                    <td>Borde derecho (coordenada X donde termina)</td>
+                </tr>
+                <tr>
+                    <td><code>bottom</code></td>
+                    <td>Borde inferior (coordenada Y donde termina)</td>
+                </tr>
+            </table>
+
+            <div class="info">
+                <strong>💡 Cálculo de dimensiones:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Ancho:</strong> right - left</li>
+                    <li><strong>Alto:</strong> bottom - top</li>
+                    <li><strong>Ejemplo:</strong> Si top = 100f y bottom = 200f, la altura será 100f</li>
+                </ul>
+            </div>
+
+            <div class="coordinate-diagram">
+<pre>canvas.drawRect(100f, 100f, 400f, 200f, paint)
+
+(0,0)────100────200────300────400────500──→ X
+  │       │                      │
+ 100      ├──────────────────────┤
+  │       │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│  Alto: 100px
+ 200      └──────────────────────┘
+  │       ←──── Ancho: 300px ────→
+  ↓
+  Y</pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>📐 Mediciones de Texto</h2>
+            
+            <h3>Obtener el Ancho de un Texto</h3>
+            <p>Usa <code>measureText()</code> del objeto Paint para conocer el ancho que ocupará un texto:</p>
+            
+            <pre><code>val paint = Paint().apply {
+    textSize = 30f
+}
+
+val ancho = paint.measureText("Hola Mundo")
+println("El texto ocupa: $ancho píxeles de ancho")</code></pre>
+
+            <h3>Calcular la Altura de un Texto</h3>
+            <p>Utiliza <code>fontMetrics</code> para obtener información sobre la altura del texto:</p>
+            
+            <pre><code>val paint = Paint().apply {
+    textSize = 30f
+}
+
+val metrics = paint.fontMetrics
+val altura = metrics.descent - metrics.ascent
+
+println("Altura del texto: $altura píxeles")</code></pre>
+
+            <div class="warning">
+                <strong>⚠️ Importante sobre ascent:</strong><br>
+                El valor <code>ascent</code> es <strong>negativo</strong> (representa la parte del texto que va hacia arriba desde la línea base). Por eso se resta: <code>descent - ascent</code>. Debido a la ley de signos, esto efectivamente suma ambos valores absolutos.
+            </div>
+
+            <div class="tip">
+                <strong>💡 Uso práctico:</strong> Estas mediciones son esenciales para:
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Centrar texto dinámicamente</li>
+                    <li>Calcular espacios entre líneas</li>
+                    <li>Ajustar el tamaño del bitmap según el contenido</li>
+                    <li>Crear layouts responsivos</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>📤 Compartir la Imagen por WhatsApp</h2>
+            
+            <h3>Paso 1: Configurar FileProvider</h3>
+            <p>Agrega lo siguiente en tu archivo <code>AndroidManifest.xml</code> dentro de la etiqueta <code>&lt;application&gt;</code>:</p>
+            
+            <pre><code>&lt;provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.provider"
+    android:exported="false"
+    android:grantUriPermissions="true"&gt;
+    &lt;meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths"/&gt;
+&lt;/provider&gt;</code></pre>
+
+            <h3>Paso 2: Crear archivo de rutas</h3>
+            <p>Crea un directorio <code>xml</code> en <code>res</code> (si no existe) y dentro crea el archivo <code>file_paths.xml</code>:</p>
+            
+            <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;paths&gt;
+    &lt;cache-path name="images" path="." /&gt;
+&lt;/paths&gt;</code></pre>
+
+            <h3>Paso 3: Guardar y compartir el Bitmap</h3>
+            <pre><code>fun compartirPorWhatsApp(context: Context, bitmap: Bitmap) {
+    try {
+        // Guardar bitmap en caché
+        val cachePath = File(context.cacheDir, "images")
+        cachePath.mkdirs()
+        
+        val file = File(cachePath, "imagen_compartida.png")
+        val fileOutputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+        fileOutputStream.close()
+        
+        // Crear URI con FileProvider
+        val imageUri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.provider",
+            file
+        )
+        
+        // Crear intent para compartir
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, imageUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            setPackage("com.whatsapp") // Específico para WhatsApp
+        }
+        
+        context.startActivity(Intent.createChooser(intent, "Compartir vía"))
+        
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(context, "Error al compartir", Toast.LENGTH_SHORT).show()
     }
-</code></pre>
-<h2>Como escribir texto</h2>
-<p>recuerda que el objeto canvas es el que ejecuta las operaciones de dibujo sobre el bitmap es decir que es la persona que dibuja entonces utilizamos el metodo canvas.drawText() este recibe cuatro parametros el primer parametro es el texto que deseas mostrar el segundo es la posicion en x el tercer parametro es la posicion en y el utltimo parametro es un objeto Paint que contiene todas las caracteristicas</p>
-<p>para escribir utilizamos coordenadas solo recuerda como se trabaja en un plano cartesiano es practicamente igual</p>
-<pre><code>
-    (0,0)----100----200----300----400----500----x
-      |
-      100
-      |
-      200
-      |
-      300
-      |
-      400
-      |
-      500
-      |
-      y  
-</code></pre>
+}</code></pre>
 
-<p>solo debes indicar la posicion donde deseas escribir nada mas por ejemplo</p>
+            <div class="info">
+                <strong>💡 Nota:</strong> Si quieres permitir otras apps además de WhatsApp, simplemente elimina la línea <code>setPackage("com.whatsapp")</code>
+            </div>
+        </section>
 
-<pre><code>
-    canvas.drawText("hola mundo",200,400,lapizRojo)
-    (0,0)----100----200----300----400----500----x
-      |               |
-      100             |
-      |               |
-      200             |
-      |               |
-      300             |
-      |               |
-      400-------------hola mundo
-      |
-      500
-      |
-      y  
-</code></pre>
-<h2>Propiedades importantes del Paint()</h2>
-<p>recuerda que el paint es el pincel con el que dibujamos</p>
-<p>color: Define el color con el que se dibuja: texto, lineas</p>
-<pre><code>
-    color = android.grapics.Color.RED
-    color =android.grapics.Color.parseColor("#FFFFF")
-</code></pre>
-<h2>Texto: Controla el tamaño del texto</h2>
-<pre><code>
-textSize= 30f
-</code></pre>
-<p>typeFace</p>
-<pre><code>
-typeFace= Typeface.MONOSPACE
-typeFace = Typeface.SERIF
-//fuentes personalizadas
-//recibe como segundo parametro un entero asi que asegurante de elegir una opcion que te devuelva un nuemero entero
-typeFace = Typeface.create("Arial",Typeface.Bold)
-</code></pre>
+        <section class="section">
+            <h2>📝 Ejemplo Completo: Ticket de Venta</h2>
+            <pre><code>fun crearTicketVenta(productos: List&lt;Producto&gt;): Bitmap {
+    // Calcular altura dinámica
+    val alturaBase = 500f
+    val alturaPorProducto = 60f
+    val alturaTotal = (alturaBase + productos.size * alturaPorProducto).toInt()
+    
+    val bitmap = Bitmap.createBitmap(800, alturaTotal, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    
+    // Paint para fondo
+    val paintFondo = Paint().apply {
+        color = Color.WHITE
+        style = Paint.Style.FILL
+    }
+    
+    // Paint para título
+    val paintTitulo = Paint().apply {
+        color = Color.BLACK
+        textSize = 50f
+        textAlign = Paint.Align.CENTER
+        typeface = Typeface.create("Arial", Typeface.BOLD)
+        isAntiAlias = true
+    }
+    
+    // Paint para productos
+    val paintProductos = Paint().apply {
+        color = Color.BLUE
+        textSize = 25f
+        typeface = Typeface.MONOSPACE
+        isAntiAlias = true
+    }
+    
+    // Dibujar fondo
+    canvas.drawRect(0f, 0f, 800f, alturaTotal.toFloat(), paintFondo)
+    
+    // Dibujar título
+    canvas.drawText("TICKET DE VENTA", 400f, 100f, paintTitulo)
+    
+    // Dibujar productos
+    var y = 200f
+    productos.forEach { producto ->
+        canvas.drawText(producto.nombre, 50f, y, paintProductos)
+        canvas.drawText("$${producto.precio}", 600f, y, paintProductos)
+        y += 60f
+    }
+    
+    return bitmap
+}</code></pre>
+        </section>
 
-<p>strokeWidth: Grosor de la linea</p>
-<pre><code>
-    strokeWidth = 10f
-</code></pre>
-<h2>style:Rellena formas con colores solidos</h2>
-<pre><code>
-    //importante agregar un color
-    style = Paint.Style.FILL
-    style =Paint.Style.STROKE //solo el contorno
-    style = Paint.Style.FILL_AND_STROKE //relleno y contorno
-</code></pre>
-<h2>textAlign: alineacion del texto</h2>
-<pre><code>
-textAlign = Paint.TextAlign.CENTER
-textAlign = Paint.TextAlign.LEFT
-textAlign = Paint.TextAlign.RIGHT
-</code></pre>
-<h2>letterSpacing: Espacio entre letras</h2>
-<pre><code>
-    letterSpacing = 0.3f
-    letterSpacing = -0.05f
-</code></pre>
+        <section class="section">
+            <h2>✅ Mejores Prácticas</h2>
+            <div class="tip">
+                <ul style="margin-left: 20px;">
+                    <li>Siempre usa <code>isAntiAlias = true</code> para textos más nítidos</li>
+                    <li>Calcula el tamaño del bitmap dinámicamente según el contenido</li>
+                    <li>Recicla bitmaps que ya no uses: <code>bitmap.recycle()</code></li>
+                    <li>Usa <code>measureText()</code> para layouts precisos</li>
+                    <li>Comprime con calidad 90-100 para PNG de alta calidad</li>
+                    <li>Maneja excepciones al compartir archivos</li>
+                </ul>
+            </div>
+        </section>
 
-<h2>isAntiAlias :suavisado de bordes</h2>
-<pre><code>
-    isAntialias = true
-</code></pre>
-<h2>Como crear lineas</h2>
-<p>para crear una linea utilizamos el metodo drawLine(startx,starty,endx,endy,Paint)  recibe cuatro parametros recuerda que x trabaja en el eje horizontal y y en el eje vertical startx y starty te dice en el eje horizontal donde inicia y donde finaliza de igual forma starty y end y en el eje vertical donde inicia y donde termina</p>
-<pre><code>
-    canvas.drawLine(startx,starty,endx,endy,Paint)
-    canvas.drawLine(200f,200f,200f,600f,Paint)
-    (0,0)----100----200----300----400----500----x
-      |               
-      100             
-      |               
-      200             |
-      |               |
-      300             |
-      |               |
-      400             |
-      |               |
-      500             |
-      |               |
-      y               |
-</code></pre>
-
-<h2>Como crear un rectangulo</h2>
-<p>para crear un rectuangulo se utiliza el metodo canvas.drawRect y recibe 4 5 parametros el primer pararametro left le indicamos donde inicia y con right le indicamos donde finaliza y de igual forma top le indicamos donde inicia y bottom donde finaliza  es decir que left y right trabajan en el eje horizontal y top y bottom en el eje vertical y el utlimo parametro sera el Paint</p>
-<h2>Importante</h2>
-para definir la altura del 
-<p>para definir la altura del rectangulo se debe restar el bottom - top  ejemplo si el top le indicas que inicie en 100f y el bottom le indicas que finalice en 150f entonces tendras una altura de 50f </p>
-
-
-<pre><code>
-    canvas.drawRect(left,top,right,bottom,Paint)
-    canvas.drawRect(0f,100f,1080f,150f,paint)
-
-    canvas.drawRect(100f,100f,400f,150f,paint)
-    (0,0)----100----200----300----400----500----x
-      |               
-      100     -----------------------        
-      |       |______________________|     //altura 50f
-      200             
-      |               
-      300             
-      |               
-      400             
-      |               
-      500             
-      |               
-      y               
-</code></pre>
-
-<h2>Obtener el ancho de una palabra</h2>
-<p>para obtener el ancho de una palabra lo que debes hacer es utilizar el objeto Paint que contiene todas las caracteristicas y utilizar el metodo measureText que recibe como parametro la candena de texto que deseas conocer el ancho </p>
-<pre><code>
-    val metrics = Paint.measureText("hola")
-</code></pre>
-<h2>Como calcular el alto de una palabra</h2>
-<p>para obtener el alto real de una palabra de igual forma necesitas el objeto Pain y utilizar el metodo ascendt y descent</p>
-<pre><code>
-    val metrics = Paint.fontMetrics 
-    val alto = metrics.descent - metrics.ascent
-</code></pre>
-<h2>Importante</h2>
-<p>ascent es un valor negativo es por eso que se le resta y de esa forma se suma por la ley de signos</p>
-
-<h2>Como enviar una imagen en Whatsapp</h2>
-<p>primero debes pegar esto en el manifest tal como en el video tutorial</p>
-<pre><code>
-     <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
-        </provider>
-</code></pre>
-<p>y tambien debes crear un archivo en res->xml y pegar</p>
-<pre><code>
-    &ltpaths>
-    &ltcache-path name="images" path="." />
-&lt/paths>
-</code></pre>
-
-
-
-
-
-
-
-
-
+        <footer style="margin-top: 60px; padding: 30px 0; border-top: 2px solid #eee; text-align: center; color: #666;">
+            <p>📚 Documentación creada para el desarrollo de aplicaciones Android</p>
+            <p style="margin-top: 10px;">💻 Happy Coding!</p>
+        </footer>
+    </div>
 </body>
 </html>

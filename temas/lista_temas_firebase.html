@@ -3,65 +3,159 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Temas de Jetpack Compose</title>
+    <title>Firebase - Temas de Desarrollo Android</title>
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9727984479462958"
       crossorigin="anonymous"
     ></script>
     <meta name="google-adsense-account" content="ca-pub-9727984479462958" />
-    <link rel="stylesheet" href="../style/style_lista_temas.css" />
+    
+    <link rel="stylesheet" href="../style_firebase/style_lista_temas_firebase.css">
     <link rel="icon" type="image/x-icon" href="../img/icono_android.png" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <div class="container">
-      <h1>Firebase</h1>
-      <p class="subtitle">Domina el desarrollo moderno de Android</p>
-      <a href="../capitulos/propiedadesModifiier.html"></a>
+      <!-- Header Section -->
+      <header>
+        <h1>Firebase</h1>
+        <p class="subtitle">Domina el desarrollo moderno de Android con Firebase</p>
+      </header>
 
+      <!-- Topics Grid -->
       <ul class="topics-grid">
-      
-    
-        <!-- Realtime database-->
-        <li
-          class="topic-card"
-          onclick="window.location.href='../capitulos/crud_firebase.html'"
-        >
+        <!-- Card 1: CRUD Realtime Database -->
+        <li class="topic-card" onclick="window.location.href='../capitulos/crud_firebase.html'">
           <div class="topic-header">
             <span class="topic-number"></span>
             <span class="topic-icon"></span>
-            <span class="topic-text">Crud Realtime Database</span>
+            <span class="topic-text">CRUD Realtime Database</span>
           </div>
           <p class="topic-description">
-            Aprende a crear un CRUD completo utilizando Firebase Realtime
-            Database. Descubre cómo insertar, leer, actualizar y eliminar datos
-            en una base de datos No-SQL, donde la información se almacena
-            mediante pares clave-valor y se sincroniza en tiempo real.
+            Aprende a crear un CRUD completo utilizando Firebase Realtime Database. 
+            Descubre cómo insertar, leer, actualizar y eliminar datos en una base de datos 
+            No-SQL, donde la información se almacena mediante pares clave-valor y se 
+            sincroniza en tiempo real.
           </p>
         </li>
 
-        <!-- Crud imagenes -->
-
-        <li
-          class="topic-card"
-          onclick="window.location.href='../capitulos/galeria_foto.html'"
-        >
+        <!-- Card 2: CRUD de Imágenes -->
+        <li class="topic-card" onclick="window.location.href='../capitulos/galeria_foto.html'">
           <div class="topic-header">
             <span class="topic-number"></span>
             <span class="topic-icon"></span>
-            <span class="topic-text">Crud de Imagenes</span>
+            <span class="topic-text">CRUD de Imágenes</span>
           </div>
           <p class="topic-description">
-            Aprenderas como implementar un CRUD de imágenes en Android. Guardamos las imágenes en el almacenamiento interno del dispositivo, obtenemos su ruta completa, la registramos en Firebase Realtime Database y luego mostramos la imagen en la app.
+            Aprenderás cómo implementar un CRUD de imágenes en Android. Guardamos las 
+            imágenes en el almacenamiento interno del dispositivo, obtenemos su ruta 
+            completa, la registramos en Firebase Realtime Database y luego mostramos 
+            la imagen en la app.
           </p>
         </li>
 
-     
+        <!-- Card 3: Canvas e Imágenes -->
+        <li class="topic-card" onclick="window.location.href='../capitulos_firebase/canvas.html'">
+          <div class="topic-header">
+            <span class="topic-number"></span>
+            <span class="topic-icon"></span>
+            <span class="topic-text">Crea Imágenes con Canvas</span>
+          </div>
+          <p class="topic-description">
+            Aprenderás a crear una imagen personalizada con Canvas y a compartirla 
+            directamente por WhatsApp desde tu app Android. Domina el sistema de 
+            coordenadas, Paint, y las operaciones de dibujo.
+          </p>
+        </li>
 
-        
+        <!-- Card 4: Authentication (Example) -->
+        <!-- Uncomment to add more cards
+        <li class="topic-card" onclick="window.location.href='../capitulos/auth_firebase.html'">
+          <div class="topic-header">
+            <span class="topic-number"></span>
+            <span class="topic-icon"></span>
+            <span class="topic-text">Firebase Authentication</span>
+          </div>
+          <p class="topic-description">
+            Implementa autenticación segura con Firebase Auth. Aprende a gestionar 
+            usuarios con Email/Password, Google Sign-In, y proveedores sociales de 
+            forma sencilla y segura.
+          </p>
+        </li>
+        -->
 
-        
+        <!-- Card 5: Cloud Storage (Example) -->
+        <!-- 
+        <li class="topic-card" onclick="window.location.href='../capitulos/storage_firebase.html'">
+          <div class="topic-header">
+            <span class="topic-number"></span>
+            <span class="topic-icon"></span>
+            <span class="topic-text">Cloud Storage</span>
+          </div>
+          <p class="topic-description">
+            Aprende a subir, descargar y gestionar archivos en Firebase Cloud Storage. 
+            Maneja imágenes, videos, y cualquier tipo de archivo con URLs de descarga 
+            seguras.
+          </p>
+        </li>
+        -->
+
+        <!-- Card 6: Cloud Firestore (Example) -->
+        <!--
+        <li class="topic-card" onclick="window.location.href='../capitulos/firestore_firebase.html'">
+          <div class="topic-header">
+            <span class="topic-number"></span>
+            <span class="topic-icon"></span>
+            <span class="topic-text">Cloud Firestore</span>
+          </div>
+          <p class="topic-description">
+            Domina Firestore, la base de datos NoSQL flexible y escalable de Firebase. 
+            Aprende sobre colecciones, documentos, queries avanzados y sincronización 
+            en tiempo real.
+          </p>
+        </li>
+        -->
       </ul>
     </div>
+
+    <!-- Optional: Floating Action Button -->
+    <!-- 
+    <button class="fab" onclick="scrollToTop()" aria-label="Volver arriba">
+      ↑
+    </button>
+    -->
+
+    <script>
+      // Optional: Smooth scroll to top
+      function scrollToTop() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+
+      // Optional: Add keyboard navigation
+      document.querySelectorAll('.topic-card').forEach(card => {
+        card.setAttribute('tabindex', '0');
+        card.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            card.click();
+          }
+        });
+      });
+
+      // Optional: Add loading animation
+      document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.topic-card');
+        cards.forEach((card, index) => {
+          card.style.animationDelay = `${index * 0.1}s`;
+        });
+      });
+    </script>
   </body>
 </html>
