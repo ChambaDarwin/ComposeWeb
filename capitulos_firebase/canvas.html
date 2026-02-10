@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Como enviar una imagen personalizada a Whatsapp</h1>
+    <p>mira el video completo paso a paso</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/D9FhcdsV3_A?si=4-4r6YWVlO83wKaj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <h2>dependencias</h2>
+    <pre><code>
+        nivel de la aplicacion son:
+
+  implementation("androidx.compose.foundation:foundation:1.6.0")
+
+    // Compose UI (requerido para gráficos)
+    implementation("androidx.compose.ui:ui:1.6.0")
+
+    // Compose UI Graphics (para Paint, Path, etc.)
+    implementation("androidx.compose.ui:ui-graphics:1.6.0")
+
+    </code></pre>
+    <h2>Como crear una imagen con Canvas</h2>
+    <p>lo primero que haremos sera definir la superficie donde vamos a dibujar y el tamaño y la calidad de la imagen para ello creamos un objeto de tipo BitMap que recibe tres parametros el primero es el ancho el segundo es la altura y el tercero es la calidad de la imagen</p>
+    <pre><code>
+        val bitmap = createBitMap(800,600,BitMap.Config.ARGB_8888)
+    </code></pre>
+    <h2>Como crear un objeto Canvas</h2>
+    <p>este objeto ejecuta todas las operaciones que se va a dibujar en el Bitmap por ende recibe como parametro el objeto bitmap que creamos en el paso anterior,  entonces  creamos un objeto de la siguiente forma</p>
+    <pre><code>
+        val canvas = android.grapics.Canvas(bitmap)
+    </code></pre>
+<h2>Importante</h2>
+<p>debes utilizar el import android.grapics.Canvas</p>
+
+<h2>Como crear un objeto Paint()</h2>
+<p>un objeto paint es como crear un lapiz personalizado con color , grosor etc y puedes crear muchos objetos Paint como desees de la siguiente forma</p>
+<pre><code>
+    val lapizRojo = Pain().apply{
+        color=Color.Red
+    }
+</code></pre>
+<h2>Como escribir texto</h2>
+<p>recuerda que el objeto canvas es el que ejecuta las operaciones de dibujo sobre el bitmap es decir que es la persona que dibuja entonces utilizamos el metodo canvas.drawText() este recibe cuatro parametros el primer parametro es el texto que deseas mostrar el segundo es la posicion en x el tercer parametro es la posicion en y el utltimo parametro es un objeto Paint que contiene todas las caracteristicas</p>
+<p>para escribir utilizamos coordenadas solo recuerda como se trabaja en un plano cartesiano es practicamente igual</p>
+<pre><code>
+    (0,0)----100----200----300----400----500----x
+      |
+      100
+      |
+      200
+      |
+      300
+      |
+      400
+      |
+      500
+      |
+      y  
+</code></pre>
+
+<p>solo debes indicar la posicion donde deseas escribir nada mas por ejemplo</p>
+
+<pre><code>
+    canvas.drawText("hola mundo",200,400,lapizRojo)
+    (0,0)----100----200----300----400----500----x
+      |               |
+      100             |
+      |               |
+      200             |
+      |               |
+      300             |
+      |               |
+      400-------------hola mundo
+      |
+      500
+      |
+      y  
+</code></pre>
+<h2>Propiedades importantes del Paint()</h2>
+<p>recuerda que el paint es el pincel con el que dibujamos</p>
+<p>color: Define el color con el que se dibuja: texto, lineas</p>
+<pre><code>
+    color = android.grapics.Color.RED
+    color =android.grapics.Color.parseColor("#FFFFF")
+</code></pre>
+<h2>Texto: Controla el tamaño del texto</h2>
+<pre><code>
+textSize= 30f
+</code></pre>
+<p>typeFace</p>
+<pre><code>
+typeFace= Typeface.MONOSPACE
+typeFace = Typeface.SERIF
+//fuentes personalizadas
+//recibe como segundo parametro un entero asi que asegurante de elegir una opcion que te devuelva un nuemero entero
+typeFace = Typeface.create("Arial",Typeface.Bold)
+</code></pre>
+
+<p>strokeWidth: Grosor de la linea</p>
+<pre><code>
+    strokeWidth = 10f
+</code></pre>
+<h2>style:Rellena formas con colores solidos</h2>
+<pre><code>
+    //importante agregar un color
+    style = Paint.Style.FILL
+    style =Paint.Style.STROKE //solo el contorno
+    style = Paint.Style.FILL_AND_STROKE //relleno y contorno
+</code></pre>
+<h2>textAlign: alineacion del texto</h2>
+<pre><code>
+textAlign = Paint.TextAlign.CENTER
+textAlign = Paint.TextAlign.LEFT
+textAlign = Paint.TextAlign.RIGHT
+</code></pre>
+<h2>letterSpacing: Espacio entre letras</h2>
+<pre><code>
+    letterSpacing = 0.3f
+    letterSpacing = -0.05f
+</code></pre>
+
+<h2>isAntiAlias :suavisado de bordes</h2>
+<pre><code>
+    isAntialias = true
+</code></pre>
+<h2>Como crear lineas</h2>
+<p>para crear una linea utilizamos el metodo drawLine(startx,starty,endx,endy,Paint)  recibe cuatro parametros recuerda que x trabaja en el eje horizontal y y en el eje vertical startx y starty te dice en el eje horizontal donde inicia y donde finaliza de igual forma starty y end y en el eje vertical donde inicia y donde termina</p>
+<pre><code>
+    canvas.drawLine(startx,starty,endx,endy,Paint)
+    canvas.drawLine(200f,200f,200f,600f,Paint)
+    (0,0)----100----200----300----400----500----x
+      |               
+      100             
+      |               
+      200             |
+      |               |
+      300             |
+      |               |
+      400             |
+      |               |
+      500             |
+      |               |
+      y               |
+</code></pre>
+
+<h2>Como crear un rectangulo</h2>
+<p>para crear un rectuangulo se utiliza el metodo canvas.drawRect y recibe 4 5 parametros el primer pararametro left le indicamos donde inicia y con right le indicamos donde finaliza y de igual forma top le indicamos donde inicia y bottom donde finaliza  es decir que left y right trabajan en el eje horizontal y top y bottom en el eje vertical y el utlimo parametro sera el Paint</p>
+<h2>Importante</h2>
+para definir la altura del 
+<p>para definir la altura del rectangulo se debe restar el bottom - top  ejemplo si el top le indicas que inicie en 100f y el bottom le indicas que finalice en 150f entonces tendras una altura de 50f </p>
+
+
+<pre><code>
+    canvas.drawRect(left,top,right,bottom,Paint)
+    canvas.drawRect(0f,100f,1080f,150f,paint)
+
+    canvas.drawRect(100f,100f,400f,150f,paint)
+    (0,0)----100----200----300----400----500----x
+      |               
+      100     -----------------------        
+      |       |______________________|     //altura 50f
+      200             
+      |               
+      300             
+      |               
+      400             
+      |               
+      500             
+      |               
+      y               
+</code></pre>
+
+<h2>Obtener el ancho de una palabra</h2>
+<p>para obtener el ancho de una palabra lo que debes hacer es utilizar el objeto Paint que contiene todas las caracteristicas y utilizar el metodo measureText que recibe como parametro la candena de texto que deseas conocer el ancho </p>
+<pre><code>
+    val metrics = Paint.measureText("hola")
+</code></pre>
+<h2>Como calcular el alto de una palabra</h2>
+<p>para obtener el alto real de una palabra de igual forma necesitas el objeto Pain y utilizar el metodo ascendt y descent</p>
+<pre><code>
+    val metrics = Paint.fontMetrics 
+    val alto = metrics.descent - metrics.ascent
+</code></pre>
+<h2>Importante</h2>
+<p>ascent es un valor negativo es por eso que se le resta y de esa forma se suma por la ley de signos</p>
+
+<h2>Como enviar una imagen en Whatsapp</h2>
+<p>primero debes pegar esto en el manifest tal como en el video tutorial</p>
+<pre><code>
+     <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+</code></pre>
+<p>y tambien debes crear un archivo en res->xml y pegar</p>
+<pre><code>
+    &ltpaths>
+    &ltcache-path name="images" path="." />
+&lt/paths>
+</code></pre>
+
+
+
+
+
+
+
+
+
+</body>
+</html>

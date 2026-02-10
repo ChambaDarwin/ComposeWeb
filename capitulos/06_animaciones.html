@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animaciones Lottie en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/style_animacion.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Animaciones Lottie</h1>
+            <p>Dale vida a tu app con animaciones profesionales en Jetpack Compose</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h3>✨ ¿Qué son las animaciones Lottie?</h3>
+                <p>Lottie es una biblioteca desarrollada por Airbnb que permite renderizar animaciones de After Effects en tiempo real. Son archivos ligeros en formato JSON que ofrecen animaciones de calidad profesional sin comprometer el rendimiento de tu aplicación.</p>
+            </div>
+
+            <div class="video-container">
+               <iframe width="560" height="315" src="https://www.youtube.com/embed/45wFHRxXs4w?si=h0vHJvtxGeXWj0Zz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+
+        
+
+            <h2>📦 Paso 1: Instalación de Dependencias</h2>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Agregar la dependencia de Lottie</div>
+                </div>
+                <div class="step-content">
+                    <p>Abre el archivo <strong>build.gradle.kts</strong> (Module: app) y agrega la siguiente dependencia en el bloque <code>dependencies</code>:</p>
+                    
+                    <div class="code-filename">build.gradle.kts (Module: app)</div>
+                    <pre class="gradle-code"><code>dependencies {
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
+    
+    // Resto de tus dependencias...
+}</code></pre>
+
+                    <div class="tip-box">
+                        <div>
+                            <strong>💡 Consejo:</strong> Después de agregar la dependencia, haz clic en <strong>"Sync Now"</strong> en la barra superior de Android Studio para sincronizar el proyecto.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>📁 Paso 2: Preparar tus Animaciones</h2>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Descargar y organizar archivos Lottie</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>¿Dónde conseguir animaciones Lottie?</strong></p>
+                    <ul>
+                        <li><strong>LottieFiles:</strong> <a href="https://lottiefiles.com" target="_blank" style="color: #f5576c;">lottiefiles.com</a> - Miles de animaciones gratuitas</li>
+                        <li><strong>Iconscout:</strong> Animaciones premium y gratuitas</li>
+                        <li><strong>Crear propias:</strong> Exporta desde After Effects con el plugin Bodymovin</li>
+                    </ul>
+
+                    <p><strong>Ubicación del archivo:</strong></p>
+                    <ol>
+                        <li>Descarga tu animación en formato <strong>.json</strong></li>
+                        <li>En Android Studio, navega a: <code>app/src/main/res/</code></li>
+                        <li>Crea la carpeta <strong>raw</strong> si no existe (clic derecho → New → Android Resource Directory → Resource type: raw)</li>
+                        <li>Copia tu archivo .json dentro de <code>res/raw/</code></li>
+                    </ol>
+
+                    <div class="warning-box">
+                        <div>
+                            <strong>⚠️ Importante:</strong> El nombre del archivo debe estar en minúsculas y sin espacios. Ejemplo: <code>loading_animation.json</code> en lugar de <code>Loading Animation.json</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>💻 Paso 3: Implementación en Compose</h2>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Crear la función composable</div>
+                </div>
+                <div class="step-content">
+                    <p>Crea una función composable reutilizable que muestre la animación Lottie:</p>
+
+                    <div class="code-filename">LottieAnimationScreen.kt</div>
+                    <pre><code>import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.airbnb.lottie.compose.*
+
+@Composable
+fun LottieAnimationScreen() {
+    // Cargar la composición de la animación
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.mi_animacion)
+    )
+    
+    // Controlar el progreso de la animación
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
+    
+    // Renderizar la animación
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = Modifier.size(200.dp)
+    )
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Entendiendo el código</div>
+                </div>
+                <div class="step-content">
+                    <h3 style="color: #f5576c; margin: 20px 0 15px;">🔍 Desglose de componentes:</h3>
+
+                    <p><strong>1. rememberLottieComposition:</strong></p>
+                    <ul>
+                        <li>Carga el archivo JSON de la animación</li>
+                        <li><code>remember</code> evita que se recargue en cada recomposición</li>
+                        <li><code>LottieCompositionSpec.RawRes(R.raw.mi_animacion)</code> especifica la ubicación del archivo</li>
+                    </ul>
+
+                    <p><strong>2. animateLottieCompositionAsState:</strong></p>
+                    <ul>
+                        <li>Controla el progreso y reproducción de la animación</li>
+                        <li><code>composition</code>: La animación cargada</li>
+                        <li><code>iterations</code>: Número de repeticiones</li>
+                    </ul>
+
+                    <p><strong>3. LottieAnimation:</strong></p>
+                    <ul>
+                        <li>Componente que renderiza la animación en pantalla</li>
+                        <li><code>composition</code>: La animación a mostrar</li>
+                        <li><code>progress</code>: Estado actual de la animación (0.0 a 1.0)</li>
+                        <li><code>modifier</code>: Personalización de tamaño y estilo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>⚙️ Paso 4: Opciones de Configuración</h2>
+
+            <div class="step-container">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Personalizar el comportamiento</div>
+                </div>
+                <div class="step-content">
+                    <h3 style="color: #f5576c; margin: 20px 0 15px;">Opciones de repetición:</h3>
+
+                    <pre><code>// Reproducir una sola vez
+iterations = 1
+
+// Reproducir infinitamente
+iterations = LottieConstants.IterateForever
+
+// Reproducir 5 veces
+iterations = 5</code></pre>
+
+                    <h3 style="color: #f5576c; margin: 30px 0 15px;">Control de velocidad:</h3>
+
+                    <pre><code>val progress by animateLottieCompositionAsState(
+    composition = composition,
+    iterations = LottieConstants.IterateForever,
+    speed = 2f  // 2x más rápido (0.5f = mitad de velocidad)
+)</code></pre>
+
+                    <h3 style="color: #f5576c; margin: 30px 0 15px;">Reproducción automática:</h3>
+
+                    <pre><code>val progress by animateLottieCompositionAsState(
+    composition = composition,
+    isPlaying = true,  // false para pausar
+    restartOnPlay = true  // Reiniciar al reproducir
+)</code></pre>
+                </div>
+            </div>
+
+            <h2>🎯 Ejemplo Completo Avanzado</h2>
+
+            <div class="step-container">
+                <div class="step-content">
+                    <p>Ejemplo con control manual de reproducción:</p>
+
+                    <div class="code-filename">AdvancedLottieAnimation.kt</div>
+                    <pre><code>@Composable
+fun AdvancedLottieAnimation() {
+    var isPlaying by remember { mutableStateOf(true) }
+    
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.loading_animation)
+    )
+    
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = isPlaying,
+        iterations = LottieConstants.IterateForever,
+        speed = 1.5f
+    )
+    
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier
+                .size(300.dp)
+                .padding(16.dp)
+        )
+        
+        Button(onClick = { isPlaying = !isPlaying }) {
+            Text(if (isPlaying) "Pausar" else "Reproducir")
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <div>
+                    <strong>🎓 Resumen:</strong> Has aprendido a integrar animaciones Lottie en Jetpack Compose. Estas animaciones profesionales mejoran significativamente la experiencia del usuario sin comprometer el rendimiento de tu aplicación. Experimenta con diferentes animaciones y configuraciones para encontrar el estilo perfecto para tu app.
+                </div>
+            </div>
+
+            <div class="navigation">
+                <a href="expondedDropdown.html" class="nav-button prev">← ExposedDropdownMenuBox</a>
+                <a href="#" class="nav-button">Siguiente Capítulo →</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

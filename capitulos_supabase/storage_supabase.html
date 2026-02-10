@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storage Supabase</title>
+  </head>
+  <body>
+    <h2>Comos subir imagenes a Supabase</h2>
+    <p>
+      mira el video completo donde te muestro el paso a paso que debes seguir
+    </p>
+
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.youtube.com/embed/tEeikTDmpiU?si=EZAyyUek9fTKDhjA"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+    ></iframe>
+    <h2>Dependencias</h2>
+    <p>
+      las Dependencias que utilizaremos debes colocarlas al nivel de la
+      aplicacion
+    </p>
+    <pre><code>
+    
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.4.1")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.4.1")
+    implementation("io.ktor:ktor-client-okhttp:2.3.7")
+
+    //se utiliza para mostrar imagenes
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    //viewmodel 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    //dagger hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    </code></pre>
+    <h2>plugins</h2>
+    <pre><code>
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
+    </code></pre>
+    <h2>modulo del proyecto</h2>
+    <pre><code>
+        buildscript {
+    dependencies {
+        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.51.1")
+    }
+}
+    </code></pre>
+    <p>
+      tambien no te olvides de solicitar persmisos de internet para ello debes
+      dirijirte a app luego manifest y pegar la siguiente linea
+    </p>
+    <pre><code>
+        <uses-permission android:name="android.permission.INTERNET"/>
+    </code></pre>
+
+<h2>Como configurar un proyecto de Supabase</h2>
+    <a href="https://supabase.com/" target="_blank"
+      >ingresa y vincula con github</a
+    >
+    <h2>Selecciona en el boton de color verde New Project</h2>
+    <p>
+      Luego completa la información requerida como el nombre del proyecto y la
+      contraseña de la base de datos
+    </p>
+    <p>
+      lo siguiente que haremos sera dirijirnos a storage y crear un nuevo bucket
+      y le indicamos que sera un bucket publico y le damos crear
+    </p>
+    <p>luego configuramos las politicas</p>
+    
+
+    <h2>Como crear una unica instacia de supabaseClient</h2>
+    <p>la injeccion de dependencias es un patron de diseño que consiste en no crear los objetos que necesita dentro de una clase si no que alguien externo se los inyecte </p>
+    <p>
+      vamos a proveer una unica instacia de supabaseClient para ello
+      realizaremos lo siguiente
+    </p>
+    <pre><code>
+    @Module
+@InstallIn(SingletonComponent::class)
+object Modulo {
+
+    @Provides
+    @Singleton
+    fun providerSupabaseClient(): SupabaseClient {
+        return createSupabaseClient(
+            supabaseUrl = "",
+            supabaseKey = ""
+        ) {
+            install(Storage)
+        }
+
+    }
+}
+</code></pre>
+<h2>Crear un objeto de supabaseClient</h2>
+    <p>
+      lo primero que tenemos que hacer es obtener el projecturl y el api key
+      para ello nos dirijimos al final a project settings ->data api y obtenes
+      el parametro supbaseUrl luego nos dirijimos a api key para completar el
+      parametro supabaseKey
+    </p>
+    <h2>Trabajando con el viewModel</h2>
+    <p>
+      Los metodos que trabajan con el Storage deben utilizar en funciones
+      suspendidas o dentro del viewModelScaope.launch{}y todos los metodos se
+      utiliza con el objeto en este caso el objeto se llama
+      supabase.storage.from("image") es el nombre del bucket
+    </p>
+    <h2>Como subir una imagen</h2>
+    <p>
+      para subir una imagen utilizamos el metodo upload () que recibe dos
+      parametros el path que es el nombre de la imagen y data que es el
+      ByteArray que contiene la imagen
+    </p>
+
+    <h2>Como obtener la public url</h2>
+    <p>
+      con la public url puedes utilizar para mostrar una imagen o guardar en una
+      base de datos para ello utiliza el metodo publicUrl que recibe como
+      parametro el path es decir el nombre de la imagen
+    </p>
+    <pre><code>
+            supabase.storage.from("image").publicUrl(path)
+        </code></pre>
+
+    <h2>Como recuperar todas las imagenes del Storage</h2>
+    <p>para recuperar las imagenes del storage utilizamos el metodo list() este metodo nos devuelve una lista de tipo BucketItem  pero aun no tenemos la publicUrl para ello utilizmos el name que nos devuelve el path de la imagen</p>
+    <pre><code>
+        val lista=   supabase.storage.from("image").list().map {
+                supabase.storage.from("image").publicUrl(it.name)
+            }
+    </code></pre>
+
+    <h2>Como eliminar una imagen</h2>
+    <p>para eliminar una imagen utilizamos el metodo delete() que recibe como parametro el nombre de la imagen  pero recuerda que la imagen es algo como esto https://ogdtmenhbheftlkzbpxd.supabase.co/storage/v1/object/public/image/img_1770229779832.jpg pero lo que nosostros necesitamos es solo esto img_1770229779832.jpg entonces para ello utilizaremos lo siguiente</p>
+    <pre><code>
+        supbase.storage.from("image").delete(image.substringAfterLast("/"))
+    </code></pre>
+    <p>substringAfterLast crea una subcadena despues del ultimo "/" y a partir de ahi ya podemos obener el nombre de  la imagen y por ende podemos eliminar</p>
+
+    <h2>Como abrir la Galeria y seleccionar una foto</h2>
+    <p>
+      para abrir la galeria utilizaremos rememberLauncherForActivityResult que
+      se utiliza para abrir una actividad del sistemas por ejemplo pedir
+      permisos ,abrir la camara,tomar una foto, o abrir la galeria , tambien
+      podemos observar que recibe como parametro un contrato el contrato define
+      que accion va  a realizar el launcher y que tipo de resultado se va a
+      devolver
+    </p>
+    <h2>Ejemplo de contratos</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Contrato</th>
+          <th>¿Qué hace?</th>
+          <th>Input</th>
+          <th>Output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>GetContent()</code></td>
+          <td>Seleccionar archivo</td>
+          <td>String (mime)</td>
+          <td>Uri?</td>
+        </tr>
+        <tr>
+          <td><code>PickVisualMedia()</code></td>
+          <td>Fotos/Video</td>
+          <td>PickVisualMediaRequest</td>
+          <td>Uri?</td>
+        </tr>
+        <tr>
+          <td><code>TakePicture()</code></td>
+          <td>Cámara</td>
+          <td>Uri</td>
+          <td>Boolean</td>
+        </tr>
+        <tr>
+          <td><code>RequestPermission()</code></td>
+          <td>Permiso</td>
+          <td>String</td>
+          <td>Boolean</td>
+        </tr>
+        <tr>
+          <td><code>StartActivityForResult()</code></td>
+          <td>Intent</td>
+          <td>Intent</td>
+          <td>ActivityResult</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Regla</h2>
+    <p>Contrato = accion + tipo de resultado</p>
+    <p>
+      Uri es un identificador unico de un recurso que te acceso temporal para
+      leerlo
+    </p>
+
+    
+  </body>
+</html>

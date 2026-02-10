@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExposedDropdownMenuBox en Jetpack Compose</title>
+    <link rel="stylesheet" href="../style/styele_exposed.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 ExposedDropdownMenuBox</h1>
+            <p>El equivalente moderno al Spinner en Jetpack Compose</p>
+        </header>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>💡 ¿Qué aprenderás en este tutorial?</strong>
+                Descubrirás cómo implementar el componente <span class="highlight">ExposedDropdownMenuBox</span>, el reemplazo del tradicional Spinner de XML en Jetpack Compose. Aprenderás a crear menús desplegables elegantes y funcionales paso a paso.
+            </div>
+
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/w3jgEYhvWLk?si=uQ-esma_ieXu6x-L" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+
+            <p>Si vienes del mundo de XML en Android, este componente es el <strong>equivalente moderno al Spinner</strong>. Te permite desplegar una lista de opciones para que el usuario seleccione una de ellas. El potencial de este componente es enorme y su implementación es más declarativa y flexible que su predecesor.</p>
+
+            <h2>🎯 Configuración Inicial</h2>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <span class="step-title">Crear la función composable</span>
+                <p style="margin-top: 15px;">Primero, crearemos una función composable reutilizable que contendrá:</p>
+                <ul>
+                    <li><strong>expanded</strong>: Estado boolean que indica si el menú está desplegado</li>
+                    <li><strong>text</strong>: Estado que almacena el valor seleccionado</li>
+                    <li><strong>lista</strong>: Lista con las opciones disponibles</li>
+                </ul>
+
+<pre><code>@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExposedDropdownUi() {
+    val lista = listOf("Cliente", "Administrador")
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var text by rememberSaveable { mutableStateOf("") }
+}</code></pre>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-title">Configurar el contenedor ExposedDropdownMenuBox</span>
+                <p style="margin-top: 15px;">Este contenedor envuelve tanto el TextField como el menú desplegable. Recibe dos parámetros obligatorios:</p>
+                <ul>
+                    <li><strong>expanded</strong>: Valor boolean que controla la visibilidad del menú</li>
+                    <li><strong>onExpandedChange</strong>: Lambda que se ejecuta cuando cambia el estado</li>
+                </ul>
+                <p>Cuando el usuario presiona el contenedor, el parámetro <code>it</code> es <code>true</code>, lo que actualiza el estado y despliega las opciones.</p>
+
+<pre><code>ExposedDropdownMenuBox(
+    expanded = expanded,
+    onExpandedChange = { expanded = it }
+) {
+    // Aquí van el TextField y el menú
+}</code></pre>
+            </div>
+
+            <h2>🎨 Configuración del TextField</h2>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <span class="step-title">Implementar el TextField</span>
+                <p style="margin-top: 15px;">El TextField muestra el valor seleccionado. Configuración importante:</p>
+                <ul>
+                    <li><strong>value</strong>: Muestra el texto seleccionado actualmente</li>
+                    <li><strong>onValueChange</strong>: Se deja vacío porque no se usa entrada de teclado</li>
+                    <li><strong>readOnly</strong>: Se establece en <code>true</code> para evitar edición manual</li>
+                    <li><strong>trailingIcon</strong>: Muestra el ícono de flecha indicadora</li>
+                    <li><strong>menuAnchor()</strong>: Modificador esencial que vincula el TextField con el menú</li>
+                </ul>
+
+<pre><code>OutlinedTextField(
+    value = text,
+    onValueChange = {},
+    readOnly = true,
+    label = { Text("Seleccionar rol") },
+    trailingIcon = {
+        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+    },
+    modifier = Modifier
+        .fillMaxWidth()
+        .menuAnchor()
+        .padding(16.dp)
+)</code></pre>
+            </div>
+
+            <h2>📋 Configuración del Menú Desplegable</h2>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <span class="step-title">Implementar ExposedDropdownMenu</span>
+                <p style="margin-top: 15px;">Este componente muestra las opciones disponibles. Parámetros clave:</p>
+                <ul>
+                    <li><strong>expanded</strong>: Controla la visibilidad del menú</li>
+                    <li><strong>onDismissRequest</strong>: Se ejecuta cuando el usuario toca fuera del menú</li>
+                </ul>
+
+<pre><code>ExposedDropdownMenu(
+    expanded = expanded,
+    onDismissRequest = { expanded = false }
+) {
+    lista.forEach { opcion ->
+        DropdownMenuItem(
+            text = { Text(opcion) },
+            onClick = {
+                text = opcion
+                expanded = false
+            }
+        )
+    }
+}</code></pre>
+                <p style="margin-top: 15px;">Cada <code>DropdownMenuItem</code> representa una opción. Al hacer clic:</p>
+                <ol>
+                    <li>Actualiza el valor del TextField con la opción seleccionada</li>
+                    <li>Cierra el menú estableciendo <code>expanded</code> en <code>false</code></li>
+                </ol>
+            </div>
+
+            <h2>✅ Código Completo</h2>
+
+<pre><code>@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExposedDropdownUi() {
+    val lista = listOf("Cliente", "Administrador")
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var text by rememberSaveable { mutableStateOf("") }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Seleccionar rol") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+                .padding(16.dp)
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            lista.forEach { opcion ->
+                DropdownMenuItem(
+                    text = { Text(opcion) },
+                    onClick = {
+                        text = opcion
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}</code></pre>
+
+            <div class="info-box" style="margin-top: 30px;">
+                <strong>🎓 Resumen</strong>
+                Has aprendido a implementar <span class="highlight">ExposedDropdownMenuBox</span>, el componente moderno de Jetpack Compose que reemplaza al tradicional Spinner de XML. Este componente ofrece mayor flexibilidad, mejor integración con Material Design 3 y una experiencia de usuario más fluida.
+            </div>
+
+            <div class="navigation">
+                <a href="#" class="nav-button prev">← Capítulo Anterior</a>
+                <a href="#" class="nav-button">Siguiente Capítulo →</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
