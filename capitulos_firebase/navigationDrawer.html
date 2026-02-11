@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Drawer en Jetpack Compose - Guía Completa</title>
+    <link rel="stylesheet" href="../style_firebase/style_navigation_drawer.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> ModalNavigationDrawer en Jetpack Compose</h1>
+            <p class="subtitle">Guía completa para crear menús laterales modernos en Android</p>
+           
+        </header>
+
+        <div class="video-section">
+            <h2>📺 Tutorial en Video</h2>
+            <p>Aprende paso a paso cómo implementar un Navigation Drawer profesional</p>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/D9FhcdsV3_A?si=3VPRIe9J52ftCzKz" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>📖 ¿Qué es un ModalNavigationDrawer?</h2>
+            <p>El <strong>ModalNavigationDrawer</strong> es un componente de Material Design 3 que proporciona un panel lateral deslizable para la navegación de tu aplicación. Sus características principales son:</p>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>🎨 Modal</h3>
+                    <p>Oscurece el contenido principal cuando está abierto, enfocando la atención del usuario en el menú.</p>
+                </div>
+                <div class="card">
+                    <h3>⚡ Deslizable</h3>
+                    <p>Se puede abrir deslizando desde el borde izquierdo de la pantalla o mediante un botón.</p>
+                </div>
+                <div class="card">
+                    <h3>🔒 Bloqueante</h3>
+                    <p>Bloquea la interacción con la pantalla principal hasta que se cierre o seleccione una opción.</p>
+                </div>
+                <div class="card">
+                    <h3>📱 Responsivo</h3>
+                    <p>Se adapta automáticamente a diferentes tamaños de pantalla y orientaciones.</p>
+                </div>
+            </div>
+
+            <div class="tip">
+                <strong>💡 Consejo:</strong> El Navigation Drawer es ideal para aplicaciones con múltiples secciones que no necesitan estar visibles constantemente.
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>🛠️ Implementación Básica</h2>
+            
+            <h3>1. Estado del Drawer</h3>
+            <p>Primero, necesitas crear un estado para controlar si el drawer está abierto o cerrado:</p>
+            <pre><code>@Composable
+fun MyApp() {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    
+    // ... resto del código
+}</code></pre>
+
+            <div class="example">
+                <strong>Explicación:</strong>
+                <ul>
+                    <li><code>rememberDrawerState</code>: Crea y recuerda el estado del drawer entre recomposiciones</li>
+                    <li><code>DrawerValue.Closed</code>: Estado inicial (también puede ser <code>DrawerValue.Open</code>)</li>
+                    <li><code>rememberCoroutineScope()</code>: Necesario para ejecutar operaciones de suspensión como abrir/cerrar el drawer</li>
+                </ul>
+            </div>
+
+            <h3>2. Estructura del ModalNavigationDrawer</h3>
+            <pre><code>ModalNavigationDrawer(
+    drawerState = drawerState,
+    drawerContent = {
+        ModalDrawerSheet {
+            // Contenido del menú lateral
+            Text("Menú", modifier = Modifier.padding(16.dp))
+            Divider()
+            NavigationDrawerItem(
+                label = { Text("Inicio") },
+                selected = false,
+                onClick = { /* Navegar */ }
+            )
+            NavigationDrawerItem(
+                label = { Text("Perfil") },
+                selected = false,
+                onClick = { /* Navegar */ }
+            )
+        }
+    }
+) {
+    // Contenido principal de la pantalla
+    Scaffold(
+        topBar = { /* TopBar */ }
+    ) { paddingValues ->
+        // Tu contenido aquí
+    }
+}</code></pre>
+
+            <h3>3. TopBar con botón de menú</h3>
+            <pre><code>Scaffold(
+    topBar = {
+        TopAppBar(
+            title = { Text("Mi App") },
+            navigationIcon = {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Abrir menú"
+                    )
+                }
+            }
+        )
+    }
+) { paddingValues ->
+    // Contenido
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+            <h2>🎨 Personalización Avanzada</h2>
+            
+            <h3>Drawer Personalizado con Header</h3>
+            <pre><code>@Composable
+fun CustomDrawerContent(
+    user: User,
+    onMenuClick: (String) -> Unit,
+    onClose: () -> Unit
+) {
+    ModalDrawerSheet(
+        modifier = Modifier.width(280.dp)
+    ) {
+        // Header con foto de perfil
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(24.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.profile),
+                contentDescription = "Foto de perfil",
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = user.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+            Text(
+                text = user.email,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.8f)
+            )
+        }
+
+        Divider()
+
+        // Elementos del menú
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Home, null) },
+            label = { Text("Inicio") },
+            selected = false,
+            onClick = {
+                onMenuClick("home")
+                onClose()
+            },
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+        
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.Person, null) },
+            label = { Text("Perfil") },
+            selected = false,
+            onClick = {
+                onMenuClick("profile")
+                onClose()
+            },
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Divider()
+        
+        // Cerrar sesión al final
+        NavigationDrawerItem(
+            icon = { Icon(Icons.Default.ExitToApp, null) },
+            label = { Text("Cerrar sesión") },
+            selected = false,
+            onClick = { onMenuClick("logout") },
+            modifier = Modifier.padding(horizontal = 12.dp),
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedTextColor = Color.Red,
+                unselectedIconColor = Color.Red
+            )
+        )
+    }
+}</code></pre>
+        </div>
+
+        <div class="content-section">
+            <h2>⚙️ Funciones Útiles</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Abrir el Drawer</h3>
+                    <pre><code>scope.launch {
+    drawerState.open()
+}</code></pre>
+                </div>
+
+                <div class="card">
+                    <h3>Cerrar el Drawer</h3>
+                    <pre><code>scope.launch {
+    drawerState.close()
+}</code></pre>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>✅ Mejores Prácticas</h2>
+            
+            <ol>
+                <li><strong>Usar CoroutineScope:</strong> Siempre usa <code>rememberCoroutineScope()</code> para las operaciones del drawer.</li>
+                <li><strong>Cerrar automáticamente:</strong> Cierra el drawer después de seleccionar una opción de navegación.</li>
+                <li><strong>Feedback visual:</strong> Marca el elemento seleccionado en el menú.</li>
+                <li><strong>Accesibilidad:</strong> Siempre proporciona <code>contentDescription</code> a los iconos.</li>
+                <li><strong>Ancho consistente:</strong> Usa un ancho fijo (entre 256dp y 320dp) para el drawer.</li>
+                <li><strong>Gestos:</strong> Permite tanto el botón como el gesto de deslizar para abrir el drawer.</li>
+            </ol>
+
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> No uses el Navigation Drawer para navegación primaria en tablets o pantallas grandes. En esos casos, considera usar NavigationRail o NavigationBar permanente.
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>🐛 Problemas Comunes y Soluciones</h2>
+            
+            <h3>1. El drawer no se cierra al tocar fuera</h3>
+            <p><strong>Solución:</strong> Esto es el comportamiento esperado del ModalNavigationDrawer. Si quieres cerrarlo automáticamente, usa:</p>
+            <pre><code>ModalNavigationDrawer(
+    drawerState = drawerState,
+    gesturesEnabled = true, // Permite cerrar con gesto
+    // ...
+)</code></pre>
+
+            <h3>2. Crash al intentar abrir el drawer</h3>
+            <p><strong>Solución:</strong> Asegúrate de usar <code>scope.launch</code> para operaciones de suspensión:</p>
+            <pre><code>// ❌ Incorrecto
+onClick = { drawerState.open() }
+
+// ✅ Correcto
+onClick = {
+    scope.launch {
+        drawerState.open()
+    }
+}</code></pre>
+
+            <h3>3. El contenido se superpone con el drawer</h3>
+            <p><strong>Solución:</strong> Asegúrate de que el contenido principal esté dentro del bloque <code>content</code> del ModalNavigationDrawer, no dentro de <code>drawerContent</code>.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>📚 Recursos Adicionales</h2>
+            <ul>
+                <li><a href="https://developer.android.com/jetpack/compose/navigation" target="_blank">Documentación oficial de Navigation en Compose</a></li>
+                <li><a href="https://m3.material.io/components/navigation-drawer" target="_blank">Material Design 3 - Navigation Drawer</a></li>
+                <li><a href="https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#ModalNavigationDrawer(kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.material3.DrawerState,kotlin.Boolean,kotlin.Function0)" target="_blank">API Reference - ModalNavigationDrawer</a></li>
+            </ul>
+        </div>
+
+        <footer>
+            <h3> ¡Comienza a implementar tu Navigation Drawer!</h3>
+            <p>Con esta guía tienes todo lo necesario para crear menús laterales profesionales en tus aplicaciones Android con Jetpack Compose.</p>
+            <p style="margin-top: 20px; color: #666;">
+                <small>Última actualización: 2026 | Jetpack Compose & Material 3</small>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
