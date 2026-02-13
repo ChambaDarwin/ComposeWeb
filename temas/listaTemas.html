@@ -10,121 +10,188 @@
       crossorigin="anonymous"
     ></script>
     <meta name="google-adsense-account" content="ca-pub-9727984479462958" />
-    <link rel="stylesheet" href="../style/style_lista_temas.css" />
     <link rel="icon" type="image/x-icon" href="../img/icono_android.png" />
+    <link rel="stylesheet" href="../style/lista_temas_main.css">
   </head>
   <body>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
     <div class="container">
-      <h1>Temas de Jetpack Compose</h1>
-      <p class="subtitle">Domina el desarrollo moderno de Android</p>
-      <a href="../capitulos/propiedadesModifiier.html"></a>
+      <!-- Header Section -->
+      <div class="header-section">
+        <div class="logo-container">📱</div>
+        <h1>Temas de Jetpack Compose</h1>
+        <p class="subtitle">Domina el desarrollo moderno de Android con las mejores prácticas y patrones de diseño</p>
+        
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">Temas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Lecciones</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Práctico</span>
+          </div>
+        </div>
+      </div>
 
-      <ul class="topics-grid">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input" 
+          id="searchInput"
+          placeholder="Buscar temas..."
+          autocomplete="off"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <!-- Topics Grid -->
+      <ul class="topics-grid" id="topicsGrid">
         <!-- Composables -->
-        <li
-          class="topic-card"
-          onclick="window.location.href='lista_composables.html'"
-        >
+        <li class="topic-card" onclick="window.location.href='lista_composables.html'" data-title="composables">
           <div class="topic-header">
-            <span class="topic-number">1.</span>
+            <span class="topic-number">1</span>
             <span class="topic-icon">📱</span>
             <span class="topic-text">Composables</span>
           </div>
           <p class="topic-description">
-            Configuración de componentes y estilos mediante propiedades y
-            modificadores en Compose
+            Configuración de componentes y estilos mediante propiedades y modificadores en Compose
           </p>
-          <!-- <span class="difficulty beginner">Principiante</span> -->
+          <div class="topic-footer">
+            <span class="difficulty beginner">● Principiante</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
 
-      
-        <li
-          class="topic-card"
-          onclick="window.location.href='lista_arquitectura.html'"
-        >
+        <!-- Arquitectura MVVM -->
+        <li class="topic-card" onclick="window.location.href='lista_arquitectura.html'" data-title="arquitectura mvvm">
           <div class="topic-header">
-            <span class="topic-number"></span>
+            <span class="topic-number">2</span>
             <span class="topic-icon">🧩</span>
             <span class="topic-text">Arquitectura MVVM</span>
           </div>
           <p class="topic-description">
-            Aplicación para enviar saludo personalizado usando componentes
-            básicos de UI
+            Aplicación para enviar saludo personalizado usando componentes básicos de UI
           </p>
-          <!-- <span class="difficulty beginner">Principiante</span> -->
+          <div class="topic-footer">
+            <span class="difficulty intermediate">● Intermedio</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
 
-       <!-- POO EN JAVA -->
-
-        <li
-          class="topic-card"
-          onclick="window.location.href='./temas_poo.html'"
-        >
+        <!-- POO en Java -->
+        <li class="topic-card" onclick="window.location.href='./temas_poo.html'" data-title="poo programación orientada objetos">
           <div class="topic-header">
-            <span class="topic-number"></span>
+            <span class="topic-number">3</span>
             <span class="topic-icon">📜</span>
             <span class="topic-text">POO</span>
           </div>
           <p class="topic-description">
-            Aprende los conceptos clave de la Programación Orientada a Objetos:
-            clases, objetos, herencia, interfaces, clases abstractas y
-            polimorfismo.
+            Aprende los conceptos clave de la Programación Orientada a Objetos: clases, objetos, herencia, interfaces, clases abstractas y polimorfismo.
           </p>
+          <div class="topic-footer">
+            <span class="difficulty beginner">● Principiante</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
 
-      
-
-
-
         <!-- Firebase -->
-      
-        <li
-          class="topic-card"
-          onclick="window.location.href='lista_temas_firebase.html'"
-        >
+        <li class="topic-card" onclick="window.location.href='lista_temas_firebase.html'" data-title="firebase">
           <div class="topic-header">
-            <span class="topic-number"></span>
-            <span class="topic-icon"></span>
+            <span class="topic-number">4</span>
+            <span class="topic-icon">🔥</span>
             <span class="topic-text">Firebase</span>
           </div>
           <p class="topic-description">
-            Aprende a integrar  y construye aplicaciones móviles modernas, seguras y escalables, facilitando funciones como autenticación de usuarios, bases de datos en tiempo real, almacenamiento de archivos y notificaciones, todo integrado en la nube.
-
+            Aprende a integrar y construir aplicaciones móviles modernas, seguras y escalables, facilitando funciones como autenticación de usuarios, bases de datos en tiempo real, almacenamiento de archivos y notificaciones.
           </p>
+          <div class="topic-footer">
+            <span class="difficulty intermediate">● Intermedio</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
 
         <!-- Dependencias -->
-
-        <li
-          class="topic-card"
-          onclick="window.location.href='../capitulos/dependencias.html'"
-        >
+        <li class="topic-card" onclick="window.location.href='../capitulos/dependencias.html'" data-title="dependencias">
           <div class="topic-header">
-            <span class="topic-number">#</span>
+            <span class="topic-number">5</span>
             <span class="topic-icon">✨</span>
-            <span class="topic-text">Depencias</span>
+            <span class="topic-text">Dependencias</span>
           </div>
           <p class="topic-description">
-            Aqui encontraras todas las dependencias utilizadas en el desarrollo
-            Android con Jetpack Compose
+            Aquí encontrarás todas las dependencias utilizadas en el desarrollo Android con Jetpack Compose
           </p>
+          <div class="topic-footer">
+            <span class="difficulty beginner">● Principiante</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
 
-        <li
-          class="topic-card"
-          onclick="window.location.href='../capitulos/assert.html'"
-        >
+        <!-- Test Unitarios -->
+        <li class="topic-card" onclick="window.location.href='../capitulos/assert.html'" data-title="test unitarios">
           <div class="topic-header">
-            <span class="topic-number">#</span>
+            <span class="topic-number">6</span>
             <span class="topic-icon">🎨</span>
             <span class="topic-text">Test Unitarios</span>
           </div>
           <p class="topic-description">
-            Aqui encontraras todos los asserts de JUnit y MockK con teoría y
-            ejemplos prácticos.
+            Aquí encontrarás todos los asserts de JUnit y MockK con teoría y ejemplos prácticos.
           </p>
+          <div class="topic-footer">
+            <span class="difficulty advanced">● Avanzado</span>
+            <span class="arrow-icon">→</span>
+          </div>
         </li>
       </ul>
     </div>
+
+    <script>
+      // Scroll Progress Indicator
+      window.addEventListener('scroll', () => {
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollPercent = (scrollTop / scrollHeight) * 100;
+        scrollIndicator.style.width = scrollPercent + '%';
+      });
+
+      // Search Functionality
+      const searchInput = document.getElementById('searchInput');
+      const topicsGrid = document.getElementById('topicsGrid');
+      const topicCards = topicsGrid.querySelectorAll('.topic-card');
+
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        topicCards.forEach(card => {
+          const title = card.getAttribute('data-title');
+          const text = card.textContent.toLowerCase();
+          
+          if (title.includes(searchTerm) || text.includes(searchTerm)) {
+            card.style.display = 'block';
+            card.style.animation = 'fadeIn 0.3s ease';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+
+      // Add hover sound effect (optional)
+      topicCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0) scale(1)';
+        });
+      });
+    </script>
   </body>
 </html>
