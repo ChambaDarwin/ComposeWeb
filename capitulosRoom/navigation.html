@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD con Room — Jetpack Compose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style_room/navigation.css">
+    <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <div class="badge">Serie de tutoriales · Android</div>
+        <h1>CRUD con <span>Room</span> &<br>Jetpack Compose</h1>
+        <p class="subtitle">Aprende a implementar operaciones de base de datos local usando Room con arquitectura MVVM y Jetpack Compose, paso a paso.</p>
+        <div class="crud-pills">
+            <span class="pill pill-c">CREATE</span>
+            <span class="pill pill-r">READ</span>
+            <span class="pill pill-u">UPDATE</span>
+            <span class="pill pill-d">DELETE</span>
+        </div>
+    </header>
+
+    <div class="video-section">
+        <div class="section-label">Video completo</div>
+        <div class="video-wrapper">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/jj8glGtUVC8?si=oDYm9-su7YvN70mo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <section>
+        <div class="section-label">Configuración · build.gradle (app)</div>
+        <h2>Plugins nivel de la aplicación</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+                <span class="code-lang">KOTLIN · build.gradle</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPIAR</button>
+            </div>
+            <pre><code><span class="fn">id</span>(<span class="str">"kotlin-kapt"</span>)
+<span class="fn">id</span>(<span class="str">"dagger.hilt.android.plugin"</span>)</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-label">Configuración · Dependencias</div>
+        <h2>Dependencias nivel aplicación</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+                <span class="code-lang">KOTLIN · build.gradle</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPIAR</button>
+            </div>
+            <pre><code><span class="cm">// Dagger Hilt</span>
+<span class="fn">implementation</span>(<span class="str">"com.google.dagger:hilt-android:2.51.1"</span>)
+<span class="fn">kapt</span>(<span class="str">"com.google.dagger:hilt-compiler:2.51.1"</span>)
+<span class="fn">implementation</span>(<span class="str">"androidx.hilt:hilt-navigation-compose:1.2.0"</span>)
+
+<span class="cm">// Navigation</span>
+<span class="fn">implementation</span>(<span class="str">"androidx.navigation:navigation-compose:2.8.4"</span>)
+
+<span class="cm">// ViewModel</span>
+<span class="fn">implementation</span>(<span class="str">"androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6"</span>)
+
+<span class="cm">// Imágenes (Coil)</span>
+<span class="fn">implementation</span>(<span class="str">"io.coil-kt:coil-compose:2.6.0"</span>)</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-label">Configuración · Proyecto</div>
+        <h2>Dependencias módulo del proyecto</h2>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+                <span class="code-lang">GROOVY · build.gradle (project)</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPIAR</button>
+            </div>
+            <pre><code><span class="fn">buildscript</span> {
+    <span class="fn">dependencies</span> {
+        <span class="fn">classpath</span>(<span class="str">"com.google.dagger:hilt-android-gradle-plugin:2.51.1"</span>)
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-label">Navegación · NavGraph</div>
+        <h2>Navigation con NavController</h2>
+        <p>NavController gestiona la navegación entre pantallas, permite navegar entre ellas, pasar parámetros y manejar el backStack.</p>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+                <span class="code-lang">KOTLIN · NavGraph.kt</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPIAR</button>
+            </div>
+            <pre><code><span class="ann">@Composable</span>
+<span class="kw">fun</span> <span class="fn">NavGraphNotes</span>() {
+    <span class="kw">val</span> navController = <span class="fn">rememberNavController</span>()
+    <span class="fn">NavHost</span>(
+        navController = navController,
+        startDestination = Rutas.Main.ruta
+    ) {
+        <span class="fn">composable</span>(Rutas.Main.ruta) {
+            <span class="fn">NotasScreen</span> {
+                navController.<span class="fn">navigate</span>(Rutas.Add.ruta)
+            }
+        }
+        <span class="fn">composable</span>(Rutas.Add.ruta) {
+            <span class="fn">AddNotesScreen</span>()
+        }
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-label">Galería · ActivityResult</div>
+        <h2>Seleccionar fotos de galería</h2>
+        <p>Usamos <code style="color:var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 13px;">rememberLauncherForActivityResult</code> para abrir cualquier actividad del sistema. Dependiendo del contrato puedes abrir la galería, tomar fotos, solicitar permisos, etc.</p>
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+                <span class="code-lang">KOTLIN · Compose</span>
+                <button class="copy-btn" onclick="copyCode(this)">COPIAR</button>
+            </div>
+            <pre><code><span class="kw">val</span> launcher = <span class="fn">rememberLauncherForActivityResult</span>(
+    contract = ActivityResultContracts.<span class="fn">GetMultipleContents</span>()
+) { uris ->
+    <span class="cm">// uris: List&lt;Uri&gt; con las imágenes seleccionadas</span>
+}
+
+<span class="cm">// Botón que abre la galería</span>
+Type.GALERY -> {
+    launcher.<span class="fn">launch</span>(<span class="str">"image/*"</span>)
+}</code></pre>
+        </div>
+        <div class="info-card">
+            <p>Realizaremos una app de agenda de notas con dos pantallas: una para mostrar todas las notas guardadas y otra para registrar nuevas notas usando Room como base de datos local.</p>
+        </div>
+    </section>
+
+    <footer>
+        Hecho con <span>♥</span> · Jetpack Compose + Room · MVVM Architecture
+    </footer>
+
+</div>
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-block').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = '✓ COPIADO';
+            btn.style.color = 'var(--accent)';
+            btn.style.borderColor = 'var(--green)';
+            setTimeout(() => {
+                btn.textContent = 'COPIAR';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }, 2000);
+        });
+    }
+</script>
+</body>
+</html>
