@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
     min-height: 100vh;
     padding: 20px;
     line-height: 1.6;
@@ -22,7 +22,7 @@ body {
 }
 
 h1 {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #e0148b 0%, #2cc534 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -65,7 +65,7 @@ h1 {
     padding: 25px;
     background: #f8f9fa;
     border-radius: 15px;
-    border-left: 5px solid #667eea;
+    border-left: 5px solid #df66ea;
 }
 
 h2 {
@@ -183,7 +183,7 @@ code {
 
 .step-number {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2cdf59 0%, #d3944c 100%);
     color: white;
     width: 35px;
     height: 35px;
@@ -240,16 +240,25 @@ code {
 
 .nav-button {
     flex: 1;
-    padding: 15px 25px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    padding: 14px 22px;
+    background: #1c7c45;
+    color: #fff;
     text-decoration: none;
     border-radius: 12px;
     text-align: center;
+    font-size: 13.5px;
     font-weight: 600;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    border: 1.5px solid #1c7c45;
+    transition: background 0.2s, transform 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
+.nav-button:hover { background: #0f5229; transform: translateY(-2px); }
+
+.nav-button.ghost {
+    background: transparent;
+    color: #1c7c45;
+}
+.nav-button.ghost:hover { background: #e8f5ee; transform: translateY(-2px); }
 
 .nav-button:hover {
     transform: translateY(-3px);

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room + Dagger Hilt</title>
+</head>
+<body>
+    <p>las dependencias que utilizaremos para realizar un crud </p>
+    <h2>plugins nivel de la aplicacion</h2>
+    <pre><code>
+    id("com.google.dagger.hilt.android")
+
+    id("com.google.devtools.ksp")
+    </code></pre>
+    <h2>dependencias a nivel de la aplicacion</h2>
+    <pre><code>
+
+      //navegacion
+    implementation("androidx.navigation:navigation-compose:2.8.4")
+
+//viewmodel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+//room
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+// Hilt
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // KSP (reemplaza kapt)
+    ksp("androidx.room:room-compiler:2.6.1")
+     
+    </code></pre>
+
+    <h2> puglins A nivel del proyecto</h2>
+    <pre><code>
+         id("com.google.dagger.hilt.android") version "2.51.1" apply false
+   id("com.google.devtools.ksp") version "2.0.21-1.0.28" apply false
+    </code></pre>
+    <p>lo primero que haremos sera diseñar la interfaz de usuario para ello crearemos dos pantallas una para agregar un producto y otra para agregar un producto</p>
+    <h2>Importante</h2>
+    <p>no te olvides que navController gestiona la navegacion entre pantallas permite pasar parametros en la url y gestiona el backStack y el NavHost es el contendedor de pantallas que decide que pantalla mostrar</p>
+    <pre><code>
+        val navController = rememberNavController
+        NavHost(){
+            composable(ruta){
+
+            }
+        }
+    </code></pre>
+    
+<h2>Configuracion de dagger Hilt</h2>
+<p>lo primero que haremos sera indicarle a hitl y a android que utilizaremos inyeccion de dependencias para ello crearemos una clase que extiendad de Application y luego la registraremos en el manifest y luego utilizaremos sus anotaciones si es una actividad utilizaremos @AndroidEntryPoint si es un viewModel utilizaremos @HiltViewModel  y la clase que extiende de Application utilizaremos @HiltAndroidApp</p>
+
+<h2>Como crear una base de datos utilizando room</h2>
+<p>room es una libreria de Android que se utiliza para la persistencia de datos</p>
+<p>room tiene tres partes principales</p>
+<h2>Entity</h2>
+<p>representa una tabla en la base datos  donde cada propiedad de la data class  es una columna de la tabla  si no utilizas la anotacion @Entity room no sabra que clase debe convertir a una tabla </p>
+
+<pre><code>
+    @Entity (tableName = "notes")
+data class Note (
+    @PrimaryKey(autoGenerate = true)
+    val id:Int=0,
+    val title:String="",
+    val description:String=""
+)
+</code></pre>
+<h2>Dao (DATA ACCESS OBJECT)</h2>
+<p>es la capa que se encarga de comunicarse con la base de datos </p>
+<pre><code>
+    @Dao
+interface NotesDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNote(note: Note)
+
+    @Delete
+    suspend fun delete(note: Note)
+
+    @Update
+    suspend fun updateNote(note: Note)
+
+    @Query("select * from notes")
+    fun getAllNotes(): Flow<List<Note>>
+}
+</code></pre>
+
+<h2>Database</h2>
+<pre><code>
+    @Database(entities = [Note::class], version = 1)
+abstract class NoteDatabase:RoomDatabase() {
+    abstract fun getDao():NotesDao
+}
+</code></pre>
+<h2>Crear una instancia de la base de datos</h2>
+<p>lo siguiente que haremos sera crear una instancia de la base de datos para ello crearemos un objeto que inyecte esa instancia</p>
+<pre><code>
+     @Provides
+    @Singleton
+    fun providesInstnceDatabase(@ApplicationContext context: Context):NoteDatabase{
+        return Room.databaseBuilder(
+            context,
+            NoteDatabase::class.java,
+            "note_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesDao(database: NoteDatabase)=database.getDao()
+</code></pre>
+
+</body>
+</html>
