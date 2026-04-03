@@ -1,81 +1,368 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curso Room + MVVM + Dagger Hilt</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="../style_room/lista_temas_room.css">
-   <link rel="icon" type="image/x-icon" href="../img/icono_android.png">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room + Jetpack Compose — Darwin Chamba</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style_room/lista_temas_room.css" />
+  </head>
+  <body>
+    <!-- ── HERO ── -->
+    <div class="hero">
+      <div>
+        <h1 class="hero-title">
+          Persistencia con <span class="highlight">Room</span> & Jetpack Compose
+        </h1>
+        <div class="hero_flex">
+          <p class="hero-subtitle">
+            Aprende a construir apps Android robustas usando Room Database junto
+            con la potencia de Jetpack Compose. Desde UI y navegación hasta
+            operaciones avanzadas con coroutines y Flow.
+          </p>
+          <div class="hero-graphic">
+            <svg
+              viewBox="0 0 180 180"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="10"
+                y="10"
+                width="160"
+                height="160"
+                rx="24"
+                fill="#fff"
+                stroke="#d4cfc7"
+                stroke-width="1.5"
+              />
+              <rect
+                x="30"
+                y="36"
+                width="120"
+                height="16"
+                rx="8"
+                fill="#ffe8d9"
+              />
+              <rect
+                x="30"
+                y="60"
+                width="80"
+                height="10"
+                rx="5"
+                fill="#f0ede7"
+              />
+              <rect
+                x="30"
+                y="78"
+                width="100"
+                height="10"
+                rx="5"
+                fill="#f0ede7"
+              />
+              <rect
+                x="30"
+                y="104"
+                width="120"
+                height="38"
+                rx="10"
+                fill="#fff0e8"
+                stroke="#e8500a"
+                stroke-width="1.5"
+              />
+              <circle cx="46" cy="123" r="8" fill="#e8500a" opacity=".15" />
+              <rect
+                x="60"
+                y="116"
+                width="60"
+                height="7"
+                rx="3.5"
+                fill="#e8500a"
+                opacity=".3"
+              />
+              <rect
+                x="60"
+                y="127"
+                width="40"
+                height="6"
+                rx="3"
+                fill="#e8500a"
+                opacity=".15"
+              />
+              <rect
+                x="30"
+                y="152"
+                width="50"
+                height="8"
+                rx="4"
+                fill="#e8500a"
+              />
+            </svg>
+          </div>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-item">
+            <span class="meta-label">Módulos</span>
+            <span class="meta-value">8 Temas</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Nivel</span>
+            <span class="meta-value">Intermedio</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Lenguaje</span>
+            <span class="meta-value">Kotlin</span>
+          </div>
+        </div>
+      </div>
 
-<nav class="fade">
-    <div class="nav-logo">Android<span>Dev</span></div>
-    <span class="nav-pill">Room · MVVM · Hilt</span>
-</nav>
-
-<div class="hero fade">
-    <div class="hero-badge">Curso en progreso</div>
-    <h1>Room + MVVM<br>+ <span>Dagger Hilt</span></h1>
-    <p class="hero-desc">Construye una app de notas completa desde cero. Cada capítulo está documentado con código y explicaciones paso a paso.</p>
-    <div class="tags">
-        <span class="tag">Room DB</span>
-        <span class="tag">MVVM</span>
-        <span class="tag">Dagger Hilt</span>
-        <span class="tag">Jetpack Compose</span>
-        <span class="tag">Navigation</span>
-        <span class="tag">Kotlin</span>
+      <!-- decorative graphic -->
     </div>
-</div>
 
-<div class="divider"></div>
-
-<div class="content">
-
-    <p class="section-title fade-1">Disponible</p>
-    <a href="../capitulosRoom/navigation.html" class="chapter-card fade-1">
-        <div class="chapter-index">01</div>
-        <div class="chapter-info">
-            <div class="chapter-name">Diseño UI & Navegación</div>
-            <div class="chapter-sub">Navigation · Compose · Gallery Picker · Color Selector</div>
-        </div>
-        <div class="chapter-arrow">→</div>
-    </a>
-
-    <p class="section-title fade-2">Próximamente</p>
-    <div class="coming fade-3">
-        <div class="coming-card">
-            <div class="coming-index">02</div>
-            <div class="coming-name">Configuración de Room & Entidades</div>
-            <span class="coming-badge">PRONTO</span>
-        </div>
-        <div class="coming-card">
-            <div class="coming-index">03</div>
-            <div class="coming-name">DAO & Repositorio</div>
-            <span class="coming-badge">PRONTO</span>
-        </div>
-        <div class="coming-card">
-            <div class="coming-index">04</div>
-            <div class="coming-name">ViewModel con Dagger Hilt</div>
-            <span class="coming-badge">PRONTO</span>
-        </div>
-        <div class="coming-card">
-            <div class="coming-index">05</div>
-            <div class="coming-name">CRUD completo & UI conectada</div>
-            <span class="coming-badge">PRONTO</span>
-        </div>
+    <!-- ── DIVIDER ── -->
+    <div class="section-divider">
+      <hr class="divider-line" />
     </div>
 
-</div>
+    <!-- ── CARDS SECTION ── -->
+    <div class="section">
+      <div class="section-header">
+        <h2 class="section-title">Contenido del Curso</h2>
+        <span class="section-count">8 módulos</span>
+      </div>
 
-<footer>
-    <div>
-        <div class="footer-name">Darwin <span>Chamba</span></div>
-        <div class="footer-role">Desarrollador FullStack</div>
+      <div class="cards-grid">
+        <!-- CARD 1 — FEATURED -->
+        <div class="card featured">
+          <div class="card-top">
+            <div class="card-icon icon-orange">🎨</div>
+            <span class="card-number">01</span>
+          </div>
+          <div>
+            <h3 class="card-title">Diseño UI &amp; Navegación</h3>
+            <p class="card-desc">
+              Fundamentos de Jetpack Compose para construir interfaces
+              declarativas. Aprende composables, state hoisting y cómo
+              estructurar la navegación entre pantallas con NavController.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Composables</span>
+            <span class="tag">NavController</span>
+            <span class="tag">State</span>
+          </div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              flex-wrap: wrap;
+            "
+          >
+            <a class="card-btn" href="../capitulosRoom/navigation.html">
+              Ir al tema
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+            <span class="card-status"
+              ><span class="status-dot dot-live"></span>Disponible</span
+            >
+          </div>
+        </div>
+
+        <!-- CARD 2 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-green">🗄️</div>
+            <span class="card-number">02</span>
+          </div>
+          <div>
+            <h3 class="card-title">Configuración de Room</h3>
+            <p class="card-desc">
+              Integra la librería Room en tu proyecto. Configura dependencias,
+              crea la base de datos, define entidades y establece la conexión
+              principal.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Entity</span>
+            <span class="tag">Database</span>
+            <span class="tag">Gradle</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-soon"></span>Próximamente</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 3 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-blue">🔍</div>
+            <span class="card-number">03</span>
+          </div>
+          <div>
+            <h3 class="card-title">DAO &amp; Consultas SQL</h3>
+            <p class="card-desc">
+              Domina los Data Access Objects. Crea consultas con anotaciones
+              @Query, @Insert, @Update y @Delete para manejar datos de forma
+              eficiente.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">@Dao</span>
+            <span class="tag">@Query</span>
+            <span class="tag">SQL</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 4 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-yellow">⚡</div>
+            <span class="card-number">04</span>
+          </div>
+          <div>
+            <h3 class="card-title">Coroutines &amp; Flow</h3>
+            <p class="card-desc">
+              Ejecuta operaciones de base de datos de forma asíncrona con
+              Coroutines. Reactiva tu UI usando StateFlow y collectAsState en
+              Compose.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Flow</span>
+            <span class="tag">suspend</span>
+            <span class="tag">StateFlow</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 5 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-pink">🏗️</div>
+            <span class="card-number">05</span>
+          </div>
+          <div>
+            <h3 class="card-title">ViewModel &amp; Arquitectura</h3>
+            <p class="card-desc">
+              Implementa el patrón MVVM integrando ViewModel con Room. Gestiona
+              el ciclo de vida de los datos y separa responsabilidades
+              correctamente.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">MVVM</span>
+            <span class="tag">ViewModel</span>
+            <span class="tag">Repository</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 6
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-teal">🔗</div>
+            <span class="card-number">06</span>
+          </div>
+          <div>
+            <h3 class="card-title">Relaciones entre Tablas</h3>
+            <p class="card-desc">
+              Modela relaciones One-to-One, One-to-Many y Many-to-Many en Room.
+              Usa @Relation y @Junction para consultas complejas entre
+              entidades.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">@Relation</span>
+            <span class="tag">ForeignKey</span>
+            <span class="tag">Join</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 7 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-orange">🔄</div>
+            <span class="card-number">07</span>
+          </div>
+          <div>
+            <h3 class="card-title">Migraciones de Base de Datos</h3>
+            <p class="card-desc">
+              Gestiona cambios de esquema sin perder datos del usuario. Aprende
+              a crear migraciones, estrategias de fallback y pruebas de
+              migración.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">Migration</span>
+            <span class="tag">Schema</span>
+            <span class="tag">Version</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+        <!-- CARD 8 
+        <div class="card">
+          <div class="card-top">
+            <div class="card-icon icon-gray">🧪</div>
+            <span class="card-number">08</span>
+          </div>
+          <div>
+            <h3 class="card-title">Testing con Room</h3>
+            <p class="card-desc">
+              Escribe pruebas unitarias e instrumentadas para tu base de datos.
+              Usa InMemoryDatabase para tests rápidos y confiables de DAOs y
+              repositorios.
+            </p>
+          </div>
+          <div class="card-tags">
+            <span class="tag">InMemory</span>
+            <span class="tag">JUnit</span>
+            <span class="tag">Espresso</span>
+          </div>
+          <span class="card-status"
+            ><span class="status-dot dot-plan"></span>Planeado</span
+          >
+        </div>
+        -->
+
+      </div>
     </div>
-    <div class="footer-right">© 2026</div>
-</footer>
 
-</body>
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-author">
+          <span class="author-name">Darwin Chamba</span>
+          <span class="author-role">Desarrollador Full Stack</span>
+        </div>
+        <div class="footer-copy">
+          <span>© 2024 Darwin Chamba. Todos los derechos reservados.</span
+          ><br />
+          <span style="opacity: 0.6">Room + Jetpack Compose Course</span>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>
