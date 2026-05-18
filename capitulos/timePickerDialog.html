@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selector de hora en Jetpack Compose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style/style_timePickerDialog.css">
+</head>
+<body>
+
+<header>
+    <div class="tag">Jetpack Compose · Android</div>
+    <h1>Cómo crear un selector de hora</h1>
+    <p>Guía paso a paso para implementar <code class="inline">TimePickerDialog</code> en Jetpack Compose y convertir el resultado a texto legible.</p>
+</header>
+
+<main>
+
+    <!-- Video -->
+    <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/6E7t167qsiY?si=yybQDZcLa5v4LsAi"
+            title="Selector de hora en Jetpack Compose"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- Paso 1 -->
+    <div class="section">
+        <div class="section-label">
+            <div class="step-num">1</div>
+            <span>Crear la función composable</span>
+        </div>
+        <p>
+            El primer paso es crear una función composable que reciba como parámetro una función lambda. Esta lambda acepta un valor de tipo <code class="inline">Long</code> porque la hora seleccionada se devuelve en milisegundos, lo que facilita su manipulación y conversión posterior.
+        </p>
+        <div class="code-block"><pre><span class="kw">@Composable</span>
+<span class="kw">fun</span> <span class="fn">SelectHour</span>(context: <span class="tp">Context</span>, time: (<span class="tp">Long</span>) -> <span class="tp">Unit</span>) {
+}</pre></div>
+    </div>
+
+    <!-- Paso 2 -->
+    <div class="section">
+        <div class="section-label">
+            <div class="step-num">2</div>
+            <span>Configurar el TimePickerDialog</span>
+        </div>
+        <p>
+            A continuación, se crea una instancia de <code class="inline">TimePickerDialog</code>. Esta clase recibe cinco parámetros:
+        </p>
+        <p>
+            <strong>1)</strong> El contexto de la aplicación.<br>
+            <strong>2)</strong> Una lambda que se ejecuta cuando el usuario confirma la selección. Sus parámetros son la <em>vista</em>, la <em>hora</em> y los <em>minutos</em> — aunque la vista raramente se usa, se representa con <code class="inline">_</code>.<br>
+            <strong>3)</strong> La hora inicial que mostrará el selector.<br>
+            <strong>4)</strong> Los minutos iniciales.<br>
+            <strong>5)</strong> Un booleano: <code class="inline">true</code> para formato de 24 horas, <code class="inline">false</code> para formato de 12 horas (AM/PM).
+        </p>
+        <div class="code-block"><pre><span class="kw">@Composable</span>
+<span class="kw">fun</span> <span class="fn">SelectHour</span>(context: <span class="tp">Context</span>, time: (<span class="tp">Long</span>) -> <span class="tp">Unit</span>) {
+    <span class="kw">val</span> calendar = <span class="tp">Calendar</span>.getInstance()
+    <span class="kw">val</span> dialog = <span class="fn">TimePickerDialog</span>(
+        context,
+        { _, hour, minute ->
+
+        },
+        calendar.get(<span class="tp">Calendar</span>.HOUR_OF_DAY),
+        calendar.get(<span class="tp">Calendar</span>.MINUTE),
+        <span class="kw">false</span>
+    )
+}</pre></div>
+    </div>
+
+    <!-- Paso 3 -->
+    <div class="section">
+        <div class="section-label">
+            <div class="step-num">3</div>
+            <span>Asignar la hora seleccionada al calendario</span>
+        </div>
+        <p>
+            Dentro de la lambda, se actualiza el objeto <code class="inline">Calendar</code> con los valores que el usuario eligió. Para ello se usa el método <code class="inline">set()</code>, que recibe dos argumentos: el campo del calendario a modificar (por ejemplo, <code class="inline">HOUR_OF_DAY</code> o <code class="inline">MINUTE</code>) y el nuevo valor. Finalmente, se invoca la lambda con el tiempo resultante en milisegundos.
+        </p>
+        <div class="code-block"><pre>{ _, hour, minute ->
+    calendar.set(<span class="tp">Calendar</span>.HOUR_OF_DAY, hour)
+    calendar.set(<span class="tp">Calendar</span>.MINUTE, minute)
+    time(calendar.timeInMillis)
+},</pre></div>
+    </div>
+
+    <!-- Paso 4 -->
+    <div class="section">
+        <div class="section-label">
+            <div class="step-num">4</div>
+            <span>Mostrar el diálogo</span>
+        </div>
+        <p>
+            Por último, se agrega un botón. Al presionarlo, se llama al método <code class="inline">show()</code> del diálogo para mostrarlo en pantalla.
+        </p>
+        <div class="code-block"><pre><span class="fn">Button</span>(onClick = { dialog.show() }) {
+    <span class="fn">Text</span>(<span class="str">"Seleccionar hora"</span>)
+}</pre></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Sección 2: Convertir milisegundos -->
+    <h2>Cómo convertir milisegundos a texto legible</h2>
+
+    <p>
+        Una vez obtenida la hora en milisegundos, es necesario mostrarla en un formato comprensible para el usuario. Para esto se utiliza la clase <code class="inline">SimpleDateFormat</code>, que permite transformar valores de tiempo en cadenas de texto con un patrón personalizado.
+    </p>
+
+    <div class="callout">
+        <strong>Nota:</strong> Usar <code class="inline">Locale.getDefault()</code> como segundo parámetro garantiza que el formato respete el idioma y la región configurados en el dispositivo del usuario.
+    </div>
+
+    <div class="code-block"><pre><span class="kw">val</span> formato = <span class="fn">SimpleDateFormat</span>(<span class="str">"HH:mm"</span>, <span class="tp">Locale</span>.getDefault())
+<span class="cm">// Obtiene el idioma y la región del dispositivo</span></pre></div>
+
+    <p>
+        Luego se emplea la clase <code class="inline">Date</code> para representar un instante específico en el tiempo. Al pasarle un valor en milisegundos como argumento, el objeto encapsula la fecha y hora correspondiente.
+    </p>
+
+    <p>
+        Finalmente, el método <code class="inline">format()</code> recibe ese objeto <code class="inline">Date</code> y lo convierte a texto aplicando el patrón definido.
+    </p>
+
+    <div class="code-block"><pre><span class="kw">val</span> formato = <span class="fn">SimpleDateFormat</span>(<span class="str">"HH:mm"</span>, <span class="tp">Locale</span>.getDefault())
+horaTexto = formato.format(<span class="fn">Date</span>(milisegundos))</pre></div>
+
+    <div class="callout">
+        <strong>Patrón HH:mm:</strong> <code class="inline">HH</code> representa las horas en formato de 24 horas (00–23), mientras que <code class="inline">mm</code> representa los minutos (00–59). Si prefieres formato de 12 horas, usa <code class="inline">hh:mm a</code>.
+    </div>
+
+</main>
+
+<footer>
+    Jetpack Compose · TimePickerDialog · SimpleDateFormat
+</footer>
+
+</body>
+</html>
