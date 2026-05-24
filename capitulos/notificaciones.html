@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones en Android</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="../style/notificaiones.css">
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-tag">Jetpack Compose · Android</div>
+    <h1>Cómo crear <em>Notificaciones</em> en Android</h1>
+    <p class="hero-sub">Guía completa sobre permisos, canales, AlarmManager y BroadcastReceiver con Jetpack Compose.</p>
+</header>
+
+<main class="wrapper">
+
+    <!-- VIDEO -->
+    <div class="video-wrap">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/MxS3AYeAyoA?si=AwJE9EwlCI20QHvJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+
+    <!-- SECCIÓN 1: PERMISOS -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">01</span>
+            <h2>Permisos necesarios</h2>
+        </div>
+
+        <p>Para trabajar con notificaciones en Android es necesario declarar los siguientes permisos en el archivo <code>AndroidManifest.xml</code>:</p>
+
+        <div class="perm-list">
+            <div class="perm-item">
+                <span class="perm-badge">uses-permission</span>
+                <div>
+                    <div class="perm-name">POST_NOTIFICATIONS</div>
+                    <div class="perm-desc">Requerido desde Android 13 (API 33) para mostrar notificaciones al usuario.</div>
+                </div>
+            </div>
+            <div class="perm-item">
+                <span class="perm-badge">uses-permission</span>
+                <div>
+                    <div class="perm-name">SCHEDULE_EXACT_ALARM</div>
+                    <div class="perm-desc">Permite programar alarmas exactas con AlarmManager en Android 12 y superior.</div>
+                </div>
+            </div>
+            <div class="perm-item">
+                <span class="perm-badge">uses-permission</span>
+                <div>
+                    <div class="perm-name">RECEIVE_BOOT_COMPLETED</div>
+                    <div class="perm-desc">Permite recibir el evento de arranque del dispositivo para reprogramar alarmas.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">AndroidManifest.xml</span>
+            </div>
+            <pre><code><span class="str">&lt;uses-permission android:name="android.permission.POST_NOTIFICATIONS"/&gt;</span>
+<span class="str">&lt;uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/&gt;</span>
+<span class="str">&lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/&gt;</span></code></pre>
+        </div>
+
+        <h3>Solicitar permiso en tiempo de ejecución</h3>
+
+        <p>A partir de Android 13 (API 33 — <strong>TIRAMISU</strong>), el permiso <code>POST_NOTIFICATIONS</code> debe solicitarse al usuario en tiempo de ejecución. El flujo es el siguiente:</p>
+
+        <div class="flow">
+            <div class="flow-step">Verificar versión Android ≥ 13</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">checkSelfPermission()</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">¿Concedido?</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">requestPermission.launch()</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">MainActivity.kt</span>
+            </div>
+            <pre><code><span class="cm">// Registra el lanzador de solicitud de permisos</span>
+<span class="kw">val</span> requestPermission = <span class="fn">registerForActivityResult</span>(
+    <span class="tp">ActivityResultContracts</span>.RequestPermission()
+) { <span class="cm">/* manejar resultado */</span> }
+
+<span class="kw">fun</span> <span class="fn">pedirPermiso</span>() {
+    <span class="kw">if</span> (<span class="tp">Build</span>.VERSION.SDK_INT >= <span class="tp">Build</span>.VERSION_CODES.TIRAMISU) {
+        <span class="kw">if</span> (<span class="tp">ActivityCompat</span>.<span class="fn">checkSelfPermission</span>(
+                <span class="kw">this</span>,
+                <span class="tp">Manifest</span>.permission.POST_NOTIFICATIONS
+            ) != <span class="tp">PackageManager</span>.PERMISSION_GRANTED
+        ) {
+            requestPermission.<span class="fn">launch</span>(<span class="tp">Manifest</span>.permission.POST_NOTIFICATIONS)
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="callout callout-info">
+            <span class="callout-icon">ℹ️</span>
+            <div class="callout-content">
+                <strong>¿Qué devuelve checkSelfPermission()?</strong>
+                El método devuelve un entero: <code>0</code> si el permiso fue concedido, <code>-1</code> si fue denegado. La constante <code>PackageManager.PERMISSION_GRANTED</code> equivale a <code>0</code>, lo que facilita la comparación.
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECCIÓN 2: CANAL -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">02</span>
+            <h2>Canal de notificaciones</h2>
+        </div>
+
+        <p>A partir de Android 8.0 (API 26 — <strong>Oreo</strong>), es obligatorio crear un <strong>canal de notificaciones</strong> antes de mostrar cualquier notificación. Un canal es una categoría que permite a Android agrupar notificaciones similares y al usuario configurar individualmente el sonido, la vibración y la prioridad.</p>
+
+        <div class="callout callout-success">
+            <span class="callout-icon">✅</span>
+            <div class="callout-content">
+                <strong>El canal se crea una sola vez</strong>
+                Si el canal ya existe, Android lo ignora. Es seguro llamar a <code>createNotificationChannel()</code> cada vez que se inicia la app.
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">NotificationHelper.kt</span>
+            </div>
+            <pre><code><span class="kw">fun</span> <span class="fn">createChannel</span>(context: <span class="tp">Context</span>) {
+    <span class="kw">if</span> (<span class="tp">Build</span>.VERSION.SDK_INT >= <span class="tp">Build</span>.VERSION_CODES.O) {
+
+        <span class="kw">val</span> channel = <span class="tp">NotificationChannel</span>(
+            CHANNEL_ID,
+            <span class="str">"Notificaciones"</span>,
+            <span class="tp">NotificationManager</span>.IMPORTANCE_HIGH
+        ).<span class="fn">apply</span> {
+            description = <span class="str">"Canal de alertas y recordatorios"</span>
+        }
+
+        <span class="cm">// Obtenemos el servicio del sistema para gestionar notificaciones</span>
+        <span class="kw">val</span> manager = context.<span class="fn">getSystemService</span>(<span class="tp">NotificationManager</span>::<span class="kw">class</span>.java)
+        manager.<span class="fn">createNotificationChannel</span>(channel)
+    }
+}</code></pre>
+        </div>
+
+        <h3>Crear y mostrar una notificación</h3>
+
+        <p>Para construir una notificación se utiliza <code>NotificationCompat.Builder</code>, que recibe el contexto y el ID del canal. Una vez construida, se muestra mediante <code>NotificationManagerCompat.notify()</code>.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">NotificationHelper.kt</span>
+            </div>
+            <pre><code><span class="nb">@SuppressLint</span>(<span class="str">"MissingPermission"</span>)
+<span class="kw">fun</span> <span class="fn">createNotification</span>(context: <span class="tp">Context</span>, myNotification: <span class="tp">MyNotification</span>) {
+
+    <span class="kw">val</span> notification = <span class="tp">NotificationCompat</span>.<span class="fn">Builder</span>(context, CHANNEL_ID)
+        .<span class="fn">setSmallIcon</span>(android.R.drawable.star_on)
+        .<span class="fn">setContentTitle</span>(myNotification.title)
+        .<span class="fn">setContentText</span>(myNotification.description)
+        .<span class="fn">setAutoCancel</span>(<span class="kw">true</span>)     <span class="cm">// se elimina al tocarla</span>
+        .<span class="fn">setPriority</span>(<span class="tp">NotificationCompat</span>.PRIORITY_HIGH)
+        .<span class="fn">build</span>()
+
+    <span class="tp">NotificationManagerCompat</span>
+        .<span class="fn">from</span>(context)
+        .<span class="fn">notify</span>(myNotification.requestCode, notification)
+}</code></pre>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECCIÓN 3: ALARM MANAGER -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">03</span>
+            <h2>AlarmManager</h2>
+        </div>
+
+        <p><strong>AlarmManager</strong> es el servicio del sistema que permite programar una acción para ejecutarse en un momento específico en el futuro. Cuando llega el tiempo programado, dispara un <code>PendingIntent</code> que normalmente apunta a un <code>BroadcastReceiver</code>.</p>
+
+        <div class="flow">
+            <div class="flow-step">AlarmManager</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">Tiempo cumplido</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">PendingIntent</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">BroadcastReceiver</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">Notificación</div>
+        </div>
+
+        <h3>Verificar permiso de alarmas exactas</h3>
+
+        <p>En Android 12 (API 31) y superior, la app debe verificar si tiene permiso para programar alarmas exactas. Si no lo tiene, se redirige al usuario a la pantalla de configuración del sistema.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">AlarmManagerRepository.kt</span>
+            </div>
+            <pre><code><span class="kw">fun</span> <span class="fn">programarNotificacion</span>(context: <span class="tp">Context</span>, myNotification: <span class="tp">MyNotification</span>) {
+
+    <span class="kw">val</span> alarmManager = context.<span class="fn">getSystemService</span>(<span class="tp">Context</span>.ALARM_SERVICE) <span class="kw">as</span> <span class="tp">AlarmManager</span>
+
+    <span class="cm">// Verificar permiso en Android 12+</span>
+    <span class="kw">if</span> (<span class="tp">Build</span>.VERSION.SDK_INT >= <span class="tp">Build</span>.VERSION_CODES.S) {
+        <span class="kw">if</span> (!alarmManager.<span class="fn">canScheduleExactAlarms</span>()) {
+            <span class="kw">val</span> intent = <span class="tp">Intent</span>(<span class="tp">Settings</span>.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+            intent.flags = <span class="tp">Intent</span>.FLAG_ACTIVITY_NEW_TASK
+            context.<span class="fn">startActivity</span>(intent)
+            <span class="kw">return</span>
+        }
+    }
+
+    <span class="cm">// Crear el Intent hacia el BroadcastReceiver</span>
+    <span class="kw">val</span> intent = <span class="tp">Intent</span>(context, <span class="tp">NotificationBroadcast</span>::<span class="kw">class</span>.java).<span class="fn">apply</span> {
+        <span class="fn">putExtra</span>(<span class="str">"notification"</span>, <span class="tp">Json</span>.<span class="fn">encodeToString</span>(myNotification))
+    }
+
+    <span class="kw">val</span> pendingIntent = <span class="tp">PendingIntent</span>.<span class="fn">getBroadcast</span>(
+        context,
+        myNotification.requestCode,
+        intent,
+        <span class="tp">PendingIntent</span>.FLAG_IMMUTABLE <span class="kw">or</span> <span class="tp">PendingIntent</span>.FLAG_UPDATE_CURRENT
+    )
+
+    <span class="cm">// Programar la alarma exacta</span>
+    alarmManager.<span class="fn">setExactAndAllowWhileIdle</span>(
+        <span class="tp">AlarmManager</span>.RTC_WAKEUP,
+        myNotification.time,
+        pendingIntent
+    )
+}</code></pre>
+        </div>
+
+        <h3>Flags del PendingIntent</h3>
+
+        <div class="flag-grid">
+            <div class="flag-card">
+                <div class="flag-name">FLAG_IMMUTABLE</div>
+                <div class="flag-desc">El PendingIntent no puede modificarse después de crearse. Obligatorio en Android 12+.</div>
+            </div>
+            <div class="flag-card">
+                <div class="flag-name">FLAG_UPDATE_CURRENT</div>
+                <div class="flag-desc">Si ya existe un PendingIntent con el mismo ID, actualiza sus datos en lugar de crear uno nuevo.</div>
+            </div>
+        </div>
+
+        <div class="callout callout-tip">
+            <span class="callout-icon">💡</span>
+            <div class="callout-content">
+                <strong>¿Qué es RTC_WAKEUP?</strong>
+                <code>AlarmManager.RTC_WAKEUP</code> dispara la alarma basándose en la hora real del reloj del sistema y <strong>despierta el dispositivo</strong> aunque esté en modo Doze o con la pantalla apagada. Es el tipo correcto para notificaciones que deben llegar en un momento preciso.
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECCIÓN 4: BROADCAST RECEIVER -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">04</span>
+            <h2>BroadcastReceiver</h2>
+        </div>
+
+        <p>El <code>BroadcastReceiver</code> es el componente que recibe el <code>PendingIntent</code> cuando el AlarmManager lo dispara. Aquí se recuperan los datos de la notificación y se muestra al usuario.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">NotificationBroadcast.kt</span>
+            </div>
+            <pre><code><span class="kw">class</span> <span class="tp">NotificationBroadcast</span> : <span class="tp">BroadcastReceiver</span>() {
+
+    <span class="kw">override fun</span> <span class="fn">onReceive</span>(context: <span class="tp">Context</span>, intent: <span class="tp">Intent</span>) {
+        <span class="kw">val</span> notificationString = intent.<span class="fn">getStringExtra</span>(<span class="str">"notification"</span>)
+
+        notificationString?.<span class="fn">let</span> {
+            <span class="kw">val</span> notification = <span class="tp">Json</span>.<span class="fn">decodeFromString</span>&lt;<span class="tp">MyNotification</span>&gt;(it)
+            <span class="tp">NotificationHelper</span>.<span class="fn">createNotification</span>(context, notification)
+        }
+    }
+}</code></pre>
+        </div>
+
+        <div class="callout callout-warning">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-content">
+                <strong>El BroadcastReceiver debe declararse en el Manifest</strong>
+                Sin esta declaración, Android no reconocerá el receptor y la notificación nunca se mostrará.
+            </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">AndroidManifest.xml</span>
+            </div>
+            <pre><code><span class="str">&lt;receiver
+    android:name=".NotificationBroadcast"
+    android:exported="true"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.BOOT_COMPLETED"/&gt;
+    &lt;/intent-filter&gt;
+&lt;/receiver&gt;</span></code></pre>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- SECCIÓN 5: SERIALIZACIÓN -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">05</span>
+            <h2>Serialización del objeto</h2>
+        </div>
+
+        <p>Para enviar el objeto <code>MyNotification</code> a través del <code>PendingIntent</code>, es necesario convertirlo a una cadena de texto en formato JSON. Para esto se utiliza la librería <strong>kotlinx.serialization</strong>.</p>
+
+        <div class="highlight-box">
+            <p><strong>Json.encodeToString()</strong> convierte un objeto Kotlin a una cadena en formato JSON. <strong>Json.decodeFromString()</strong> hace el proceso inverso: convierte la cadena JSON de vuelta al objeto original.</p>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div>
+                <span class="code-label">MyNotification.kt</span>
+            </div>
+            <pre><code><span class="nb">@Serializable</span>
+<span class="kw">data class</span> <span class="tp">MyNotification</span>(
+    <span class="kw">val</span> title: <span class="tp">String</span> = <span class="str">""</span>,
+    <span class="kw">val</span> description: <span class="tp">String</span> = <span class="str">""</span>,
+    <span class="kw">val</span> time: <span class="tp">Long</span> = <span class="nb">0L</span>,
+    <span class="kw">val</span> requestCode: <span class="tp">Int</span> = <span class="nb">0</span>,
+    <span class="kw">val</span> route: <span class="tp">String</span> = <span class="str">""</span>
+)
+
+<span class="cm">// Serializar: objeto → JSON</span>
+<span class="kw">val</span> json = <span class="tp">Json</span>.<span class="fn">encodeToString</span>(myNotification)
+
+<span class="cm">// Deserializar: JSON → objeto</span>
+<span class="kw">val</span> notification = <span class="tp">Json</span>.<span class="fn">decodeFromString</span>&lt;<span class="tp">MyNotification</span>&gt;(json)</code></pre>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

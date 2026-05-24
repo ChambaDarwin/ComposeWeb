@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner AdMob en Jetpack Compose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style/banner.css">
+</head>
+<body>
+
+<header class="hero">
+    <div class="hero-tag">AdMob · Jetpack Compose · Android</div>
+    <h1>Banner publicitario<br>con <em>AdMob</em></h1>
+    <p class="hero-sub">Cómo integrar un banner de Google AdMob en una aplicación Android con Jetpack Compose.</p>
+</header>
+
+<main class="wrapper">
+
+    <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/BJattSg4SgA?si=2khMQkyagXBHRm60"
+            title="Banner AdMob en Jetpack Compose"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- 01 ADMOB -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">01</span>
+            <h2>Configurar cuenta de AdMob</h2>
+        </div>
+
+        <p>El primer paso es crear una cuenta en <strong>Google AdMob</strong> (admob.google.com), registrar la aplicación y crear una unidad de anuncio de tipo <strong>Banner</strong>. AdMob te proporcionará dos identificadores:</p>
+
+        <div class="steps">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <strong>App ID</strong>
+                    <p>Identifica tu aplicación dentro de AdMob. Se declara en el <code>AndroidManifest.xml</code>.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <strong>Ad Unit ID</strong>
+                    <p>Identifica la unidad de anuncio específica (banner, intersticial, etc.). Se usa al cargar el anuncio en el código.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout callout-info">
+            <span class="callout-icon">ℹ️</span>
+            <div class="callout-body">
+                <strong>IDs de prueba para desarrollo</strong>
+                Durante el desarrollo <strong>nunca uses tu ID real</strong>. Google proporciona IDs de prueba que muestran anuncios de ejemplo sin afectar tus métricas ni arriesgar el bloqueo de tu cuenta.
+                <ul>
+                    <li>App ID de prueba: <code>ca-app-pub-3940256099942544~3347511713</code></li>
+                    <li>Banner Ad Unit de prueba: <code>ca-app-pub-3940256099942544/6300978111</code></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- 02 MANIFEST -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">02</span>
+            <h2>AndroidManifest.xml</h2>
+        </div>
+
+        <p>Dentro de la etiqueta <code>&lt;application&gt;</code>, agrega el <strong>App ID</strong> de AdMob como metadato y declara el permiso de acceso a Internet, ya que los anuncios se cargan desde la red.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <span class="file-label">AndroidManifest.xml</span>
+            </div>
+            <pre><code><span class="cm">&lt;!-- Permiso de internet --&gt;</span>
+<span class="str">&lt;uses-permission android:name="android.permission.INTERNET" /&gt;</span>
+
+<span class="str">&lt;application&gt;</span>
+
+    <span class="cm">&lt;!-- App ID de AdMob (usar ID real solo en producción) --&gt;</span>
+    <span class="str">&lt;meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-3940256099942544~3347511713" /&gt;</span>
+
+<span class="str">&lt;/application&gt;</span></code></pre>
+        </div>
+
+        <div class="callout callout-warning">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-body">
+                <strong>Sustituye el ID antes de publicar</strong>
+                Reemplaza el valor de <code>android:value</code> por el App ID real de tu aplicación en AdMob antes de subir la app a Google Play.
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- 03 DEPENDENCIA -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">03</span>
+            <h2>Dependencia de AdMob</h2>
+        </div>
+
+        <p>Agrega la dependencia de Google Play Services para anuncios en el archivo <code>build.gradle.kts</code> del módulo <strong>app</strong>:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <span class="file-label">app/build.gradle.kts</span>
+            </div>
+            <pre><code>dependencies {
+    implementation(<span class="str">"com.google.android.gms:play-services-ads:24.3.0"</span>)
+}</code></pre>
+        </div>
+
+        <p>Tras agregarla, sincroniza el proyecto con <strong>Sync Now</strong>.</p>
+    </section>
+
+    <hr>
+
+    <!-- 04 INICIALIZAR -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">04</span>
+            <h2>Inicializar AdMob</h2>
+        </div>
+
+        <p>Antes de cargar cualquier anuncio, es obligatorio inicializar el SDK de AdMob. Esto se hace una sola vez en el método <code>onCreate()</code> de la <code>MainActivity</code>.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <span class="file-label">MainActivity.kt</span>
+            </div>
+            <pre><code><span class="kw">override fun</span> <span class="fn">onCreate</span>(savedInstanceState: <span class="tp">Bundle</span>?) {
+    <span class="kw">super</span>.<span class="fn">onCreate</span>(savedInstanceState)
+
+    <span class="cm">// Inicializa el SDK de AdMob antes de cargar cualquier anuncio</span>
+    <span class="tp">MobileAds</span>.<span class="fn">initialize</span>(<span class="kw">this</span>)
+
+    <span class="fn">setContent</span> {
+        <span class="cm">// ...</span>
+    }
+}</code></pre>
+        </div>
+
+        <div class="callout callout-success">
+            <span class="callout-icon">✅</span>
+            <div class="callout-body">
+                <strong>¿Por qué inicializar primero?</strong>
+                Si intentas cargar un anuncio antes de inicializar <code>MobileAds</code>, el SDK no estará preparado y el banner no se mostrará. La inicialización es asíncrona y solo necesita ejecutarse una vez en toda la app.
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- 05 BANNER -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-num">05</span>
+            <h2>Crear el Banner</h2>
+        </div>
+
+        <p><code>AdView</code> es la vista nativa de Android SDK que muestra el banner, pero <strong>no es un Composable</strong>. Para usar vistas tradicionales de Android dentro de Jetpack Compose se utiliza <code>AndroidView</code>, que actúa como puente entre ambos sistemas.</p>
+
+        <div class="highlight-box">
+            <strong>AndroidView</strong> es un Composable especial que envuelve cualquier vista clásica de Android (<code>View</code>) y la integra dentro del árbol de composición de Jetpack Compose. Recibe un parámetro <code>factory</code>, una lambda que crea y configura la vista, y que expone el contexto necesario para instanciarla.
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                <span class="file-label">BannerAdView.kt</span>
+            </div>
+            <pre><code><span class="at">@Composable</span>
+<span class="kw">fun</span> <span class="fn">BannerAd</span>() {
+    <span class="tp">AndroidView</span>(
+        factory = { context ->
+            <span class="tp">AdView</span>(context).<span class="fn">apply</span> {
+                <span class="fn">setAdSize</span>(<span class="tp">AdSize</span>.BANNER)
+                adUnitId = <span class="str">"ca-app-pub-3940256099942544/6300978111"</span> <span class="cm">// ID de prueba</span>
+                <span class="fn">loadAd</span>(<span class="tp">AdRequest</span>.<span class="fn">Builder</span>().<span class="fn">build</span>())
+            }
+        }
+    )
+}</code></pre>
+        </div>
+
+        <h3>Métodos explicados</h3>
+
+        <div class="method-grid">
+            <div class="method-item">
+                <span class="method-name">setAdSize()</span>
+                <span class="method-desc">Define el tamaño del banner. <code>AdSize.BANNER</code> es el tamaño estándar de 320×50 dp. Google ofrece otros tamaños como <code>LARGE_BANNER</code> o <code>MEDIUM_RECTANGLE</code>.</span>
+            </div>
+            <div class="method-item">
+                <span class="method-name">adUnitId</span>
+                <span class="method-desc">El identificador único de la unidad de anuncio. Durante desarrollo se usa el ID de prueba; en producción se reemplaza por el ID real obtenido en la consola de AdMob.</span>
+            </div>
+            <div class="method-item">
+                <span class="method-name">AdRequest.Builder()</span>
+                <span class="method-desc">Crea un objeto que representa la solicitud de carga del anuncio. Se pueden añadir configuraciones adicionales antes de llamar a <code>build()</code>.</span>
+            </div>
+            <div class="method-item">
+                <span class="method-name">loadAd()</span>
+                <span class="method-desc">Envía la solicitud a los servidores de Google y descarga el anuncio para mostrarlo en el <code>AdView</code>.</span>
+            </div>
+        </div>
+
+        <h3>Flujo de carga del banner</h3>
+
+        <div class="flow">
+            <div class="flow-step">AdView creado</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">setAdSize()</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">adUnitId asignado</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">AdRequest.Builder().build()</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">loadAd()</div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">Banner visible</div>
+        </div>
+
+        <div class="callout callout-tip">
+            <span class="callout-icon">💡</span>
+            <div class="callout-body">
+                <strong>Uso en la pantalla</strong>
+                Puedes colocar <code>BannerAd()</code> como cualquier otro Composable, por ejemplo al final de un <code>Column</code> o dentro de un <code>Scaffold</code> en la parte inferior de la pantalla.
+            </div>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

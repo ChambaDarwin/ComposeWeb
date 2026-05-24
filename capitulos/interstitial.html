@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anuncios Interstitial · Android + AdMob</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../style/interstitial.css">
+</head>
+<body>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- NAV -->
+  
+
+  <div class="layout">
+
+
+
+    <!-- MAIN -->
+    <main id="content">
+
+      <!-- TITLE -->
+      <div class="page-title">
+        <h1>Anuncios <span>Interstitial</span><br/>con Google AdMob</h1>
+      </div>
+
+      <!-- SECCIÓN 1 -->
+      <section id="que-es">
+        <h2>¿Qué es un anuncio Interstitial?</h2>
+        <p>Los anuncios interstitial son anuncios de pantalla completa que cubren la interfaz de la aplicación hasta que el usuario los cierra. Están diseñados para mostrarse en pausas o transiciones naturales del flujo de la aplicación, como entre niveles de un juego o al finalizar una tarea.</p>
+
+        <div class="callout">
+          <strong>Prerequisito</strong>
+          <p>Antes de continuar, asegúrate de haber inicializado el SDK de Google AdMob, declarado el <code>APP_ID</code> en el <code>AndroidManifest.xml</code>, añadido el permiso <code>INTERNET</code> y agregado la dependencia de AdMob en <code>build.gradle</code>. Puedes revisar esa configuración en el capítulo anterior.</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2 -->
+      <section id="viewmodel">
+        <h2>Cargar el anuncio en el ViewModel</h2>
+        <p>Para gestionar anuncios que ocupan la pantalla completa utilizamos el patrón <strong>ViewModel</strong>. Dentro de él crearemos una función que solicita y carga un anuncio desde los servidores de AdMob. Para esto, la clase <code>InterstitialAd</code> expone el método estático <code>load()</code>.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <span class="lang">Kotlin · ViewModel</span>
+          </div>
+          <pre><code id="code1"></code></pre>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3 -->
+      <section id="parametros">
+        <h2>Parámetros de <code>InterstitialAd.load()</code></h2>
+        <p>El método estático <code>load()</code> recibe cuatro parámetros obligatorios:</p>
+
+        <div class="params-grid">
+          <div class="param-card">
+            <div class="param-num">PARAM 01</div>
+            <div class="param-name">context: Context</div>
+            <p>Contexto de la aplicación o actividad necesario para inicializar la solicitud.</p>
+          </div>
+          <div class="param-card">
+            <div class="param-num">PARAM 02</div>
+            <div class="param-name">adUnitId: String</div>
+            <p>Identificador de la unidad de anuncio de AdMob. En desarrollo se usa el ID de prueba de Google.</p>
+          </div>
+          <div class="param-card">
+            <div class="param-num">PARAM 03</div>
+            <div class="param-name">adRequest: AdRequest</div>
+            <p>Objeto <code>AdRequest</code> que encapsula la solicitud de carga al servidor de AdMob.</p>
+          </div>
+          <div class="param-card">
+            <div class="param-num">PARAM 04</div>
+            <div class="param-name">callback: InterstitialAdLoadCallback</div>
+            <p>Callback que notifica el resultado de la carga: éxito (<code>onAdLoaded</code>) o error (<code>onAdFailedToLoad</code>).</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warn">
+          <strong>ID de prueba</strong>
+          <p>El ID <code>ca-app-pub-3940256099942544/1033173712</code> es el ID de prueba oficial de Google. Nunca uses un ID real durante el desarrollo; puedes recibir sanciones en tu cuenta de AdMob.</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 4 -->
+      <section id="estado">
+        <h2>Estado reactivo con StateFlow</h2>
+        <p>Para que la UI pueda reaccionar a la disponibilidad del anuncio, almacenamos el objeto <code>InterstitialAd</code> en un <code>MutableStateFlow</code>. Cuando el anuncio carga correctamente se asigna el objeto; cuando falla o es descartado, se establece en <code>null</code>.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <span class="lang">Kotlin · Estado</span>
+          </div>
+          <pre><code id="code2"></code></pre>
+        </div>
+
+        <div class="callout">
+          <strong>Por qué StateFlow</strong>
+          <p>Al usar <code>StateFlow</code>, cualquier <em>composable</em> o fragmento que observe este estado se recompondrá automáticamente cuando el anuncio esté disponible o sea descartado, sin necesidad de lógica adicional en la UI.</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 5 -->
+      <section id="mostrar">
+        <h2>Mostrar el anuncio</h2>
+        <p>Para presentar el interstitial en pantalla completa se requiere una referencia a la <code>Activity</code> activa. Dado que el ViewModel recibe un <code>Context</code>, se realiza un <em>cast</em> seguro a <code>Activity</code> usando el operador <code>as?</code>. Si la conversión falla retorna <code>null</code> y el bloque condicional evita un crash.</p>
+
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <span class="lang">Kotlin · showInterstitial()</span>
+          </div>
+          <pre><code id="code3"></code></pre>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 6 -->
+      <section id="callback">
+        <h2>Callbacks de pantalla completa</h2>
+        <p>La clase <code>FullScreenContentCallback</code> expone métodos para reaccionar a eventos del ciclo de vida del anuncio en pantalla completa. El más importante durante este flujo es <code>onAdDismissedFullScreenContent()</code>.</p>
+
+        <ul class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <span><strong>onAdDismissedFullScreenContent()</strong> — Se ejecuta cuando el usuario cierra el anuncio (presiona la X o el anuncio concluye). Es el momento ideal para reiniciar la carga del siguiente anuncio.</span>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <span><strong>onAdFailedToShowFullScreenContent()</strong> — Se invoca si el anuncio no pudo mostrarse correctamente. Aquí también conviene limpiar el estado y reintentarlo.</span>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <span><strong>onAdShowedFullScreenContent()</strong> — Confirma que el anuncio se mostró exitosamente. Útil para pausar música, timers o cualquier lógica de la app.</span>
+          </li>
+        </ul>
+
+        <div class="callout">
+          <strong>Buena práctica</strong>
+          <p>Dentro de <code>onAdDismissedFullScreenContent()</code>, además de llamar a <code>getInterstitial()</code>, puedes exponer una función lambda o un <code>SharedFlow</code> para que la UI ejecute acciones como navegar a la siguiente pantalla o actualizar el estado del juego.</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 7 -->
+      <section id="flujo">
+        <h2>Flujo completo</h2>
+        <p>El siguiente diagrama resume el ciclo de vida de un anuncio interstitial gestionado desde el ViewModel:</p>
+
+        <ul class="steps">
+          <li><span class="step-num">1</span><span>La app llama a <code>getInterstitial(context)</code> al iniciar o tras cerrar el anuncio anterior.</span></li>
+          <li><span class="step-num">2</span><span>AdMob responde con <code>onAdLoaded</code>: el <code>StateFlow</code> se actualiza con el objeto <code>InterstitialAd</code>.</span></li>
+          <li><span class="step-num">3</span><span>En el momento oportuno (transición, fin de nivel, etc.) la UI llama a <code>showInterstitial(context)</code>.</span></li>
+          <li><span class="step-num">4</span><span>El anuncio se presenta en pantalla completa sobre la <code>Activity</code>.</span></li>
+          <li><span class="step-num">5</span><span>El usuario cierra el anuncio → <code>onAdDismissedFullScreenContent()</code> limpia el estado y solicita un nuevo anuncio automáticamente.</span></li>
+        </ul>
+
+        <hr/>
+        <p style="font-size:.85rem; color:var(--ink-muted); text-align:center;">
+          Referencia oficial: <a href="https://developers.google.com/admob/android/interstitial" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:500;">developers.google.com/admob/android/interstitial</a>
+        </p>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    /* ── Render syntax-highlighted code blocks ── */
+    function renderCode(id, lines) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = lines.map(l => `<span class="line">${l}</span>`).join('\n');
+    }
+
+    const kw = s => `<span class="kw">${s}</span>`;
+    const fn = s => `<span class="fn">${s}</span>`;
+    const cl = s => `<span class="cl">${s}</span>`;
+    const st = s => `<span class="st">${s}</span>`;
+    const cm = s => `<span class="cm">${s}</span>`;
+    const nb = s => `<span class="nb">${s}</span>`;
+    const pu = s => `<span class="pu">${s}</span>`;
+    const id = s => `<span class="id">${s}</span>`;
+
+    renderCode('code1', [
+      `${kw('fun')} ${fn('getInterstitial')}${pu('(')}context${pu(':')} ${cl('Context')}${pu(')')} ${pu('{')}`,
+      `    ${cl('InterstitialAd')}.${fn('load')}${pu('(')}`,
+      `        context${pu(',\')}`,
+      `        ${st('"ca-app-pub-3940256099942544/1033173712"')}${pu(',')}`,
+      `        ${cl('AdRequest')}.${cl('Builder')}${pu('()')}${pu('.')}${fn('build')}${pu('()')}${pu(',')}`,
+      `        ${kw('object')} ${pu(':')} ${cl('InterstitialAdLoadCallback')}${pu('()')} ${pu('{')}`,
+      `            ${kw('override')} ${kw('fun')} ${fn('onAdFailedToLoad')}${pu('(')}error${pu(':')} ${cl('LoadAdError')}${pu(')')} ${pu('{')}`,
+      `                ${id('_interstitialAd')}.value ${pu('=')} ${nb('null')}`,
+      `            ${pu('}')}`,
+      ``,
+      `            ${kw('override')} ${kw('fun')} ${fn('onAdLoaded')}${pu('(')}inter${pu(':')} ${cl('InterstitialAd')}${pu(')')} ${pu('{')}`,
+      `                ${id('_interstitialAd')}.value ${pu('=')} inter`,
+      `            ${pu('}')}`,
+      `        ${pu('}')}`,
+      `    ${pu(')')}`,
+      `${pu('}')}`,
+    ]);
+
+    renderCode('code2', [
+      `${cm('// Estado privado mutable')}`,
+      `${kw('private')} ${kw('val')} ${id('_interstitialAd')} ${pu('=')} ${cl('MutableStateFlow')}<${cl('InterstitialAd')}?>${pu('(')}${nb('null')}${pu(')')}`,
+      ``,
+      `${cm('// Estado público de solo lectura expuesto a la UI')}`,
+      `${kw('val')} ${id('interstitialAd')} ${pu('=')} ${id('_interstitialAd')}.${fn('asStateFlow')}${pu('()')}`,
+    ]);
+
+    renderCode('code3', [
+      `${kw('fun')} ${fn('showInterstitial')}${pu('(')}context${pu(':')} ${cl('Context')}${pu(')')} ${pu('{')}`,
+      `    ${cm('// Conversión segura de Context a Activity')}`,
+      `    ${kw('val')} activity ${pu('=')} context ${kw('as')}? ${cl('Activity')}`,
+      ``,
+      `    ${kw('if')} ${pu('(')}activity ${pu('!=')} ${nb('null')}${pu(')')} ${pu('{')}`,
+      `        ${id('_interstitialAd')}.value?.fullScreenContentCallback ${pu('=')}`,
+      `            ${kw('object')} ${pu(':')} ${cl('FullScreenContentCallback')}${pu('()')} ${pu('{')}`,
+      ``,
+      `                ${kw('override')} ${kw('fun')} ${fn('onAdDismissedFullScreenContent')}${pu('()')} ${pu('{')}`,
+      `                    ${cm('// El usuario cerró el anuncio: limpiar y precargar el siguiente')}`,
+      `                    ${id('_interstitialAd')}.value ${pu('=')} ${nb('null')}`,
+      `                    ${fn('getInterstitial')}${pu('(')}context${pu(')')}`,
+      `                ${pu('}')}`,
+      `            ${pu('}')}`,
+      ``,
+      `        ${cm('// Mostrar el anuncio en pantalla completa')}`,
+      `        ${id('_interstitialAd')}.value?${pu('.')}${fn('show')}${pu('(')}activity${pu(')')}`,
+      `    ${pu('}')}`,
+      `${pu('}')}`,
+    ]);
+
+    /* ── Active sidebar link on scroll ── */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('#nav-links a');
+    const progress = document.getElementById('progress');
+
+    function onScroll() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? scrollTop / docHeight : 0;
+      progress.style.transform = `scaleX(${pct})`;
+
+      let current = '';
+      sections.forEach(sec => {
+        if (scrollTop >= sec.offsetTop - 100) current = sec.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  </script>
+</body>
+</html>
